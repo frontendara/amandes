@@ -1,0 +1,56 @@
+{
+  "name": "amandes",
+  "version": "0.10.2",
+  "description": "A 360° media viewer for the modern web",
+  "author": "Google Inc.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "files": [
+    "build"
+  ],
+  "main": "./build/marzipano.umd.js",
+  "module": "./build/marzipano.es.js",
+  "exports": {
+    ".": {
+      "import": "./build/marzipano.es.js",
+      "require": "./build/marzipano.umd.js"
+    }
+  },
+  "types": "./dist/declarations/index.d.ts",
+  "homepage": "http://github.com/frontendara/amandes",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/frontendara/amandes.git"
+  },
+  "bugs": {
+    "url": "https://github.com/frontendara/amandes/issues"
+  },
+  "scripts": {
+    "dev": "vite --port=3001",
+    "build": "tsc && vite build",
+    "start:e2e": "vite --port=3333",
+    "test": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed",
+    "vite:preview": "vite --port=3001 preview",
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "bowser": "1.9.4",
+    "gl-matrix": "3.4.3",
+    "hammerjs": "2.0.4",
+    "minimal-event-emitter": "1.0.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.19.0",
+    "c8": "^7.11.0",
+    "happy-dom": "^2.31.1",
+    "jsdoc": "^3.6.6",
+    "sinon": "^9.2.2",
+    "typescript": "^4.5.4",
+    "uglify-js": "^3.12.3",
+    "vite": "^2.8.0",
+    "vitest": "^0.3.4"
+  }
+}

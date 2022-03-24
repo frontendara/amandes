@@ -1,0 +1,46 @@
+import { Viewer, ImageUrlSource, FlatGeometry, util, FlatView  } from '../../src/index';
+
+// Create viewer.
+var viewer = new Viewer(document.getElementById('pano'));
+
+// The tiles were generated with the krpano tools, which index the tiles
+// from 1 instead of 0. Hence, we cannot use ImageUrlSource.fromString()
+// and must write a custom function to convert tiles into URLs.
+var urlPrefix = "//www.marzipano.net/media/lisboa";
+var tileUrl = function(z, x, y) {
+  return urlPrefix + "/l" + z + "/" + y + "/l" + z + '_' + y + '_' + x + ".jpg";
+};
+var source = new ImageUrlSource(function(tile) {
+  return { url: tileUrl(tile.z+1, tile.x+1, tile.y+1) };
+});
+
+// Create geometry.
+var geometry = new FlatGeometry([
+  { width: 756,   height: 312,   tileWidth: 756, tileHeight: 756 },
+  { width: 1512,  height: 624,   tileWidth: 756, tileHeight: 756 },
+  { width: 3024,  height: 1248,  tileWidth: 756, tileHeight: 756 },
+  { width: 6048,  height: 2496,  tileWidth: 756, tileHeight: 756 },
+  { width: 12096, height: 4992,  tileWidth: 756, tileHeight: 756 },
+  { width: 24192, height: 9984,  tileWidth: 756, tileHeight: 756 },
+  { width: 48384, height: 19968, tileWidth: 756, tileHeight: 756 }
+]);
+
+// Create view.
+// The letterbox view limiter allows the view to zoom out until the image is
+// fully visible, adding black bands around the image where necessary.
+var limiter = util.compose(
+  FlatView.limit.resolution(48384),
+  FlatView.limit.letterbox()
+);
+var view = new FlatView({ mediaAspectRatio: 48384/19968}, limiter);
+
+// Create scene.
+var scene = viewer.createScene({
+  source: source,
+  geometry: geometry,
+  view: view,
+  pinFirstLevel: true
+});
+
+// Display scene.
+scene.switchTo();

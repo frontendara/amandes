@@ -1,0 +1,43 @@
+# Keep in sync with .npmignore.
+*~
+.tmp
+.DS_Store
+npm-debug.log
+package-lock.json
+/node_modules/*
+/tmp/*
+/build/*
+/dist/*
+/docs/*
+/test/test_suite.js*
+.idea
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# testing
+playwright-report/
+coverage/
