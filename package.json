@@ -1,8 +1,7 @@
 {
-  "name": "amandes",
-  "version": "0.10.2",
+  "name": "@frdr/amandes",
+  "version": "1.0.0",
   "description": "A 360° media viewer for the modern web",
-  "author": "Google Inc.",
   "license": "Apache-2.0",
   "type": "module",
   "files": [
@@ -34,7 +33,7 @@
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
     "vite:preview": "vite --port=3001 preview",
-    "check-types": "tsc --noEmit"
+    "check-types": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
     "bowser": "1.9.4",
