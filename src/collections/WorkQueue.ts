@@ -13,59 +13,59 @@ class WorkTask {
 }
 
 class WorkQueue {
-  _queue: any[];
-  _delay: any;
-  _paused: any;
-  _currentTask: null;
-  _lastFinished: null | number;
+  #queue: any[];
+  #delay: any;
+  #paused: any;
+  #currentTask: null;
+  #lastFinished: null | number;
   constructor(opts) {
-    this._queue = [];
-    this._delay = opts && opts.delay || 0;
-    this._paused = opts && !!opts.paused || false;
-    this._currentTask = null;
-    this._lastFinished = null;
+    this.#queue = [];
+    this.#delay = opts && opts.delay || 0;
+    this.#paused = opts && !!opts.paused || false;
+    this.#currentTask = null;
+    this.#lastFinished = null;
   }
   length() {
-    return this._queue.length;
+    return this.#queue.length;
   }
   push(fn, cb) {
 
     var task = new WorkTask(fn, cb);
 
-    var cancel = this._cancel.bind(this, task);
+    var cancel = this.#cancel.bind(this, task);
 
     // Push the task into the queue.
-    this._queue.push(task);
+    this.#queue.push(task);
 
     // Run the task if idle.
-    this._next();
+    this.#next();
 
     return cancel;
 
   }
   pause() {
-    if (!this._paused) {
-      this._paused = true;
+    if (!this.#paused) {
+      this.#paused = true;
     }
   }
   resume() {
-    if (this._paused) {
-      this._paused = false;
-      this._next();
+    if (this.#paused) {
+      this.#paused = false;
+      this.#next();
     }
   }
-  _start(task) {
+  #start(task) {
 
     // Consistency check.
-    if (this._currentTask) {
+    if (this.#currentTask) {
       throw new Error('WorkQueue: called start while running task');
     }
 
     // Mark queue as busy, so that concurrent tasks wait.
-    this._currentTask = task;
+    this.#currentTask = task;
 
     // Execute the task.
-    var finish = this._finish.bind(this, task);
+    var finish = this.#finish.bind(this, task);
     task.cfn = task.fn(finish);
 
     // Detect when a non-cancellable function has been queued.
@@ -74,12 +74,12 @@ class WorkQueue {
     }
 
   }
-  _finish(task) {
+  #finish(task) {
 
     var args = Array.prototype.slice.call(arguments, 1);
 
     // Consistency check.
-    if (this._currentTask !== task) {
+    if (this.#currentTask !== task) {
       throw new Error('WorkQueue: called finish on wrong task');
     }
 
@@ -87,63 +87,63 @@ class WorkQueue {
     task.cb.apply(null, args);
 
     // Mark as not busy and record task finish time, then advance to next task.
-    this._currentTask = null;
-    this._lastFinished = now();
-    this._next();
+    this.#currentTask = null;
+    this.#lastFinished = now();
+    this.#next();
 
   }
-  _cancel(task) {
+  #cancel(task) {
 
     var args = Array.prototype.slice.call(arguments, 1);
 
-    if (this._currentTask === task) {
+    if (this.#currentTask === task) {
 
-      // Cancel running task. Because cancel passes control to the _finish
+      // Cancel running task. Because cancel passes control to the #finish
       // callback we passed into fn, the cleanup logic will be handled there.
       task.cfn.apply(null, args);
 
     } else {
 
       // Remove task from queue.
-      var pos = this._queue.indexOf(task);
+      var pos = this.#queue.indexOf(task);
       if (pos >= 0) {
-        this._queue.splice(pos, 1);
+        this.#queue.splice(pos, 1);
         task.cb.apply(null, args);
       }
 
     }
 
   }
-  _next() {
+  #next() {
 
-    if (this._paused) {
+    if (this.#paused) {
       // Do not start tasks while paused.
       return;
     }
 
-    if (!this._queue.length) {
+    if (!this.#queue.length) {
       // No tasks to run.
       return;
     }
 
-    if (this._currentTask) {
+    if (this.#currentTask) {
       // Will be called again when the current task finishes.
       return;
     }
 
-    if (this._lastFinished != null) {
-      var elapsed = now() - this._lastFinished;
-      var remaining = this._delay - elapsed;
+    if (this.#lastFinished != null) {
+      var elapsed = now() - this.#lastFinished;
+      var remaining = this.#delay - elapsed;
       if (remaining > 0) {
         // Too soon. Run again after the inter-task delay.
-        setTimeout(this._next.bind(this), remaining);
+        setTimeout(this.#next.bind(this), remaining);
         return;
       }
     }
 
     // Run the next task.
-    var task = this._queue.shift();
-    this._start(task);
+    var task = this.#queue.shift();
+    this.#start(task);
 
   }
 }

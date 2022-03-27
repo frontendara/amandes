@@ -20,17 +20,17 @@ var propertyMap = {
  * @throws If the pixel source is unsupported.
  */
 class StaticAsset {
-  _widthProp: any;
-  _heightProp: any;
-  _element: any;
+  #widthProp: any;
+  #heightProp: any;
+  #element: any;
 
   constructor(element) {
     var supported = false;
     for (var type in propertyMap) {
       if (global?.[type] && element instanceof global[type]) {
         supported = true;
-        this._widthProp = propertyMap[type][0];
-        this._heightProp = propertyMap[type][1];
+        this.#widthProp = propertyMap[type][0];
+        this.#heightProp = propertyMap[type][1];
         break;
       }
     }
@@ -38,7 +38,7 @@ class StaticAsset {
       throw new Error('Unsupported pixel source');
     }
 
-    this._element = element;
+    this.#element = element;
   }
   /**
    * Destructor.
@@ -47,13 +47,13 @@ class StaticAsset {
     clearOwnProperties(this);
   }
   element() {
-    return this._element;
+    return this.#element;
   }
   width() {
-    return this._element[this._widthProp];
+    return this.#element[this.#widthProp];
   }
   height() {
-    return this._element[this._heightProp];
+    return this.#element[this.#heightProp];
   }
   timestamp() {
     return 0;
