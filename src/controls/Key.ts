@@ -18,16 +18,16 @@ import clearOwnProperties from "../util/clearOwnProperties";
  * @param {Element} [element=document] DOM element where the key events are listened to
  */
 class KeyControlMethod {
-  _keyCode: any;
-  _parameter: any;
-  _velocity: any;
-  _friction: any;
-  _element: any;
-  _keydownHandler: (e: any) => void;
-  _keyupHandler: (e: any) => void;
-  _blurHandler: () => void;
-  _dynamics: Dynamics;
-  _pressing: boolean;
+  #keyCode: any;
+  #parameter: any;
+  #velocity: any;
+  #friction: any;
+  #element: any;
+  #keydownHandler: (e: any) => void;
+  #keyupHandler: (e: any) => void;
+  #blurHandler: () => void;
+  #dynamics: Dynamics;
+  #pressing: boolean;
 
   constructor(keyCode: number, parameter: string, velocity: number, friction: number, element?: Document) {
     if (!keyCode) {
@@ -45,62 +45,62 @@ class KeyControlMethod {
 
     element = element || document;
 
-    this._keyCode = keyCode;
-    this._parameter = parameter;
-    this._velocity = velocity;
-    this._friction = friction;
-    this._element = element;
+    this.#keyCode = keyCode;
+    this.#parameter = parameter;
+    this.#velocity = velocity;
+    this.#friction = friction;
+    this.#element = element;
 
-    this._keydownHandler = this._handlePress.bind(this);
-    this._keyupHandler = this._handleRelease.bind(this);
-    this._blurHandler = this._handleBlur.bind(this);
+    this.#keydownHandler = this.#handlePress.bind(this);
+    this.#keyupHandler = this.#handleRelease.bind(this);
+    this.#blurHandler = this.#handleBlur.bind(this);
 
-    this._element.addEventListener('keydown', this._keydownHandler);
-    this._element.addEventListener('keyup', this._keyupHandler);
-    window.addEventListener('blur', this._blurHandler);
+    this.#element.addEventListener('keydown', this.#keydownHandler);
+    this.#element.addEventListener('keyup', this.#keyupHandler);
+    window.addEventListener('blur', this.#blurHandler);
 
-    this._dynamics = new Dynamics();
-    this._pressing = false;
+    this.#dynamics = new Dynamics();
+    this.#pressing = false;
   }
   /**
    * Destructor.
    */
   destroy() {
-    this._element.removeEventListener('keydown', this._keydownHandler);
-    this._element.removeEventListener('keyup', this._keyupHandler);
-    window.removeEventListener('blur', this._blurHandler);
+    this.#element.removeEventListener('keydown', this.#keydownHandler);
+    this.#element.removeEventListener('keyup', this.#keyupHandler);
+    window.removeEventListener('blur', this.#blurHandler);
     clearOwnProperties(this);
   }
-  _handlePress(e) {
-    if (e.keyCode !== this._keyCode) { return; }
+  #handlePress(e) {
+    if (e.keyCode !== this.#keyCode) { return; }
 
-    this._pressing = true;
+    this.#pressing = true;
 
-    this._dynamics.velocity = this._velocity;
-    this._dynamics.friction = 0;
-    this.emit('parameterDynamics', this._parameter, this._dynamics);
+    this.#dynamics.velocity = this.#velocity;
+    this.#dynamics.friction = 0;
+    this.emit('parameterDynamics', this.#parameter, this.#dynamics);
     this.emit('active');
   }
   emit(_arg0: string, _parameter?: any, _dynamics?: any) {
     throw new Error("Method not implemented.");
   }
-  _handleRelease(e) {
-    if (e.keyCode !== this._keyCode) { return; }
+  #handleRelease(e) {
+    if (e.keyCode !== this.#keyCode) { return; }
 
-    if (this._pressing) {
-      this._dynamics.friction = this._friction;
-      this.emit('parameterDynamics', this._parameter, this._dynamics);
+    if (this.#pressing) {
+      this.#dynamics.friction = this.#friction;
+      this.emit('parameterDynamics', this.#parameter, this.#dynamics);
       this.emit('inactive');
     }
 
-    this._pressing = false;
+    this.#pressing = false;
   }
-  _handleBlur() {
-    this._dynamics.velocity = 0;
-    this.emit('parameterDynamics', this._parameter, this._dynamics);
+  #handleBlur() {
+    this.#dynamics.velocity = 0;
+    this.emit('parameterDynamics', this.#parameter, this.#dynamics);
     this.emit('inactive');
 
-    this._pressing = false;
+    this.#pressing = false;
   }
 }
 eventEmitter(KeyControlMethod);

@@ -6,33 +6,33 @@ var defaultCapacity = 64;
 // values. The capacity, if given, is just a hint; the map is allowed to exceed
 // it, but performance may suffer.
 class Map {
-  _capacity: any;
-  _keyBuckets: any[];
-  _valBuckets: any[];
-  _size: number;
+  #capacity: any;
+  #keyBuckets: any[];
+  #valBuckets: any[];
+  #size: number;
   constructor(capacity?: number) {
     if (capacity != null &&
       (!isFinite(capacity) || Math.floor(capacity) !== capacity || capacity < 1)) {
       throw new Error('Map: invalid capacity');
     }
-    this._capacity = capacity || defaultCapacity;
+    this.#capacity = capacity || defaultCapacity;
 
-    this._keyBuckets = [];
-    this._valBuckets = [];
-    for (var i = 0; i < this._capacity; i++) {
-      this._keyBuckets.push([]);
-      this._valBuckets.push([]);
+    this.#keyBuckets = [];
+    this.#valBuckets = [];
+    for (var i = 0; i < this.#capacity; i++) {
+      this.#keyBuckets.push([]);
+      this.#valBuckets.push([]);
     }
-    this._size = 0;
+    this.#size = 0;
   }
   // Returns the value associated with the specified key, or null if not found.
   get(key) {
-    var h = mod(key.hash(), this._capacity);
-    var keyBucket = this._keyBuckets[h];
+    var h = mod(key.hash(), this.#capacity);
+    var keyBucket = this.#keyBuckets[h];
     for (var i = 0; i < keyBucket.length; i++) {
       var existingKey = keyBucket[i];
       if (key.equals(existingKey)) {
-        var valBucket = this._valBuckets[h];
+        var valBucket = this.#valBuckets[h];
         var existingValue = valBucket[i];
         return existingValue;
       }
@@ -43,9 +43,9 @@ class Map {
   // currently associated value.
   // Returns the replaced value, or null if no value was replaced.
   set(key, val) {
-    var h = mod(key.hash(), this._capacity);
-    var keyBucket = this._keyBuckets[h];
-    var valBucket = this._valBuckets[h];
+    var h = mod(key.hash(), this.#capacity);
+    var keyBucket = this.#keyBuckets[h];
+    var valBucket = this.#valBuckets[h];
     for (var i = 0; i < keyBucket.length; i++) {
       var existingKey = keyBucket[i];
       if (key.equals(existingKey)) {
@@ -57,15 +57,15 @@ class Map {
     }
     keyBucket.push(key);
     valBucket.push(val);
-    this._size++;
+    this.#size++;
     return null;
   }
   // Removes the key-value pair associated with the specified key.
   // Returns the removed value, or null if not found.
   del(key) {
-    var h = mod(key.hash(), this._capacity);
-    var keyBucket = this._keyBuckets[h];
-    var valBucket = this._valBuckets[h];
+    var h = mod(key.hash(), this.#capacity);
+    var keyBucket = this.#keyBuckets[h];
+    var valBucket = this.#valBuckets[h];
     for (var i = 0; i < keyBucket.length; i++) {
       var existingKey = keyBucket[i];
       if (key.equals(existingKey)) {
@@ -77,7 +77,7 @@ class Map {
         }
         keyBucket.length = keyBucket.length - 1;
         valBucket.length = valBucket.length - 1;
-        this._size--;
+        this.#size--;
         return existingValue;
       }
     }
@@ -85,8 +85,8 @@ class Map {
   }
   // Returns whether there is a value associated with the specified key.
   has(key) {
-    var h = mod(key.hash(), this._capacity);
-    var keyBucket = this._keyBuckets[h];
+    var h = mod(key.hash(), this.#capacity);
+    var keyBucket = this.#keyBuckets[h];
     for (var i = 0; i < keyBucket.length; i++) {
       var existingKey = keyBucket[i];
       if (key.equals(existingKey)) {
@@ -97,24 +97,24 @@ class Map {
   }
   // Returns the number of key-value pairs in the map.
   size() {
-    return this._size;
+    return this.#size;
   }
   // Removes all key-value pairs from the map.
   clear() {
-    for (var i = 0; i < this._capacity; i++) {
-      this._keyBuckets[i].length = 0;
-      this._valBuckets[i].length = 0;
+    for (var i = 0; i < this.#capacity; i++) {
+      this.#keyBuckets[i].length = 0;
+      this.#valBuckets[i].length = 0;
     }
-    this._size = 0;
+    this.#size = 0;
   }
   // Calls fn(key, value) for each key-value pair in the map, in an unspecified
   // order. Returns the number of times fn was called.
   // The result is unspecified if the map is mutated during iteration.
   forEach(fn) {
     var count = 0;
-    for (var i = 0; i < this._capacity; i++) {
-      var keyBucket = this._keyBuckets[i];
-      var valBucket = this._valBuckets[i];
+    for (var i = 0; i < this.#capacity; i++) {
+      var keyBucket = this.#keyBuckets[i];
+      var valBucket = this.#valBuckets[i];
       for (var j = 0; j < keyBucket.length; j++) {
         fn(keyBucket[j], valBucket[j]);
         count += 1;

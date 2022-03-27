@@ -13,21 +13,21 @@ import clearOwnProperties from "../util/clearOwnProperties";
  * @listens ControlMethod#parameterDynamics
  */
 class ControlComposer {
-  _methods: Array<{
+  #methods: Array<{
     instance: any;
     dynamics: any;
     parameterDynamicsHandler: (parameter: string, dynamics: Dynamics) => void;
   }>;
-  _parameters: string[];
-  _now: any;
-  _composedOffsets: {};
-  _composeReturn: { offsets: any; changing: null | boolean };
+  #parameters: string[];
+  #now: any;
+  #composedOffsets: {};
+  #composeReturn: { offsets: any; changing: null | boolean };
   constructor(opts?: { nowForTesting?: any } | undefined) {
     opts = opts || {};
 
-    this._methods = [];
+    this.#methods = [];
 
-    this._parameters = [
+    this.#parameters = [
       "x",
       "y",
       "axisScaledX",
@@ -38,11 +38,11 @@ class ControlComposer {
       "roll",
     ];
 
-    this._now = opts.nowForTesting || now;
+    this.#now = opts.nowForTesting || now;
 
-    this._composedOffsets = {};
+    this.#composedOffsets = {};
 
-    this._composeReturn = { offsets: this._composedOffsets, changing: null };
+    this.#composeReturn = { offsets: this.#composedOffsets, changing: null };
   }
   add(instance) {
     if (this.has(instance)) {
@@ -50,14 +50,14 @@ class ControlComposer {
     }
 
     var dynamics = {};
-    this._parameters.forEach(function (parameter) {
+    this.#parameters.forEach(function (parameter) {
       dynamics[parameter] = {
         dynamics: new Dynamics(),
         time: null,
       };
     });
 
-    var parameterDynamicsHandler = this._updateDynamics.bind(this, dynamics);
+    var parameterDynamicsHandler = this.#updateDynamics.bind(this, dynamics);
 
     var method = {
       instance: instance,
@@ -67,12 +67,12 @@ class ControlComposer {
 
     instance.addEventListener("parameterDynamics", parameterDynamicsHandler);
 
-    this._methods.push(method);
+    this.#methods.push(method);
   }
   remove(instance) {
-    var index = this._indexOfInstance(instance);
+    var index = this.#indexOfInstance(instance);
     if (index >= 0) {
-      var method = this._methods.splice(index, 1)[0];
+      var method = this.#methods.splice(index, 1)[0];
       method.instance.removeEventListener(
         "parameterDynamics",
         method.parameterDynamicsHandler
@@ -80,11 +80,11 @@ class ControlComposer {
     }
   }
   has(instance) {
-    return this._indexOfInstance(instance) >= 0;
+    return this.#indexOfInstance(instance) >= 0;
   }
-  _indexOfInstance(instance) {
-    for (var i = 0; i < this._methods.length; i++) {
-      if (this._methods[i].instance === instance) {
+  #indexOfInstance(instance) {
+    for (var i = 0; i < this.#methods.length; i++) {
+      if (this.#methods[i].instance === instance) {
         return i;
       }
     }
@@ -92,19 +92,19 @@ class ControlComposer {
   }
   list() {
     var instances: unknown[] = [];
-    for (var i = 0; i < this._methods.length; i++) {
-      instances.push(this._methods[i].instance);
+    for (var i = 0; i < this.#methods.length; i++) {
+      instances.push(this.#methods[i].instance);
     }
     return instances;
   }
-  _updateDynamics(storedDynamics, parameter, dynamics) {
+  #updateDynamics(storedDynamics, parameter, dynamics) {
     var parameterDynamics = storedDynamics[parameter];
 
     if (!parameterDynamics) {
       throw new Error("Unknown control parameter " + parameter);
     }
 
-    var newTime = this._now();
+    var newTime = this.#now();
     parameterDynamics.dynamics.update(
       dynamics,
       (newTime - parameterDynamics.time) / 1000
@@ -116,30 +116,30 @@ class ControlComposer {
   emit(_arg0: string) {
     throw new Error("Method not implemented.");
   }
-  _resetComposedOffsets() {
-    for (var i = 0; i < this._parameters.length; i++) {
-      this._composedOffsets[this._parameters[i]] = 0;
+  #resetComposedOffsets() {
+    for (var i = 0; i < this.#parameters.length; i++) {
+      this.#composedOffsets[this.#parameters[i]] = 0;
     }
   }
   offsets() {
     var parameter;
     var changing = false;
 
-    var currentTime = this._now();
+    var currentTime = this.#now();
 
-    this._resetComposedOffsets();
+    this.#resetComposedOffsets();
 
-    for (var i = 0; i < this._methods.length; i++) {
-      var methodDynamics = this._methods[i].dynamics;
+    for (var i = 0; i < this.#methods.length; i++) {
+      var methodDynamics = this.#methods[i].dynamics;
 
-      for (var p = 0; p < this._parameters.length; p++) {
-        parameter = this._parameters[p];
+      for (var p = 0; p < this.#parameters.length; p++) {
+        parameter = this.#parameters[p];
         var parameterDynamics = methodDynamics[parameter];
         var dynamics = parameterDynamics.dynamics;
 
         // Add offset to composed offset
         if (dynamics.offset != null) {
-          this._composedOffsets[parameter] += dynamics.offset;
+          this.#composedOffsets[parameter] += dynamics.offset;
           // Reset offset
           dynamics.offset = null;
         }
@@ -149,7 +149,7 @@ class ControlComposer {
         var offsetFromVelocity = dynamics.offsetFromVelocity(elapsed);
 
         if (offsetFromVelocity) {
-          this._composedOffsets[parameter] += offsetFromVelocity;
+          this.#composedOffsets[parameter] += offsetFromVelocity;
         }
 
         // Update velocity on dynamics
@@ -165,8 +165,8 @@ class ControlComposer {
       }
     }
 
-    this._composeReturn.changing = changing;
-    return this._composeReturn;
+    this.#composeReturn.changing = changing;
+    return this.#composeReturn;
   }
   destroy() {
     var instances = this.list();

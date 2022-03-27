@@ -30,95 +30,95 @@ var defaultOptions = {
 // TODO: allow speed not change linearly with distance to click spot.
 // Quadratic or other would allow a larger speed range.
 class QtvrControlMethod {
-  _element: any;
-  _opts: { [x: string]: any };
-  _active: boolean;
-  _dynamics: { x: Dynamics; y: Dynamics };
-  _hammer: HammerGesturesHandle;
+  #element: any;
+  #opts: { [x: string]: any };
+  #active: boolean;
+  #dynamics: { x: Dynamics; y: Dynamics };
+  #hammer: HammerGesturesHandle;
 
   constructor(element: Element, pointerType: string, opts?: undefined) {
-    this._element = element;
+    this.#element = element;
 
-    this._opts = defaults(opts || {}, defaultOptions);
+    this.#opts = defaults(opts || {}, defaultOptions);
 
-    this._active = false;
+    this.#active = false;
 
-    this._hammer = HammerGestures.get(element, pointerType);
+    this.#hammer = HammerGestures.get(element, pointerType);
 
-    this._dynamics = {
+    this.#dynamics = {
       x: new Dynamics(),
       y: new Dynamics(),
     };
 
-    this._hammer.on("panstart", this._handleStart.bind(this));
-    this._hammer.on("panmove", this._handleMove.bind(this));
-    this._hammer.on("panend", this._handleRelease.bind(this));
-    this._hammer.on("pancancel", this._handleRelease.bind(this));
+    this.#hammer.on("panstart", this.#handleStart.bind(this));
+    this.#hammer.on("panmove", this.#handleMove.bind(this));
+    this.#hammer.on("panend", this.#handleRelease.bind(this));
+    this.#hammer.on("pancancel", this.#handleRelease.bind(this));
   }
   /**
    * Destructor.
    */
   destroy() {
-    this._hammer.release();
+    this.#hammer.release();
     clearOwnProperties(this);
   }
-  _handleStart(e) {
+  #handleStart(e) {
     // Prevent event dragging other DOM elements and causing strange behavior on Chrome
     e.preventDefault();
 
-    if (!this._active) {
-      this._active = true;
+    if (!this.#active) {
+      this.#active = true;
       this.emit("active");
     }
   }
   emit(_arg0: string, _arg1?: any, _arg2?: any) {
     throw new Error("Method not implemented.");
   }
-  _handleMove(e) {
+  #handleMove(e) {
     // Prevent event dragging other DOM elements and causing strange behavior on Chrome
     e.preventDefault();
 
-    this._updateDynamics(e, false);
+    this.#updateDynamics(e, false);
   }
-  _handleRelease(e) {
+  #handleRelease(e) {
     // Prevent event dragging other DOM elements and causing strange behavior on Chrome
     e.preventDefault();
 
-    this._updateDynamics(e, true);
+    this.#updateDynamics(e, true);
 
-    if (this._active) {
-      this._active = false;
+    if (this.#active) {
+      this.#active = false;
       this.emit("inactive");
     }
   }
-  _updateDynamics(e, release) {
-    var elementRect = this._element.getBoundingClientRect();
+  #updateDynamics(e, release) {
+    var elementRect = this.#element.getBoundingClientRect();
     var width = elementRect.right - elementRect.left;
     var height = elementRect.bottom - elementRect.top;
     var maxDim = Math.max(width, height);
 
-    var x = (e.deltaX / maxDim) * this._opts.speed;
-    var y = (e.deltaY / maxDim) * this._opts.speed;
+    var x = (e.deltaX / maxDim) * this.#opts.speed;
+    var y = (e.deltaY / maxDim) * this.#opts.speed;
 
-    this._dynamics.x.reset();
-    this._dynamics.y.reset();
-    this._dynamics.x.velocity = x;
-    this._dynamics.y.velocity = y;
+    this.#dynamics.x.reset();
+    this.#dynamics.y.reset();
+    this.#dynamics.x.velocity = x;
+    this.#dynamics.y.velocity = y;
 
     if (release) {
       maxFriction(
-        this._opts.friction,
-        this._dynamics.x.velocity,
-        this._dynamics.y.velocity,
-        this._opts.maxFrictionTime,
+        this.#opts.friction,
+        this.#dynamics.x.velocity,
+        this.#dynamics.y.velocity,
+        this.#opts.maxFrictionTime,
         tmpReleaseFriction
       );
-      this._dynamics.x.friction = tmpReleaseFriction[0];
-      this._dynamics.y.friction = tmpReleaseFriction[1];
+      this.#dynamics.x.friction = tmpReleaseFriction[0];
+      this.#dynamics.y.friction = tmpReleaseFriction[1];
     }
 
-    this.emit("parameterDynamics", "x", this._dynamics.x);
-    this.emit("parameterDynamics", "y", this._dynamics.y);
+    this.emit("parameterDynamics", "x", this.#dynamics.x);
+    this.emit("parameterDynamics", "y", this.#dynamics.y);
   }
 }
 

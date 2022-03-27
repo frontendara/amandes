@@ -53,13 +53,13 @@ export type HotspotCoords = RectilinearViewCoords | FlatViewCoords;
  *     may be used to rotate an embedded hotspot.
  */
 class Hotspot {
-  _domElement: HTMLElement;
-  _parentDomElement: HTMLElement;
-  _view: any;
-  _coords: HotspotCoords;
-  _perspective: Perspective;
-  _visible: boolean;
-  _position: { x: number; y: number };
+  #domElement: HTMLElement;
+  #parentDomElement: HTMLElement;
+  #view: any;
+  #coords: HotspotCoords;
+  #perspective: Perspective;
+  #visible: boolean;
+  #position: { x: number; y: number };
 
   constructor(
     domElement: HTMLElement,
@@ -79,93 +79,93 @@ class Hotspot {
         ? opts.perspective.extraTransforms
         : "";
 
-    this._domElement = domElement;
-    this._parentDomElement = parentDomElement;
-    this._view = view;
+    this.#domElement = domElement;
+    this.#parentDomElement = parentDomElement;
+    this.#view = view;
     // TODO: remove this casting
-    this._coords = {} as HotspotCoords;
-    this._perspective = {} as Perspective;
+    this.#coords = {} as HotspotCoords;
+    this.#perspective = {} as Perspective;
 
     this.setPosition(coords);
 
     // Add hotspot into the DOM.
-    this._parentDomElement.appendChild(this._domElement);
+    this.#parentDomElement.appendChild(this.#domElement);
 
     this.setPerspective(opts.perspective);
 
     // Whether the hotspot is visible.
     // The hotspot may still be hidden if it's inside a hidden HotspotContainer.
-    this._visible = true;
+    this.#visible = true;
 
     // The current calculated screen position.
-    this._position = { x: 0, y: 0 };
+    this.#position = { x: 0, y: 0 };
   }
   /**
    * Destructor.
    * Clients should call {@link HotspotContainer#destroyHotspot} instead.
    */
   destroy() {
-    this._parentDomElement.removeChild(this._domElement);
+    this.#parentDomElement.removeChild(this.#domElement);
     clearOwnProperties(this);
   }
   domElement() {
-    return this._domElement;
+    return this.#domElement;
   }
   position() {
-    return this._coords;
+    return this.#coords;
   }
   setPosition(coords: HotspotCoords) {
     for (var key in coords) {
-      this._coords[key] = coords[key];
+      this.#coords[key] = coords[key];
     }
-    this._update();
+    this.update();
     // TODO: We should probably emit a hotspotsChange event on the parent
     // HotspotContainer. What's the best way to do so?
   }
   perspective() {
-    return this._perspective;
+    return this.#perspective;
   }
   setPerspective(perspective: Perspective) {
     for (var key in perspective) {
-      this._perspective[key] = perspective[key];
+      this.#perspective[key] = perspective[key];
     }
-    this._update();
+    this.update();
   }
   /**
    * Show the hotspot
    */
   show() {
-    if (!this._visible) {
-      this._visible = true;
-      this._update();
+    if (!this.#visible) {
+      this.#visible = true;
+      this.update();
     }
   }
   /**
    * Hide the hotspot
    */
   hide() {
-    if (this._visible) {
-      this._visible = false;
-      this._update();
+    if (this.#visible) {
+      this.#visible = false;
+      this.update();
     }
   }
-  _update() {
-    var element = this._domElement;
+  update() {
+    var element = this.#domElement;
 
-    var params = this._coords;
-    var position = this._position;
+    var params = this.#coords;
+    var position = this.#position;
     var x, y;
 
     var isVisible = false;
 
-    if (this._visible) {
-      var view = this._view;
+    if (this.#visible) {
+      var view = this.#view;
 
-      if (this._perspective.radius) {
+      if (this.#perspective.radius) {
         // Hotspots that are embedded in the panorama may be visible even when
         // positioned behind the camera.
         isVisible = true;
-        this._setEmbeddedPosition(view, params);
+        this.#setEmbeddedPosition(view, params);
       } else {
         // Regular hotspots are only visible when positioned in front of the
         // camera. Note that they may be partially visible when positioned outside
@@ -176,7 +176,7 @@ class Hotspot {
 
         if (x != null && y != null) {
           isVisible = true;
-          this._setPosition(x, y);
+          this.#setPosition(x, y);
         }
       }
     }
@@ -190,20 +190,20 @@ class Hotspot {
       element.style.position = "";
     }
   }
-  _setEmbeddedPosition(view: { coordinatesToPerspectiveTransform: (arg0: any, arg1: number | null, arg2: string | undefined) => any; }, params: HotspotCoords) {
+  #setEmbeddedPosition(view: { coordinatesToPerspectiveTransform: (arg0: any, arg1: number | null, arg2: string | undefined) => any; }, params: HotspotCoords) {
     var transform = view.coordinatesToPerspectiveTransform(
       params,
-      this._perspective.radius,
-      this._perspective.extraTransforms
+      this.#perspective.radius,
+      this.#perspective.extraTransforms
     );
-    setTransform(this._domElement, transform);
+    setTransform(this.#domElement, transform);
   }
-  _setPosition(x: number, y: number) {
+  #setPosition(x: number, y: number) {
     positionAbsolutely(
-      this._domElement,
+      this.#domElement,
       x,
       y,
-      this._perspective.extraTransforms
+      this.#perspective.extraTransforms
     );
   }
 }

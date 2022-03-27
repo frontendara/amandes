@@ -3,48 +3,48 @@ import mod from "../util/mod";
 
 
 class WorkPool {
-  _concurrency: any;
-  _paused: any;
-  _pool: any[];
-  _next: number;
+  #concurrency: any;
+  #paused: any;
+  #pool: any[];
+  #next: number;
 
   constructor(opts) {
-    this._concurrency = opts && opts.concurrency || 1;
-    this._paused = opts && !!opts.paused || false;
+    this.#concurrency = opts && opts.concurrency || 1;
+    this.#paused = opts && !!opts.paused || false;
 
-    this._pool = [];
-    for (var i = 0; i < this._concurrency; i++) {
-      this._pool.push(new WorkQueue(opts));
+    this.#pool = [];
+    for (var i = 0; i < this.#concurrency; i++) {
+      this.#pool.push(new WorkQueue(opts));
     }
 
-    this._next = 0;
+    this.#next = 0;
   }
   length() {
     var len = 0;
-    for (var i = 0; i < this._pool.length; i++) {
-      len += this._pool[i].length();
+    for (var i = 0; i < this.#pool.length; i++) {
+      len += this.#pool[i].length();
     }
     return len;
   }
   push(fn, cb) {
-    var i = this._next;
-    var cancel = this._pool[i].push(fn, cb);
-    this._next = mod(this._next + 1, this._concurrency);
+    var i = this.#next;
+    var cancel = this.#pool[i].push(fn, cb);
+    this.#next = mod(this.#next + 1, this.#concurrency);
     return cancel;
   }
   pause() {
-    if (!this._paused) {
-      this._paused = true;
-      for (var i = 0; i < this._concurrency; i++) {
-        this._pool[i].pause();
+    if (!this.#paused) {
+      this.#paused = true;
+      for (var i = 0; i < this.#concurrency; i++) {
+        this.#pool[i].pause();
       }
     }
   }
   resume() {
-    if (this._paused) {
-      this._paused = false;
-      for (var i = 0; i < this._concurrency; i++) {
-        this._pool[i].resume();
+    if (this.#paused) {
+      this.#paused = false;
+      for (var i = 0; i < this.#concurrency; i++) {
+        this.#pool[i].resume();
       }
     }
   }

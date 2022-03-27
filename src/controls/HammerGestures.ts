@@ -15,22 +15,22 @@ function getKeyForElementAndType(element, type) {
  * DOM element and pointer type.
  */
 class HammerGestures {
-  _managers: {};
-  _refCount: {};
+  #managers: {};
+  #refCount: {};
   constructor() {
-    this._managers = {};
-    this._refCount = {};
+    this.#managers = {};
+    this.#refCount = {};
   }
   get(element, type) {
     var key = getKeyForElementAndType(element, type);
-    if (!this._managers[key]) {
-      this._managers[key] = this._createManager(element, type);
-      this._refCount[key] = 0;
+    if (!this.#managers[key]) {
+      this.#managers[key] = this.#createManager(element, type);
+      this.#refCount[key] = 0;
     }
-    this._refCount[key]++;
-    return new HammerGesturesHandle(this, this._managers[key], element, type);
+    this.#refCount[key]++;
+    return new HammerGesturesHandle(this, this.#managers[key], element, type);
   }
-  _createManager(element, type) {
+  #createManager(element, type) {
     var manager = new Hammer.Manager(element);
 
     // Managers are created with different parameters for different pointer
@@ -47,58 +47,58 @@ class HammerGestures {
 
     return manager;
   }
-  _releaseHandle(element, type) {
+  releaseHandle(element, type) {
     var key = getKeyForElementAndType(element, type);
-    if (this._refCount[key]) {
-      this._refCount[key]--;
-      if (!this._refCount[key]) {
-        this._managers[key].destroy();
-        delete this._managers[key];
-        delete this._refCount[key];
+    if (this.#refCount[key]) {
+      this.#refCount[key]--;
+      if (!this.#refCount[key]) {
+        this.#managers[key].destroy();
+        delete this.#managers[key];
+        delete this.#refCount[key];
       }
     }
   }
 }
 
 export class HammerGesturesHandle {
-  _manager: any;
-  _element: any;
-  _type: any;
-  _hammerGestures: any;
-  _eventHandlers: any[];
+  #manager: any;
+  #element: any;
+  #type: any;
+  #hammerGestures: any;
+  #eventHandlers: any[];
 
   constructor(hammerGestures, manager, element, type) {
-    this._manager = manager;
-    this._element = element;
-    this._type = type;
-    this._hammerGestures = hammerGestures;
-    this._eventHandlers = [];
+    this.#manager = manager;
+    this.#element = element;
+    this.#type = type;
+    this.#hammerGestures = hammerGestures;
+    this.#eventHandlers = [];
   }
   on(events, handler) {
-    var type = this._type;
+    var type = this.#type;
     var handlerFilteredEvents = function (e) {
       if (type === e.pointerType) {
         handler(e);
       }
     };
 
-    this._eventHandlers.push({ events: events, handler: handlerFilteredEvents });
-    this._manager.on(events, handlerFilteredEvents);
+    this.#eventHandlers.push({ events: events, handler: handlerFilteredEvents });
+    this.#manager.on(events, handlerFilteredEvents);
   }
   release() {
-    for (var i = 0; i < this._eventHandlers.length; i++) {
-      var eventHandler = this._eventHandlers[i];
-      this._manager.off(eventHandler.events, eventHandler.handler);
+    for (var i = 0; i < this.#eventHandlers.length; i++) {
+      var eventHandler = this.#eventHandlers[i];
+      this.#manager.off(eventHandler.events, eventHandler.handler);
     }
 
-    this._hammerGestures._releaseHandle(this._element, this._type);
-    this._manager = null;
-    this._element = null;
-    this._type = null;
-    this._hammerGestures = null;
+    this.#hammerGestures.releaseHandle(this.#element, this.#type);
+    this.#manager = null;
+    this.#element = null;
+    this.#type = null;
+    this.#hammerGestures = null;
   }
   manager() {
-    return this._manager;
+    return this.#manager;
   }
 }
 

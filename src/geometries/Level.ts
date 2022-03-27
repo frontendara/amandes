@@ -14,9 +14,9 @@ export interface LevelProperties {
 }
 
 class Level {
-  _fallbackOnly: boolean;
+  #fallbackOnly: boolean;
   constructor(levelProperties: LevelProperties) {
-    this._fallbackOnly = !!levelProperties.fallbackOnly;
+    this.#fallbackOnly = !!levelProperties.fallbackOnly;
   }
   numHorizontalTiles() {
     return Math.ceil(this.width() / this.tileWidth());
@@ -41,7 +41,7 @@ class Level {
     return 1;
   }
   fallbackOnly() {
-    return this._fallbackOnly;
+    return this.#fallbackOnly;
   }
 }
 

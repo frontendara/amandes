@@ -27,6 +27,8 @@ var defaultOptions: TimerOptions = {
  * @param {number} [opts.duration=Infinity] Timeout in milliseconds.
  */
 class Timer {
+  // TODO: for some reason tests wouldn't pass with private properties
+  // nor did demos work. Need to investigate.
   _duration: any;
   _startTime: null | number;
   _handle: any;

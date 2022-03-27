@@ -15,60 +15,60 @@ import clearOwnProperties from "../util/clearOwnProperties";
  * @param {Object} opts
  */
 class PinchZoomControlMethod {
-  _lastEvent: null | { scale: number; };
-  _active: boolean;
-  _dynamics: Dynamics;
-  _hammer: HammerGesturesHandle;
+  #lastEvent: null | { scale: number; };
+  #active: boolean;
+  #dynamics: Dynamics;
+  #hammer: HammerGesturesHandle;
 
   constructor(element, pointerType) {
-    this._hammer = HammerGestures.get(element, pointerType);
+    this.#hammer = HammerGestures.get(element, pointerType);
 
-    this._lastEvent = null;
+    this.#lastEvent = null;
 
-    this._active = false;
+    this.#active = false;
 
-    this._dynamics = new Dynamics();
+    this.#dynamics = new Dynamics();
 
-    this._hammer.on('pinchstart', this._handleStart.bind(this));
-    this._hammer.on('pinch', this._handleEvent.bind(this));
-    this._hammer.on('pinchend', this._handleEnd.bind(this));
-    this._hammer.on('pinchcancel', this._handleEnd.bind(this));
+    this.#hammer.on('pinchstart', this.#handleStart.bind(this));
+    this.#hammer.on('pinch', this.#handleEvent.bind(this));
+    this.#hammer.on('pinchend', this.#handleEnd.bind(this));
+    this.#hammer.on('pinchcancel', this.#handleEnd.bind(this));
   }
   /**
    * Destructor.
    */
   destroy() {
-    this._hammer.release();
+    this.#hammer.release();
     clearOwnProperties(this);
   }
-  _handleStart() {
-    if (!this._active) {
-      this._active = true;
+  #handleStart() {
+    if (!this.#active) {
+      this.#active = true;
       this.emit('active');
     }
   }
   emit(_arg0: string, _parameter?: string, _dynamics?: Dynamics) {
     throw new Error("Method not implemented.");
   }
-  _handleEnd() {
-    this._lastEvent = null;
+  #handleEnd() {
+    this.#lastEvent = null;
 
-    if (this._active) {
-      this._active = false;
+    if (this.#active) {
+      this.#active = false;
       this.emit('inactive');
     }
   }
-  _handleEvent(e) {
+  #handleEvent(e) {
     var scale = e.scale;
 
-    if (this._lastEvent) {
-      scale /= this._lastEvent.scale;
+    if (this.#lastEvent) {
+      scale /= this.#lastEvent.scale;
     }
 
-    this._dynamics.offset = (scale - 1) * -1;
-    this.emit('parameterDynamics', 'zoom', this._dynamics);
+    this.#dynamics.offset = (scale - 1) * -1;
+    this.emit('parameterDynamics', 'zoom', this.#dynamics);
 
-    this._lastEvent = e;
+    this.#lastEvent = e;
   }
 }
 

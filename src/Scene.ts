@@ -39,59 +39,60 @@ type View = RectilinearView | FlatView;
  * @param view The scene's underlying view.
  */
 class Scene {
-  _viewer: Viewer;
-  _view: View;
-  _layers: Layer[];
-  _hotspotContainer: HotspotContainer;
-  _movement: null;
-  _movementStartTime: null | number;
-  _movementStep: any;
-  _movementParams: any;
-  _movementCallback: any;
-  _updateMovementHandler: () => void;
-  _updateHotspotContainerHandler: () => void;
-  _viewChangeHandler: () => void;
+  #viewer: Viewer;
+  #view: View;
+  #layers: Layer[];
+  #hotspotContainer: HotspotContainer;
+  #movement: null;
+  #movementStartTime: null | number;
+  #movementStep: any;
+  #movementParams: any;
+  #movementCallback: any;
+  #updateMovementHandler: () => void;
+  #updateHotspotContainerHandler: () => void;
+  #viewChangeHandler: () => void;
 
   constructor(viewer: Viewer, view: View) {
-    this._viewer = viewer;
-    this._view = view;
-    this._layers = [];
+    this.#viewer = viewer;
+    this.#view = view;
+    this.#layers = [];
 
     // Hotspot container. Assume it occupies a full rect.
-    this._hotspotContainer = new HotspotContainer(
+    this.#hotspotContainer = new HotspotContainer(
+      // TODO: should this be exposed?
       viewer._controlContainer,
       viewer.stage(),
-      this._view,
+      this.#view,
       viewer.renderLoop()
     );
 
     // The current movement.
-    this._movement = null;
-    this._movementStartTime = null;
-    this._movementStep = null;
-    this._movementParams = null;
-    this._movementCallback = null;
+    this.#movement = null;
+    this.#movementStartTime = null;
+    this.#movementStep = null;
+    this.#movementParams = null;
+    this.#movementCallback = null;
 
     // Event listener for updating the view according to the current movement.
     // The listener is set/unset on the render loop when a movement starts/stops.
-    this._updateMovementHandler = this._updateMovement.bind(this);
+    this.#updateMovementHandler = this.#updateMovement.bind(this);
 
     // Show or hide hotspots when scene changes.
-    this._updateHotspotContainerHandler =
-      this._updateHotspotContainer.bind(this);
-    this._viewer.addEventListener(
+    this.#updateHotspotContainerHandler =
+      this.#updateHotspotContainer.bind(this);
+    this.#viewer.addEventListener(
       "sceneChange",
-      this._updateHotspotContainerHandler
+      this.#updateHotspotContainerHandler
     );
 
     // Emit event when view changes.
-    this._viewChangeHandler = this.emit.bind(this, "viewChange");
+    this.#viewChangeHandler = this.emit.bind(this, "viewChange");
     // TODO: fix this event emitter issue
     // @ts-ignore
-    this._view.addEventListener("change", this._viewChangeHandler);
+    this.#view.addEventListener("change", this.#viewChangeHandler);
 
     // Update the hotspot container.
-    this._updateHotspotContainer();
+    this.#updateHotspotContainer();
   }
   /**
    * Destructor. Clients should call {@link Viewer#destroyScene} instead.
@@ -100,19 +101,19 @@ class Scene {
     // TODO: fix this event emitter issue
     // @ts-ignore
 
-    this._view.removeEventListener("change", this._viewChangeHandler);
+    this.#view.removeEventListener("change", this.#viewChangeHandler);
     // TODO: fix this event emitter issue
     // @ts-ignore
-    this._viewer.removeEventListener(
+    this.#viewer.removeEventListener(
       "sceneChange",
-      this._updateHotspotContainerHandler
+      this.#updateHotspotContainerHandler
     );
 
-    if (this._movement) {
+    if (this.#movement) {
       this.stopMovement();
     }
 
-    this._hotspotContainer.destroy();
+    this.#hotspotContainer.destroy();
 
     this.destroyAllLayers();
 
@@ -120,10 +121,9 @@ class Scene {
   }
   /**
    * Returns the {@link HotspotContainer hotspot container} for the scene.
-   * @return {HotspotContainer}
    */
   hotspotContainer() {
-    return this._hotspotContainer;
+    return this.#hotspotContainer;
   }
   /**
    * Returns the first of the {@link Layer layers} belonging to the scene, or
@@ -131,11 +131,9 @@ class Scene {
    *
    * This method is equivalent to `Scene#listLayers[0]`. It may be removed in the
    * future.
-   *
-   * @return {Layer}
    */
   layer() {
-    return this._layers[0];
+    return this.#layers[0];
   }
   /**
    * Returns a list of all {@link Layer layers} belonging to the scene. The
@@ -143,28 +141,28 @@ class Scene {
    * @return {Layer[]}
    */
   listLayers() {
-    return [...this._layers];
+    return [...this.#layers];
   }
   /**
    * Returns the scene's underlying {@link View view}.
    * @return {View}
    */
   view() {
-    return this._view;
+    return this.#view;
   }
   /**
    * Returns the {@link Viewer viewer} the scene belongs to.
    * @return {Viewer}
    */
   viewer() {
-    return this._viewer;
+    return this.#viewer;
   }
   /**
    * Returns whether the scene is currently visible.
    * @return {boolean}
    */
   visible() {
-    return this._viewer.scene() === this;
+    return this.#viewer.scene() === this;
   }
   /**
    * Creates a new {@link Layer layer} and adds it into the scene in the
@@ -189,12 +187,12 @@ class Scene {
 
     var source = opts.source;
     var geometry = opts.geometry;
-    var view = this._view;
-    var stage = this._viewer.stage();
+    var view = this.#view;
+    var stage = this.#viewer.stage();
     var textureStore = new TextureStore(source, stage, textureStoreOpts);
     var layer = new Layer(source, geometry, view, textureStore, layerOpts);
 
-    this._layers.push(layer);
+    this.#layers.push(layer);
 
     if (opts.pinFirstLevel) {
       layer.pinFirstLevel();
@@ -211,12 +209,12 @@ class Scene {
    * @throws An error if the layer does not belong to the scene.
    */
   destroyLayer(layer) {
-    var i = this._layers.indexOf(layer);
+    var i = this.#layers.indexOf(layer);
     if (i < 0) {
       throw new Error("No such layer in scene");
     }
 
-    this._layers.splice(i, 1);
+    this.#layers.splice(i, 1);
 
     // Signal that the layers have changed.
     this.emit("layerChange");
@@ -228,8 +226,8 @@ class Scene {
    * Destroys all {@link Layer layers} and removes them from the scene.
    */
   destroyAllLayers() {
-    while (this._layers.length > 0) {
-      this.destroyLayer(this._layers[0]);
+    while (this.#layers.length > 0) {
+      this.destroyLayer(this.#layers[0]);
     }
   }
   /**
@@ -241,7 +239,7 @@ class Scene {
    * @param {function} [done] Function to call when the switch is complete.
    */
   switchTo(opts?: object, done?: () => void) {
-    return this._viewer.switchScene(this, opts, done);
+    return this.#viewer.switchScene(this, opts, done);
   }
   /**
    * Tweens the scene's underlying {@link View view}.
@@ -285,7 +283,7 @@ class Scene {
       opts.transitionDuration != null ? opts.transitionDuration : 1000;
     var shortest = opts.shortest != null ? opts.shortest : true;
 
-    var view = this._view;
+    var view = this.#view;
 
     var initialParams = view.parameters();
 
@@ -321,15 +319,15 @@ class Scene {
       };
     };
 
-    var reenableControls = this._viewer.controls()?.enabled();
+    var reenableControls = this.#viewer.controls()?.enabled();
 
     if (!controlsInterrupt) {
-      this._viewer.controls()?.disable();
+      this.#viewer.controls()?.disable();
     }
 
     this.startMovement(movement, function () {
       if (reenableControls) {
-        self._viewer.controls()?.enable();
+        self.#viewer.controls()?.enable();
       }
       done();
     });
@@ -342,9 +340,9 @@ class Scene {
    *     interrupted.
    */
   startMovement(fn, done) {
-    var renderLoop = this._viewer.renderLoop();
+    var renderLoop = this.#viewer.renderLoop();
 
-    if (this._movement) {
+    if (this.#movement) {
       this.stopMovement();
     }
 
@@ -353,39 +351,39 @@ class Scene {
       throw new Error("Bad movement");
     }
 
-    this._movement = fn;
-    this._movementStep = step;
-    this._movementStartTime = now();
-    this._movementParams = {};
-    this._movementCallback = done;
+    this.#movement = fn;
+    this.#movementStep = step;
+    this.#movementStartTime = now();
+    this.#movementParams = {};
+    this.#movementCallback = done;
 
     // TODO: fix this event-emitter issue
     // @ts-ignore
-    renderLoop.addEventListener("beforeRender", this._updateMovementHandler);
+    renderLoop.addEventListener("beforeRender", this.#updateMovementHandler);
     renderLoop.renderOnNextFrame();
   }
   /**
    * Stops the current movement.
    */
   stopMovement() {
-    var done = this._movementCallback;
-    var renderLoop = this._viewer.renderLoop();
+    var done = this.#movementCallback;
+    var renderLoop = this.#viewer.renderLoop();
 
-    if (!this._movement) {
+    if (!this.#movement) {
       return;
     }
 
     // Clear state before calling done, to prevent an infinite loop when the
     // callback starts a new movement.
-    this._movement = null;
-    this._movementStep = null;
-    this._movementStartTime = null;
-    this._movementParams = null;
-    this._movementCallback = null;
+    this.#movement = null;
+    this.#movementStep = null;
+    this.#movementStartTime = null;
+    this.#movementParams = null;
+    this.#movementCallback = null;
 
     // TODO: fix this event-emitter issue
     // @ts-ignore
-    renderLoop.removeEventListener("beforeRender", this._updateMovementHandler);
+    renderLoop.removeEventListener("beforeRender", this.#updateMovementHandler);
 
     if (done) {
       done();
@@ -396,19 +394,19 @@ class Scene {
    * @return {function}
    */
   movement() {
-    return this._movement;
+    return this.#movement;
   }
-  _updateMovement() {
-    if (!this._movement) {
+  #updateMovement() {
+    if (!this.#movement) {
       throw new Error("Should not call update");
     }
 
-    var renderLoop = this._viewer.renderLoop();
-    var view = this._view;
+    var renderLoop = this.#viewer.renderLoop();
+    var view = this.#view;
 
-    var elapsed = now() - Number(this._movementStartTime);
-    var step = this._movementStep;
-    var params = this._movementParams;
+    var elapsed = now() - Number(this.#movementStartTime);
+    var step = this.#movementStep;
+    var params = this.#movementParams;
 
     params = view.parameters(params);
     params = step(params, elapsed);
@@ -419,11 +417,11 @@ class Scene {
       renderLoop.renderOnNextFrame();
     }
   }
-  _updateHotspotContainer() {
+  #updateHotspotContainer() {
     if (this.visible()) {
-      this._hotspotContainer.show();
+      this.#hotspotContainer.show();
     } else {
-      this._hotspotContainer.hide();
+      this.#hotspotContainer.hide();
     }
   }
   emit(_arg0: string) {

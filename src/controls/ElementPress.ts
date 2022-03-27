@@ -17,14 +17,14 @@ import clearOwnProperties from "../util/clearOwnProperties";
  * @param {number} friction Friction at which the parameter stops
 */
 class ElementPressControlMethod {
-  _element: any;
-  _pressHandler: () => void;
-  _releaseHandler: () => void;
-  _parameter: any;
-  _velocity: any;
-  _friction: any;
-  _dynamics: Dynamics;
-  _pressing: boolean;
+  #element: any;
+  #pressHandler: () => void;
+  #releaseHandler: () => void;
+  #parameter: any;
+  #velocity: any;
+  #friction: any;
+  #dynamics: Dynamics;
+  #pressing: boolean;
   constructor(element, parameter, velocity, friction) {
     if (!element) {
       throw new Error("ElementPressControlMethod: element must be defined");
@@ -39,56 +39,56 @@ class ElementPressControlMethod {
       throw new Error("ElementPressControlMethod: friction must be defined");
     }
 
-    this._element = element;
+    this.#element = element;
 
-    this._pressHandler = this._handlePress.bind(this);
-    this._releaseHandler = this._handleRelease.bind(this);
+    this.#pressHandler = this.#handlePress.bind(this);
+    this.#releaseHandler = this.#handleRelease.bind(this);
 
-    element.addEventListener('mousedown', this._pressHandler);
-    element.addEventListener('mouseup', this._releaseHandler);
-    element.addEventListener('mouseleave', this._releaseHandler);
-    element.addEventListener('touchstart', this._pressHandler);
-    element.addEventListener('touchmove', this._releaseHandler);
-    element.addEventListener('touchend', this._releaseHandler);
+    element.addEventListener('mousedown', this.#pressHandler);
+    element.addEventListener('mouseup', this.#releaseHandler);
+    element.addEventListener('mouseleave', this.#releaseHandler);
+    element.addEventListener('touchstart', this.#pressHandler);
+    element.addEventListener('touchmove', this.#releaseHandler);
+    element.addEventListener('touchend', this.#releaseHandler);
 
-    this._parameter = parameter;
-    this._velocity = velocity;
-    this._friction = friction;
-    this._dynamics = new Dynamics();
+    this.#parameter = parameter;
+    this.#velocity = velocity;
+    this.#friction = friction;
+    this.#dynamics = new Dynamics();
 
-    this._pressing = false;
+    this.#pressing = false;
   }
   /**
    * Destructor.
    */
   destroy() {
-    this._element.removeEventListener('mousedown', this._pressHandler);
-    this._element.removeEventListener('mouseup', this._releaseHandler);
-    this._element.removeEventListener('mouseleave', this._releaseHandler);
-    this._element.removeEventListener('touchstart', this._pressHandler);
-    this._element.removeEventListener('touchmove', this._releaseHandler);
-    this._element.removeEventListener('touchend', this._releaseHandler);
+    this.#element.removeEventListener('mousedown', this.#pressHandler);
+    this.#element.removeEventListener('mouseup', this.#releaseHandler);
+    this.#element.removeEventListener('mouseleave', this.#releaseHandler);
+    this.#element.removeEventListener('touchstart', this.#pressHandler);
+    this.#element.removeEventListener('touchmove', this.#releaseHandler);
+    this.#element.removeEventListener('touchend', this.#releaseHandler);
     clearOwnProperties(this);
   }
-  _handlePress() {
-    this._pressing = true;
+  #handlePress() {
+    this.#pressing = true;
 
-    this._dynamics.velocity = this._velocity;
-    this._dynamics.friction = 0;
-    this.emit('parameterDynamics', this._parameter, this._dynamics);
+    this.#dynamics.velocity = this.#velocity;
+    this.#dynamics.friction = 0;
+    this.emit('parameterDynamics', this.#parameter, this.#dynamics);
     this.emit('active');
   }
   emit(_arg0: string, _parameter?: any, _dynamics?: any) {
     throw new Error("Method not implemented.");
   }
-  _handleRelease() {
-    if (this._pressing) {
-      this._dynamics.friction = this._friction;
-      this.emit('parameterDynamics', this._parameter, this._dynamics);
+  #handleRelease() {
+    if (this.#pressing) {
+      this.#dynamics.friction = this.#friction;
+      this.emit('parameterDynamics', this.#parameter, this.#dynamics);
       this.emit('inactive');
     }
 
-    this._pressing = false;
+    this.#pressing = false;
   }
 }
 eventEmitter(ElementPressControlMethod);

@@ -31,131 +31,131 @@ var debug = typeof MARZIPANODEBUG !== "undefined" && MARZIPANODEBUG.controls;
  * @param {'pan'|'pinch'} opts.hammerEvent
  */
 class DragControlMethod {
-  _element: any;
-  _opts: { [x: string]: any };
-  _startEvent: null | boolean | PointerEvent;
-  _lastEvent: null | boolean | PointerEvent;
-  _active: boolean;
-  _dynamics: { x: Dynamics; y: Dynamics };
-  _hammer: HammerGesturesHandle;
+  #element: any;
+  #opts: { [x: string]: any };
+  #startEvent: null | boolean | PointerEvent;
+  #lastEvent: null | boolean | PointerEvent;
+  #active: boolean;
+  #dynamics: { x: Dynamics; y: Dynamics };
+  #hammer: HammerGesturesHandle;
 
   constructor(element: Element, pointerType: string, opts?: { hammerEvent: string; }) {
-    this._element = element;
+    this.#element = element;
 
-    this._opts = defaults(opts || {}, defaultOptions);
+    this.#opts = defaults(opts || {}, defaultOptions);
 
-    this._startEvent = null;
-    this._lastEvent = null;
+    this.#startEvent = null;
+    this.#lastEvent = null;
 
-    this._active = false;
+    this.#active = false;
 
-    this._dynamics = {
+    this.#dynamics = {
       x: new Dynamics(),
       y: new Dynamics(),
     };
 
-    this._hammer = HammerGestures.get(element, pointerType);
+    this.#hammer = HammerGestures.get(element, pointerType);
 
-    this._hammer.on("hammer.input", this._handleHammerEvent.bind(this));
+    this.#hammer.on("hammer.input", this.#handleHammerEvent.bind(this));
 
-    if (this._opts.hammerEvent != "pan" && this._opts.hammerEvent != "pinch") {
+    if (this.#opts.hammerEvent != "pan" && this.#opts.hammerEvent != "pinch") {
       throw new Error(
-        this._opts.hammerEvent +
+        this.#opts.hammerEvent +
           " is not a hammerEvent managed in DragControlMethod"
       );
     }
 
-    this._hammer.on(
-      this._opts.hammerEvent + "start",
-      this._handleStart.bind(this)
+    this.#hammer.on(
+      this.#opts.hammerEvent + "start",
+      this.#handleStart.bind(this)
     );
-    this._hammer.on(
-      this._opts.hammerEvent + "move",
-      this._handleMove.bind(this)
+    this.#hammer.on(
+      this.#opts.hammerEvent + "move",
+      this.#handleMove.bind(this)
     );
-    this._hammer.on(this._opts.hammerEvent + "end", this._handleEnd.bind(this));
-    this._hammer.on(
-      this._opts.hammerEvent + "cancel",
-      this._handleEnd.bind(this)
+    this.#hammer.on(this.#opts.hammerEvent + "end", this.#handleEnd.bind(this));
+    this.#hammer.on(
+      this.#opts.hammerEvent + "cancel",
+      this.#handleEnd.bind(this)
     );
   }
   /**
    * Destructor.
    */
   destroy() {
-    this._hammer.release();
+    this.#hammer.release();
     clearOwnProperties(this);
   }
-  _handleHammerEvent(e) {
+  #handleHammerEvent(e) {
     if (e.isFirst) {
-      if (debug && this._active) {
+      if (debug && this.#active) {
         throw new Error(
           "DragControlMethod active detected when already active"
         );
       }
-      this._active = true;
+      this.#active = true;
       this.emit("active");
     }
     if (e.isFinal) {
-      if (debug && !this._active) {
+      if (debug && !this.#active) {
         throw new Error(
           "DragControlMethod inactive detected when already inactive"
         );
       }
-      this._active = false;
+      this.#active = false;
       this.emit("inactive");
     }
   }
   emit(_arg0: string) {
     throw new Error("Method not implemented.");
   }
-  _handleStart(e) {
+  #handleStart(e) {
     // Prevent this event from dragging other DOM elements, causing
     // unexpected behavior on Chrome.
     e.preventDefault();
 
-    this._startEvent = e;
+    this.#startEvent = e;
   }
-  _handleMove(e) {
+  #handleMove(e) {
     // Prevent this event from dragging other DOM elements, causing
     // unexpected behavior on Chrome.
     e.preventDefault();
 
-    if (this._startEvent) {
-      this._updateDynamicsMove(e);
+    if (this.#startEvent) {
+      this.#updateDynamicsMove(e);
       // TODO: fix these emitter issues
       // @ts-ignore
-      this.emit("parameterDynamics", "axisScaledX", this._dynamics.x);
+      this.emit("parameterDynamics", "axisScaledX", this.#dynamics.x);
       // TODO: fix these emitter issues
       // @ts-ignore
-      this.emit("parameterDynamics", "axisScaledY", this._dynamics.y);
+      this.emit("parameterDynamics", "axisScaledY", this.#dynamics.y);
     }
   }
-  _handleEnd(e) {
+  #handleEnd(e) {
     // Prevent this event from dragging other DOM elements, causing
     // unexpected behavior on Chrome.
     e.preventDefault();
 
-    if (this._startEvent) {
-      this._updateDynamicsRelease(e);
+    if (this.#startEvent) {
+      this.#updateDynamicsRelease(e);
       // TODO: fix these emitter issues
       // @ts-ignore
-      this.emit("parameterDynamics", "axisScaledX", this._dynamics.x);
+      this.emit("parameterDynamics", "axisScaledX", this.#dynamics.x);
       // TODO: fix these emitter issues
       // @ts-ignore
-      this.emit("parameterDynamics", "axisScaledY", this._dynamics.y);
+      this.emit("parameterDynamics", "axisScaledY", this.#dynamics.y);
     }
 
-    this._startEvent = false;
-    this._lastEvent = false;
+    this.#startEvent = false;
+    this.#lastEvent = false;
   }
-  _updateDynamicsMove(e) {
+  #updateDynamicsMove(e) {
     var x = e.deltaX;
     var y = e.deltaY;
 
     // When a second finger touches the screen, panstart sometimes has a large
     // offset at start; subtract that offset to prevent a sudden jump.
-    var eventToSubtract = this._lastEvent || this._startEvent;
+    var eventToSubtract = this.#lastEvent || this.#startEvent;
 
     if (eventToSubtract) {
       // TODO: better type checks
@@ -166,42 +166,42 @@ class DragControlMethod {
       y -= eventToSubtract.deltaY;
     }
 
-    var elementRect = this._element.getBoundingClientRect();
+    var elementRect = this.#element.getBoundingClientRect();
     var width = elementRect.right - elementRect.left;
     var height = elementRect.bottom - elementRect.top;
 
     x /= width;
     y /= height;
 
-    this._dynamics.x.reset();
-    this._dynamics.y.reset();
-    this._dynamics.x.offset = -x;
-    this._dynamics.y.offset = -y;
+    this.#dynamics.x.reset();
+    this.#dynamics.y.reset();
+    this.#dynamics.x.offset = -x;
+    this.#dynamics.y.offset = -y;
 
-    this._lastEvent = e;
+    this.#lastEvent = e;
   }
-  _updateDynamicsRelease(e) {
-    var elementRect = this._element.getBoundingClientRect();
+  #updateDynamicsRelease(e) {
+    var elementRect = this.#element.getBoundingClientRect();
     var width = elementRect.right - elementRect.left;
     var height = elementRect.bottom - elementRect.top;
 
     var x = (1000 * e.velocityX) / width;
     var y = (1000 * e.velocityY) / height;
 
-    this._dynamics.x.reset();
-    this._dynamics.y.reset();
-    this._dynamics.x.velocity = x;
-    this._dynamics.y.velocity = y;
+    this.#dynamics.x.reset();
+    this.#dynamics.y.reset();
+    this.#dynamics.x.velocity = x;
+    this.#dynamics.y.velocity = y;
 
     maxFriction(
-      this._opts.friction,
-      this._dynamics.x.velocity,
-      this._dynamics.y.velocity,
-      this._opts.maxFrictionTime,
+      this.#opts.friction,
+      this.#dynamics.x.velocity,
+      this.#dynamics.y.velocity,
+      this.#opts.maxFrictionTime,
       tmpReleaseFriction
     );
-    this._dynamics.x.friction = tmpReleaseFriction[0];
-    this._dynamics.y.friction = tmpReleaseFriction[1];
+    this.#dynamics.x.friction = tmpReleaseFriction[0];
+    this.#dynamics.y.friction = tmpReleaseFriction[1];
   }
 }
 
