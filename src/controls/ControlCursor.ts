@@ -27,93 +27,93 @@ var defaultOpts = {
  *     method is disabled.
  */
 class ControlCursor {
-  _element: any;
-  _controls: any;
-  _id: any;
-  _attached: boolean;
-  _setActiveCursor: () => void;
-  _setInactiveCursor: () => void;
-  _setDisabledCursor: () => void;
-  _setOriginalCursor: () => void;
-  _updateAttachmentHandler: () => void;
+  #element: any;
+  #controls: any;
+  #id: any;
+  #attached: boolean;
+  #setActiveCursor: () => void;
+  #setInactiveCursor: () => void;
+  #setDisabledCursor: () => void;
+  #setOriginalCursor: () => void;
+  #updateAttachmentHandler: () => void;
   constructor(controls, id, element, opts) {
     opts = defaults(opts || {}, defaultOpts);
 
     // TODO: This class may misbehave if the control method is unregistered and a
     // different control method is registered under the same id.
-    this._element = element;
-    this._controls = controls;
-    this._id = id;
+    this.#element = element;
+    this.#controls = controls;
+    this.#id = id;
 
-    this._attached = false;
+    this.#attached = false;
 
-    this._setActiveCursor = this._setCursor.bind(this, opts.active);
-    this._setInactiveCursor = this._setCursor.bind(this, opts.inactive);
-    this._setDisabledCursor = this._setCursor.bind(this, opts.disabled);
-    this._setOriginalCursor = this._setCursor.bind(this, this._element.style.cursor);
+    this.#setActiveCursor = this.#setCursor.bind(this, opts.active);
+    this.#setInactiveCursor = this.#setCursor.bind(this, opts.inactive);
+    this.#setDisabledCursor = this.#setCursor.bind(this, opts.disabled);
+    this.#setOriginalCursor = this.#setCursor.bind(this, this.#element.style.cursor);
 
-    this._updateAttachmentHandler = this._updateAttachment.bind(this);
+    this.#updateAttachmentHandler = this.#updateAttachment.bind(this);
 
-    controls.addEventListener('methodEnabled', this._updateAttachmentHandler);
-    controls.addEventListener('methodDisabled', this._updateAttachmentHandler);
-    controls.addEventListener('enabled', this._updateAttachmentHandler);
-    controls.addEventListener('disabled', this._updateAttachmentHandler);
+    controls.addEventListener('methodEnabled', this.#updateAttachmentHandler);
+    controls.addEventListener('methodDisabled', this.#updateAttachmentHandler);
+    controls.addEventListener('enabled', this.#updateAttachmentHandler);
+    controls.addEventListener('disabled', this.#updateAttachmentHandler);
 
-    this._updateAttachment();
+    this.#updateAttachment();
   }
   /**
    * Destructor.
    */
   destroy() {
-    this._detachFromControlMethod(this._controls.method(this._id));
-    this._setOriginalCursor();
+    this.#detachFromControlMethod(this.#controls.method(this.#id));
+    this.#setOriginalCursor();
 
-    this._controls.removeEventListener('methodEnabled',
-      this._updateAttachmentHandler);
-    this._controls.removeEventListener('methodDisabled',
-      this._updateAttachmentHandler);
-    this._controls.removeEventListener('enabled',
-      this._updateAttachmentHandler);
-    this._controls.removeEventListener('disabled',
-      this._updateAttachmentHandler);
+    this.#controls.removeEventListener('methodEnabled',
+      this.#updateAttachmentHandler);
+    this.#controls.removeEventListener('methodDisabled',
+      this.#updateAttachmentHandler);
+    this.#controls.removeEventListener('enabled',
+      this.#updateAttachmentHandler);
+    this.#controls.removeEventListener('disabled',
+      this.#updateAttachmentHandler);
 
     clearOwnProperties(this);
   }
-  _updateAttachment() {
-    var controls = this._controls;
-    var id = this._id;
+  #updateAttachment() {
+    var controls = this.#controls;
+    var id = this.#id;
     if (controls.enabled() && controls.method(id).enabled) {
-      this._attachToControlMethod(controls.method(id));
+      this.#attachToControlMethod(controls.method(id));
     } else {
-      this._detachFromControlMethod(controls.method(id));
+      this.#detachFromControlMethod(controls.method(id));
     }
   }
-  _attachToControlMethod(controlMethod) {
-    if (!this._attached) {
-      controlMethod.instance.addEventListener('active', this._setActiveCursor);
-      controlMethod.instance.addEventListener('inactive', this._setInactiveCursor);
+  #attachToControlMethod(controlMethod) {
+    if (!this.#attached) {
+      controlMethod.instance.addEventListener('active', this.#setActiveCursor);
+      controlMethod.instance.addEventListener('inactive', this.#setInactiveCursor);
 
       if (controlMethod.active) {
-        this._setActiveCursor();
+        this.#setActiveCursor();
       } else {
-        this._setInactiveCursor();
+        this.#setInactiveCursor();
       }
 
-      this._attached = true;
+      this.#attached = true;
     }
   }
-  _detachFromControlMethod(controlMethod) {
-    if (this._attached) {
-      controlMethod.instance.removeEventListener('active', this._setActiveCursor);
-      controlMethod.instance.removeEventListener('inactive', this._setInactiveCursor);
+  #detachFromControlMethod(controlMethod) {
+    if (this.#attached) {
+      controlMethod.instance.removeEventListener('active', this.#setActiveCursor);
+      controlMethod.instance.removeEventListener('inactive', this.#setInactiveCursor);
 
-      this._setDisabledCursor();
+      this.#setDisabledCursor();
 
-      this._attached = false;
+      this.#attached = false;
     }
   }
-  _setCursor(cursor) {
-    this._element.style.cursor = cursor;
+  #setCursor(cursor) {
+    this.#element.style.cursor = cursor;
   }
 }
 

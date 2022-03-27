@@ -27,48 +27,48 @@ var debug = typeof MARZIPANODEBUG !== "undefined" && MARZIPANODEBUG.controls;
  *
  */
 class Controls {
-  _methods: Record<string, any>;
-  _methodGroups: any;
-  _composer: any;
-  _enabled: boolean;
-  _activeCount: number;
+  #methods: Record<string, any>;
+  #methodGroups: any;
+  #composer: any;
+  #enabled: boolean;
+  #activeCount: number;
   updatedViews_: any[];
-  _attachedRenderLoop: any;
-  _beforeRenderHandler?: (() => void) | null;
-  _changeHandler?: (() => void) | null;
+  #attachedRenderLoop: any;
+  #beforeRenderHandler?: (() => void) | null;
+  #changeHandler?: (() => void) | null;
 
   constructor(opts?: { enabled?: any } | undefined) {
     opts = opts || {};
 
-    this._methods = {};
-    this._methodGroups = {};
-    this._composer = new Composer();
+    this.#methods = {};
+    this.#methodGroups = {};
+    this.#composer = new Composer();
 
     // Whether the controls are enabled.
-    this._enabled = opts && opts.enabled ? !!opts.enabled : true;
+    this.#enabled = opts && opts.enabled ? !!opts.enabled : true;
 
     // How many control methods are enabled and in the active state.
-    this._activeCount = 0;
+    this.#activeCount = 0;
 
     this.updatedViews_ = [];
 
-    this._attachedRenderLoop = null;
+    this.#attachedRenderLoop = null;
   }
   /**
    * Destructor.
    */
   destroy() {
     this.detach();
-    this._composer.destroy();
+    this.#composer.destroy();
     clearOwnProperties(this);
   }
   /**
    * @return {ControlMethod[]} List of registered @{link ControlMethod instances}
    */
   methods() {
-    var obj: typeof this._methods = {};
-    for (var id in this._methods) {
-      obj[id] = this._methods[id];
+    var obj = {};
+    for (var id in this.#methods) {
+      obj[id] = this.#methods[id];
     }
     return obj;
   }
@@ -77,7 +77,7 @@ class Controls {
    * @return {ControlMethod}
    */
   method(id: string | number) {
-    return this._methods[id];
+    return this.#methods[id];
   }
   /**
    * @param {String} id
@@ -85,16 +85,16 @@ class Controls {
    * @param {Boolean} [enable=false]
    */
   registerMethod(id: string, instance: any, enable?: any) {
-    if (this._methods[id]) {
+    if (this.#methods[id]) {
       throw new Error("Control method already registered with id " + id);
     }
 
-    this._methods[id] = {
+    this.#methods[id] = {
       instance: instance,
       enabled: false,
       active: false,
-      activeHandler: this._handleActive.bind(this, id),
-      inactiveHandler: this._handleInactive.bind(this, id),
+      activeHandler: this.#handleActive.bind(this, id),
+      inactiveHandler: this.#handleInactive.bind(this, id),
     };
 
     if (enable) {
@@ -105,20 +105,20 @@ class Controls {
    * @param {String} id
    */
   unregisterMethod(id: string) {
-    var method = this._methods[id];
+    var method = this.#methods[id];
     if (!method) {
       throw new Error("No control method registered with id " + id);
     }
     if (method.enabled) {
       this.disableMethod(id);
     }
-    delete this._methods[id];
+    delete this.#methods[id];
   }
   /**
    * @param {String} id
    */
   enableMethod(id: string) {
-    var method = this._methods[id];
+    var method = this.#methods[id];
     if (!method) {
       throw new Error("No control method registered with id " + id);
     }
@@ -127,10 +127,10 @@ class Controls {
     }
     method.enabled = true;
     if (method.active) {
-      this._incrementActiveCount();
+      this.#incrementActiveCount();
     }
-    this._listen(id);
-    this._updateComposer();
+    this.#listen(id);
+    this.#updateComposer();
     // TODO: emitter types
     // @ts-ignore
     this.emit("methodEnabled", id);
@@ -139,7 +139,7 @@ class Controls {
    * @param {String} id
    */
   disableMethod(id: string) {
-    var method = this._methods[id];
+    var method = this.#methods[id];
     if (!method) {
       throw new Error("No control method registered with id " + id);
     }
@@ -148,10 +148,10 @@ class Controls {
     }
     method.enabled = false;
     if (method.active) {
-      this._decrementActiveCount();
+      this.#decrementActiveCount();
     }
-    this._unlisten(id);
-    this._updateComposer();
+    this.#unlisten(id);
+    this.#updateComposer();
     this.emit("methodDisabled", id);
   }
   /**
@@ -161,21 +161,21 @@ class Controls {
    * @param {String[]} methodIds
    */
   addMethodGroup(groupId: string | number, methodIds: any) {
-    this._methodGroups[groupId] = methodIds;
+    this.#methodGroups[groupId] = methodIds;
   }
   /**
    * @param {String} groupId
    */
   removeMethodGroup(id: string | number) {
-    delete this._methodGroups[id];
+    delete this.#methodGroups[id];
   }
   /**
    * @return {ControlMethodGroup[]} List of control method groups
    */
   methodGroups() {
-    var obj: typeof this._methodGroups = {};
-    for (var id in this._methodGroups) {
-      obj[id] = this._methodGroups[id];
+    var obj = {};
+    for (var id in this.#methodGroups) {
+      obj[id] = this.#methodGroups[id];
     }
     return obj;
   }
@@ -185,7 +185,7 @@ class Controls {
    */
   enableMethodGroup(id: string | number) {
     var self = this;
-    self._methodGroups[id].forEach(function (methodId: string) {
+    self.#methodGroups[id].forEach(function (methodId: string) {
       self.enableMethod(methodId);
     });
   }
@@ -195,7 +195,7 @@ class Controls {
    */
   disableMethodGroup(id: string | number) {
     var self = this;
-    self._methodGroups[id].forEach(function (methodId: string) {
+    self.#methodGroups[id].forEach(function (methodId: string) {
       self.disableMethod(methodId);
     });
   }
@@ -203,35 +203,35 @@ class Controls {
    * @returns {Boolean}
    */
   enabled() {
-    return this._enabled;
+    return this.#enabled;
   }
   /**
    * Enables the controls
    */
   enable() {
-    if (this._enabled) {
+    if (this.#enabled) {
       return;
     }
-    this._enabled = true;
-    if (this._activeCount > 0) {
+    this.#enabled = true;
+    if (this.#activeCount > 0) {
       this.emit("active");
     }
     this.emit("enabled");
-    this._updateComposer();
+    this.#updateComposer();
   }
   /**
    * Disables the controls
    */
   disable() {
-    if (!this._enabled) {
+    if (!this.#enabled) {
       return;
     }
-    this._enabled = false;
-    if (this._activeCount > 0) {
+    this.#enabled = false;
+    if (this.#activeCount > 0) {
       this.emit("inactive");
     }
     this.emit("disabled");
-    this._updateComposer();
+    this.#updateComposer();
   }
   emit(_arg0: string, _arg1?: any) {
     throw new Error("Method not implemented.");
@@ -243,62 +243,62 @@ class Controls {
    * @param {RenderLoop}
    */
   attach(renderLoop: RenderLoop) {
-    if (this._attachedRenderLoop) {
+    if (this.#attachedRenderLoop) {
       this.detach();
     }
 
-    this._attachedRenderLoop = renderLoop;
-    this._beforeRenderHandler = this._updateViewsWithControls.bind(this);
-    this._changeHandler = renderLoop.renderOnNextFrame.bind(renderLoop);
+    this.#attachedRenderLoop = renderLoop;
+    this.#beforeRenderHandler = this.#updateViewsWithControls.bind(this);
+    this.#changeHandler = renderLoop.renderOnNextFrame.bind(renderLoop);
 
-    this._attachedRenderLoop.addEventListener(
+    this.#attachedRenderLoop.addEventListener(
       "beforeRender",
-      this._beforeRenderHandler
+      this.#beforeRenderHandler
     );
-    this._composer.addEventListener("change", this._changeHandler);
+    this.#composer.addEventListener("change", this.#changeHandler);
   }
   /**
    * Detaches the controls
    */
   detach() {
-    if (!this._attachedRenderLoop) {
+    if (!this.#attachedRenderLoop) {
       return;
     }
 
-    this._attachedRenderLoop.removeEventListener(
+    this.#attachedRenderLoop.removeEventListener(
       "beforeRender",
-      this._beforeRenderHandler
+      this.#beforeRenderHandler
     );
-    this._composer.removeEventListener("change", this._changeHandler);
+    this.#composer.removeEventListener("change", this.#changeHandler);
 
-    this._beforeRenderHandler = null;
-    this._changeHandler = null;
-    this._attachedRenderLoop = null;
+    this.#beforeRenderHandler = null;
+    this.#changeHandler = null;
+    this.#attachedRenderLoop = null;
   }
   /**
    * @param {Boolean}
    */
   attached() {
-    return this._attachedRenderLoop != null;
+    return this.#attachedRenderLoop != null;
   }
-  _listen(id: string) {
-    var method = this._methods[id];
+  #listen(id: string) {
+    var method = this.#methods[id];
     if (!method) {
       throw new Error("Bad method id");
     }
     method.instance.addEventListener("active", method.activeHandler);
     method.instance.addEventListener("inactive", method.inactiveHandler);
   }
-  _unlisten(id: string) {
-    var method = this._methods[id];
+  #unlisten(id: string) {
+    var method = this.#methods[id];
     if (!method) {
       throw new Error("Bad method id");
     }
     method.instance.removeEventListener("active", method.activeHandler);
     method.instance.removeEventListener("inactive", method.inactiveHandler);
   }
-  _handleActive(id: string | number) {
-    var method = this._methods[id];
+  #handleActive(id: string | number) {
+    var method = this.#methods[id];
     if (!method) {
       throw new Error("Bad method id");
     }
@@ -307,11 +307,11 @@ class Controls {
     }
     if (!method.active) {
       method.active = true;
-      this._incrementActiveCount();
+      this.#incrementActiveCount();
     }
   }
-  _handleInactive(id: string | number) {
-    var method = this._methods[id];
+  #handleInactive(id: string | number) {
+    var method = this.#methods[id];
     if (!method) {
       throw new Error("Bad method id");
     }
@@ -320,45 +320,45 @@ class Controls {
     }
     if (method.active) {
       method.active = false;
-      this._decrementActiveCount();
+      this.#decrementActiveCount();
     }
   }
-  _incrementActiveCount() {
-    this._activeCount++;
+  #incrementActiveCount() {
+    this.#activeCount++;
     if (debug) {
-      this._checkActiveCount();
+      this.#checkActiveCount();
     }
-    if (this._enabled && this._activeCount === 1) {
+    if (this.#enabled && this.#activeCount === 1) {
       this.emit("active");
     }
   }
-  _decrementActiveCount() {
-    this._activeCount--;
+  #decrementActiveCount() {
+    this.#activeCount--;
     if (debug) {
-      this._checkActiveCount();
+      this.#checkActiveCount();
     }
-    if (this._enabled && this._activeCount === 0) {
+    if (this.#enabled && this.#activeCount === 0) {
       this.emit("inactive");
     }
   }
-  _checkActiveCount() {
+  #checkActiveCount() {
     var count = 0;
-    for (var id in this._methods) {
-      var method = this._methods[id];
+    for (var id in this.#methods) {
+      var method = this.#methods[id];
       if (method.enabled && method.active) {
         count++;
       }
     }
-    if (count != this._activeCount) {
+    if (count != this.#activeCount) {
       throw new Error("Bad control state");
     }
   }
-  _updateComposer() {
-    var composer = this._composer;
+  #updateComposer() {
+    var composer = this.#composer;
 
-    for (var id in this._methods) {
-      var method = this._methods[id];
-      var enabled = this._enabled && method.enabled;
+    for (var id in this.#methods) {
+      var method = this.#methods[id];
+      var enabled = this.#enabled && method.enabled;
 
       if (enabled && !composer.has(method.instance)) {
         composer.add(method.instance);
@@ -368,17 +368,17 @@ class Controls {
       }
     }
   }
-  _updateViewsWithControls() {
-    var controlData = this._composer.offsets();
+  #updateViewsWithControls() {
+    var controlData = this.#composer.offsets();
     if (controlData.changing) {
-      this._attachedRenderLoop.renderOnNextFrame();
+      this.#attachedRenderLoop.renderOnNextFrame();
     }
 
     // Update each view at most once, even when shared by multiple layers.
     // The number of views is expected to be small, so use an array to keep track.
     this.updatedViews_.length = 0;
 
-    var layers = this._attachedRenderLoop.stage().listLayers();
+    var layers = this.#attachedRenderLoop.stage().listLayers();
     for (var i = 0; i < layers.length; i++) {
       var view = layers[i].view();
       if (this.updatedViews_.indexOf(view) < 0) {

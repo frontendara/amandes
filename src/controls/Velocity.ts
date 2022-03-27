@@ -14,16 +14,16 @@ import clearOwnProperties from "../util/clearOwnProperties";
  * @param {String} parameter The parameter to be controlled (e.g. `x`, `y` or `zoom`)
 */
 class VelocityControlMethod {
-  _parameter: any;
-  _dynamics: Dynamics;
+  #parameter: any;
+  #dynamics: Dynamics;
 
   constructor(parameter) {
     if (!parameter) {
       throw new Error("VelocityControlMethod: parameter must be defined");
     }
 
-    this._parameter = parameter;
-    this._dynamics = new Dynamics();
+    this.#parameter = parameter;
+    this.#dynamics = new Dynamics();
   }
   /**
    * Destructor.
@@ -36,8 +36,8 @@ class VelocityControlMethod {
    * @param {Number} velocity
    */
   setVelocity(velocity) {
-    this._dynamics.velocity = velocity;
-    this.emit('parameterDynamics', this._parameter, this._dynamics);
+    this.#dynamics.velocity = velocity;
+    this.emit('parameterDynamics', this.#parameter, this.#dynamics);
   }
   emit(_arg0: string, _parameter: any, _dynamics: any) {
     throw new Error("Method not implemented.");
@@ -47,8 +47,8 @@ class VelocityControlMethod {
    * @param {Number} friction
    */
   setFriction(friction) {
-    this._dynamics.friction = friction;
-    this.emit('parameterDynamics', this._parameter, this._dynamics);
+    this.#dynamics.friction = friction;
+    this.emit('parameterDynamics', this.#parameter, this.#dynamics);
   }
 }
 eventEmitter(VelocityControlMethod);
