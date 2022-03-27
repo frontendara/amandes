@@ -5,19 +5,19 @@ import { Tile } from "./jsdoc-extras";
  * A TileSearcher performs searches for visible tiles.
  */
 class TileSearcher {
-  _stack: any[];
-  _visited: Set;
-  _vertices: any;
+  #stack: any[];
+  #visited: Set;
+  #vertices: any;
 
   constructor() {
     // Stack of tiles to be explored.
-    this._stack = [];
+    this.#stack = [];
 
     // Set of already explored tiles.
-    this._visited = new Set();
+    this.#visited = new Set();
 
     // Tile vertices. Allocated by Tile#vertices on first use.
-    this._vertices = null;
+    this.#vertices = null;
   }
   /**
    * Performs a search for visible tiles by starting at a given tile and
@@ -30,14 +30,14 @@ class TileSearcher {
    * @return The number of visible tiles found.
    */
   search(view: any, startingTile: Tile, result: Tile[]): number {
-    var stack = this._stack;
-    var visited = this._visited;
-    var vertices = this._vertices;
+    var stack = this.#stack;
+    var visited = this.#visited;
+    var vertices = this.#vertices;
 
     var count = 0;
 
     // Clear internal state.
-    this._clear();
+    this.#clear();
 
     stack.push(startingTile);
 
@@ -70,16 +70,16 @@ class TileSearcher {
     }
 
     // Reuse the vertices array in future searches.
-    this._vertices = vertices;
+    this.#vertices = vertices;
 
     // Clear internal state.
-    this._clear();
+    this.#clear();
 
     return count;
   }
-  _clear() {
-    this._stack.length = 0;
-    this._visited.clear();
+  #clear() {
+    this.#stack.length = 0;
+    this.#visited.clear();
   }
 }
 

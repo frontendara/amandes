@@ -89,45 +89,47 @@ interface ViewerOptions {
  * @param {Element} domElement The DOM element to contain the stage.
  */
 class Viewer {
-  _domElement: any;
-  _stage: WebGlStage;
+  #domElement: any;
+  #stage: WebGlStage;
+  // TODO: this seems to be used elsewhere
   _controlContainer: HTMLDivElement;
-  _size: any;
-  _updateSizeListener: () => void;
-  _renderLoop: RenderLoop;
-  _controls: Controls | null;
-  _controlMethods: Record<string, any>;
+  #size: any;
+  #updateSizeListener: () => void;
+  #renderLoop: RenderLoop;
+  #controls: Controls | null;
+  #controlMethods: Record<string, any>;
+  // TODO: investigate usage of these in demos
   _hammerManagerTouch: HammerGesturesHandle;
   _hammerManagerMouse: HammerGesturesHandle;
-  _dragCursor: ControlCursor;
-  _scenes: Scene[];
-  _currentScene: Scene | null;
-  _replacedScene: Scene | null;
-  _cancelCurrentTween: null | ReturnType<typeof tween>;
-  _layerChangeHandler: () => void;
-  _viewChangeHandler: any;
-  _idleTimer: Timer;
-  _resetIdleTimerHandler: () => void;
-  _triggerIdleTimerHandler: () => void;
-  _stopMovementHandler: () => void;
-  _idleMovement: null;
+  #dragCursor: ControlCursor;
+  #scenes: Scene[];
+  #currentScene: Scene | null;
+  #replacedScene: Scene | null;
+  #cancelCurrentTween: null | ReturnType<typeof tween>;
+  #layerChangeHandler: () => void;
+  #viewChangeHandler: any;
+  #idleTimer: Timer;
+  #resetIdleTimerHandler: () => void;
+  #triggerIdleTimerHandler: () => void;
+  #stopMovementHandler: () => void;
+  #idleMovement: null;
 
   constructor(domElement: HTMLElement, opts?: ViewerOptions) {
     opts = opts || {};
 
-    this._domElement = domElement;
+    this.#domElement = domElement;
 
     // Add `overflow: hidden` to the domElement.
     setOverflowHidden(domElement);
 
     // Create stage.
-    this._stage = new WebGlStage(opts.stage);
+    this.#stage = new WebGlStage(opts.stage);
 
     // Register the default renderers for the selected stage.
-    registerDefaultRenderers(this._stage);
+    registerDefaultRenderers(this.#stage);
 
     // Add the stage element into the DOM.
-    this._domElement.appendChild(this._stage.domElement());
+    this.#domElement.appendChild(this.#stage.domElement());
 
     // Create control container.
     // Controls cannot be placed directly on the root DOM element because
@@ -139,24 +141,24 @@ class Viewer {
     domElement.appendChild(this._controlContainer);
 
     // Respond to window size changes.
-    this._size = {};
+    this.#size = {};
     this.updateSize();
-    this._updateSizeListener = this.updateSize.bind(this);
-    window.addEventListener("resize", this._updateSizeListener);
+    this.#updateSizeListener = this.updateSize.bind(this);
+    window.addEventListener("resize", this.#updateSizeListener);
 
     // Create render loop.
-    this._renderLoop = new RenderLoop(this._stage);
+    this.#renderLoop = new RenderLoop(this.#stage);
 
     // Create the controls and register them with the render loop.
-    this._controls = new Controls();
-    this._controlMethods = registerDefaultControls(
-      this._controls,
+    this.#controls = new Controls();
+    this.#controlMethods = registerDefaultControls(
+      this.#controls,
       this._controlContainer,
       // TODO: this needs investigation, it seems that what's passed here is not necessary
       // used inside of the registration
       opts.controls as any
     );
-    this._controls.attach(this._renderLoop);
+    this.#controls.attach(this.#renderLoop);
 
     // Expose HammerJS.
     this._hammerManagerTouch = HammerGestures.get(
@@ -169,64 +171,64 @@ class Viewer {
     );
 
     // Initialize drag cursor.
-    this._dragCursor = new ControlCursor(
-      this._controls,
+    this.#dragCursor = new ControlCursor(
+      this.#controls,
       "mouseViewDrag",
       domElement,
       (opts.cursors && opts.cursors.drag) || {}
     );
 
     // Start the render loop.
-    this._renderLoop.start();
+    this.#renderLoop.start();
 
     // Scene list.
-    this._scenes = [];
+    this.#scenes = [];
 
     // The currently visible scene.
     // During a scene transition, this is the scene being switched to.
-    this._currentScene = null;
+    this.#currentScene = null;
 
     // The scene being switched from during a scene transition.
     // This is necessary to update the layers correctly when they are added or
     // removed during a transition.
-    this._replacedScene = null;
+    this.#replacedScene = null;
 
     // The current transition.
-    this._cancelCurrentTween = null;
+    this.#cancelCurrentTween = null;
 
     // The event listener fired when the current scene layers change.
     // This is attached to the correct scene whenever the current scene changes.
-    this._layerChangeHandler = this._updateSceneLayers.bind(this);
+    this.#layerChangeHandler = this.#updateSceneLayers.bind(this);
 
     // The event listener fired when the current scene view changes.
     // This is attached to the correct scene whenever the current scene changes.
-    this._viewChangeHandler = this.emit.bind(this, "viewChange");
+    this.#viewChangeHandler = this.emit.bind(this, "viewChange");
 
     // Setup the idle timer.
     // By default, the timer has an infinite duration so it does nothing.
-    this._idleTimer = new Timer();
-    this._idleTimer.start();
+    this.#idleTimer = new Timer();
+    this.#idleTimer.start();
 
     // Reset the timer whenever the view changes.
-    this._resetIdleTimerHandler = this._resetIdleTimer.bind(this);
-    this.addEventListener("viewChange", this._resetIdleTimerHandler);
+    this.#resetIdleTimerHandler = this.#resetIdleTimer.bind(this);
+    this.addEventListener("viewChange", this.#resetIdleTimerHandler);
 
     // Start the idle movement when the idle timer fires.
-    this._triggerIdleTimerHandler = this._triggerIdleTimer.bind(this);
+    this.#triggerIdleTimerHandler = this.#triggerIdleTimer.bind(this);
     // TODO: better type definitions for event emitters
     // @ts-ignore
-    this._idleTimer.addEventListener("timeout", this._triggerIdleTimerHandler);
+    this.#idleTimer.addEventListener("timeout", this.#triggerIdleTimerHandler);
 
     // Stop an ongoing movement when the controls are activated or when the
     // scene changes.
-    this._stopMovementHandler = this.stopMovement.bind(this);
+    this.#stopMovementHandler = this.stopMovement.bind(this);
     // TODO: better type definitions for event emitters
     // @ts-ignore
-    this._controls.addEventListener("active", this._stopMovementHandler);
-    this.addEventListener("sceneChange", this._stopMovementHandler);
+    this.#controls.addEventListener("active", this.#stopMovementHandler);
+    this.addEventListener("sceneChange", this.#stopMovementHandler);
 
     // The currently programmed idle movement.
-    this._idleMovement = null;
+    this.#idleMovement = null;
   }
   addEventListener(_arg0: string, _resetIdleTimerHandler: any) {
     throw new Error("Method not implemented.");
@@ -235,35 +237,35 @@ class Viewer {
    * Destructor.
    */
   destroy() {
-    window.removeEventListener("resize", this._updateSizeListener);
+    window.removeEventListener("resize", this.#updateSizeListener);
 
-    if (this._currentScene) {
-      this._removeSceneEventListeners(this._currentScene);
+    if (this.#currentScene) {
+      this.#removeSceneEventListeners(this.#currentScene);
     }
 
-    if (this._replacedScene) {
-      this._removeSceneEventListeners(this._replacedScene);
+    if (this.#replacedScene) {
+      this.#removeSceneEventListeners(this.#replacedScene);
     }
 
-    this._dragCursor.destroy();
+    this.#dragCursor.destroy();
 
-    for (var methodName in this._controlMethods) {
-      this._controlMethods[methodName].destroy();
+    for (var methodName in this.#controlMethods) {
+      this.#controlMethods[methodName].destroy();
     }
 
-    while (this._scenes.length) {
-      this.destroyScene(this._scenes[0]);
+    while (this.#scenes.length) {
+      this.destroyScene(this.#scenes[0]);
     }
 
-    this._domElement.removeChild(this._stage.domElement());
+    this.#domElement.removeChild(this.#stage.domElement());
 
-    this._stage.destroy();
-    this._renderLoop.destroy();
-    this._controls?.destroy();
-    this._controls = null;
+    this.#stage.destroy();
+    this.#renderLoop.destroy();
+    this.#controls?.destroy();
+    this.#controls = null;
 
-    if (this._cancelCurrentTween) {
-      this._cancelCurrentTween();
+    if (this.#cancelCurrentTween) {
+      this.#cancelCurrentTween();
     }
 
     clearOwnProperties(this);
@@ -275,38 +277,38 @@ class Viewer {
    * Most clients won't need to explicitly call it to keep the size up to date.
    */
   updateSize() {
-    var size = this._size;
-    size.width = this._domElement.clientWidth;
-    size.height = this._domElement.clientHeight;
-    this._stage.setSize(size);
+    var size = this.#size;
+    size.width = this.#domElement.clientWidth;
+    size.height = this.#domElement.clientHeight;
+    this.#stage.setSize(size);
   }
   /**
    * Returns the underlying {@link Stage stage}.
    * @return {Stage}
    */
   stage() {
-    return this._stage;
+    return this.#stage;
   }
   /**
    * Returns the underlying {@link RenderLoop render loop}.
    * @return {RenderLoop}
    */
   renderLoop() {
-    return this._renderLoop;
+    return this.#renderLoop;
   }
   /**
    * Returns the underlying {@link Controls controls}.
    * @return {Controls}
    */
   controls() {
-    return this._controls;
+    return this.#controls;
   }
   /**
    * Returns the underlying DOM element.
    * @return {Element}
    */
   domElement() {
-    return this._domElement;
+    return this.#domElement;
   }
   /**
    * Creates a new {@link Scene scene} with a single layer and adds it to the
@@ -360,17 +362,17 @@ class Viewer {
     opts = opts || {};
 
     var scene = new Scene(this, opts.view);
-    this._scenes.push(scene);
+    this.#scenes.push(scene);
 
     return scene;
   }
-  _updateSceneLayers() {
+  #updateSceneLayers() {
     var i;
     var layer;
 
-    var stage = this._stage;
-    var currentScene = this._currentScene;
-    var replacedScene = this._replacedScene;
+    var stage = this.#stage;
+    var currentScene = this.#currentScene;
+    var replacedScene = this.#replacedScene;
 
     var oldLayers = stage.listLayers();
 
@@ -394,7 +396,7 @@ class Viewer {
       for (i = 0; i < oldLayers.length; i++) {
         layer = oldLayers[i];
         if (newLayers.indexOf(layer) < 0) {
-          this._removeLayerFromStage(layer);
+          this.#removeLayerFromStage(layer);
           break;
         }
       }
@@ -404,7 +406,7 @@ class Viewer {
       for (i = 0; i < newLayers.length; i++) {
         layer = newLayers[i];
         if (oldLayers.indexOf(layer) < 0) {
-          this._addLayerToStage(layer, i);
+          this.#addLayerToStage(layer, i);
         }
       }
     }
@@ -413,32 +415,32 @@ class Viewer {
     // function immediately to prevent an added layer from flashing with the wrong
     // opacity.
   }
-  _addLayerToStage(layer: Layer, i?: number) {
+  #addLayerToStage(layer: Layer, i?: number) {
     // Pin the first level to ensure a fallback while the layer is visible.
     // Note that this is distinct from the `pinFirstLevel` option passed to
     // createScene(), which pins the layer even when it's not visible.
     layer.pinFirstLevel();
-    this._stage.addLayer(layer, i);
+    this.#stage.addLayer(layer, i);
   }
-  _removeLayerFromStage(layer) {
-    this._stage.removeLayer(layer);
+  #removeLayerFromStage(layer) {
+    this.#stage.removeLayer(layer);
     layer.unpinFirstLevel();
     layer.textureStore().clearNotPinned();
   }
-  _addSceneEventListeners(scene) {
-    scene.addEventListener("layerChange", this._layerChangeHandler);
-    scene.addEventListener("viewChange", this._viewChangeHandler);
+  #addSceneEventListeners(scene) {
+    scene.addEventListener("layerChange", this.#layerChangeHandler);
+    scene.addEventListener("viewChange", this.#viewChangeHandler);
   }
-  _removeSceneEventListeners(scene) {
-    scene.removeEventListener("layerChange", this._layerChangeHandler);
-    scene.removeEventListener("viewChange", this._viewChangeHandler);
+  #removeSceneEventListeners(scene) {
+    scene.removeEventListener("layerChange", this.#layerChangeHandler);
+    scene.removeEventListener("viewChange", this.#viewChangeHandler);
   }
   /**
    * Destroys a {@link Scene scene} and removes it from the viewer.
    * @param {Scene} scene
    */
   destroyScene(scene) {
-    var i = this._scenes.indexOf(scene);
+    var i = this.#scenes.indexOf(scene);
     if (i < 0) {
       throw new Error("No such scene in viewer");
     }
@@ -446,34 +448,34 @@ class Viewer {
     var j;
     var layers;
 
-    if (this._currentScene === scene) {
+    if (this.#currentScene === scene) {
       // The destroyed scene is the current scene.
       // Remove event listeners, remove layers from stage and cancel transition.
-      this._removeSceneEventListeners(scene);
+      this.#removeSceneEventListeners(scene);
       layers = scene.listLayers();
       for (j = 0; j < layers.length; j++) {
-        this._removeLayerFromStage(layers[j]);
+        this.#removeLayerFromStage(layers[j]);
       }
-      if (this._cancelCurrentTween) {
-        this._cancelCurrentTween();
-        this._cancelCurrentTween = null;
+      if (this.#cancelCurrentTween) {
+        this.#cancelCurrentTween();
+        this.#cancelCurrentTween = null;
       }
-      this._currentScene = null;
+      this.#currentScene = null;
       this.emit("sceneChange");
     }
 
-    if (this._replacedScene === scene) {
+    if (this.#replacedScene === scene) {
       // The destroyed scene is being switched away from.
       // Remove event listeners and remove layers from stage.
-      this._removeSceneEventListeners(scene);
+      this.#removeSceneEventListeners(scene);
       layers = scene.listLayers();
       for (j = 0; j < layers.length; j++) {
-        this._removeLayerFromStage(layers[j]);
+        this.#removeLayerFromStage(layers[j]);
       }
-      this._replacedScene = null;
+      this.#replacedScene = null;
     }
 
-    this._scenes.splice(i, 1);
+    this.#scenes.splice(i, 1);
 
     scene.destroy();
   }
@@ -481,8 +483,8 @@ class Viewer {
    * Destroys all {@link Scene scenes} and removes them from the viewer.
    */
   destroyAllScenes() {
-    while (this._scenes.length > 0) {
-      this.destroyScene(this._scenes[0]);
+    while (this.#scenes.length > 0) {
+      this.destroyScene(this.#scenes[0]);
     }
   }
   /**
@@ -491,14 +493,14 @@ class Viewer {
    * @return {boolean}
    */
   hasScene(scene) {
-    return this._scenes.indexOf(scene) >= 0;
+    return this.#scenes.indexOf(scene) >= 0;
   }
   /**
    * Returns a list of all {@link Scene scenes}.
    * @return {Scene[]}
    */
   listScenes() {
-    return [...this._scenes];
+    return [...this.#scenes];
   }
   /**
    * Returns the current {@link Scene scene}, or null if there isn't one.
@@ -508,7 +510,7 @@ class Viewer {
    * @return {Scene}
    */
   scene() {
-    return this._currentScene;
+    return this.#currentScene;
   }
   /**
    * Returns the {@link View view} for the current {@link Scene scene}, or null
@@ -516,7 +518,7 @@ class Viewer {
    * @return {View}
    */
   view() {
-    var scene = this._currentScene;
+    var scene = this.#currentScene;
     if (scene) {
       return scene.view();
     }
@@ -533,7 +535,7 @@ class Viewer {
    */
   lookTo(params, opts, done) {
     // TODO: is it an error to call lookTo when no scene is displayed?
-    var scene = this._currentScene;
+    var scene = this.#currentScene;
     if (scene) {
       scene.lookTo(params, opts, done);
     }
@@ -549,7 +551,7 @@ class Viewer {
    *     interrupted.
    */
   startMovement(fn: Function, done?: Function) {
-    var scene = this._currentScene;
+    var scene = this.#currentScene;
     if (!scene) {
       return;
     }
@@ -562,7 +564,7 @@ class Viewer {
    * current scene. If there is no current scene, this is a no-op.
    */
   stopMovement() {
-    var scene = this._currentScene;
+    var scene = this.#currentScene;
     if (!scene) {
       return;
     }
@@ -577,7 +579,7 @@ class Viewer {
    * @return {function}
    */
   movement() {
-    var scene = this._currentScene;
+    var scene = this.#currentScene;
     if (!scene) {
       return;
     }
@@ -595,8 +597,8 @@ class Viewer {
    * @param {function} movement Automatic movement function, or null to disable.
    */
   setIdleMovement(timeout, movement) {
-    this._idleTimer.setDuration(timeout);
-    this._idleMovement = movement;
+    this.#idleTimer.setDuration(timeout);
+    this.#idleMovement = movement;
   }
   /**
    * Stops the idle movement. It will be started again after the timeout set by
@@ -604,13 +606,13 @@ class Viewer {
    */
   breakIdleMovement() {
     this.stopMovement();
-    this._resetIdleTimer();
+    this.#resetIdleTimer();
   }
-  _resetIdleTimer() {
-    this._idleTimer.start();
+  #resetIdleTimer() {
+    this.#idleTimer.start();
   }
-  _triggerIdleTimer() {
-    var idleMovement = this._idleMovement;
+  #triggerIdleTimer() {
+    var idleMovement = this.#idleMovement;
     if (!idleMovement) {
       return;
     }
@@ -635,9 +637,9 @@ class Viewer {
     opts = opts || {};
     done = done || noop;
 
-    var stage = this._stage;
+    var stage = this.#stage;
 
-    var oldScene = this._currentScene;
+    var oldScene = this.#currentScene;
 
     // Do nothing if the target scene is the current one.
     if (oldScene === newScene) {
@@ -645,15 +647,15 @@ class Viewer {
       return;
     }
 
-    if (this._scenes.indexOf(newScene) < 0) {
+    if (this.#scenes.indexOf(newScene) < 0) {
       throw new Error("No such scene in viewer");
     }
 
     // Cancel an already ongoing transition. This ensures that the stage contains
     // layers from exactly one scene before the transition begins.
-    if (this._cancelCurrentTween) {
-      this._cancelCurrentTween();
-      this._cancelCurrentTween = null;
+    if (this.#cancelCurrentTween) {
+      this.#cancelCurrentTween();
+      this.#cancelCurrentTween = null;
     }
 
     var oldSceneLayers = oldScene ? oldScene.listLayers() : [];
@@ -683,7 +685,7 @@ class Viewer {
 
     // Add new scene layers into the stage before starting the transition.
     for (var i = 0; i < newSceneLayers.length; i++) {
-      this._addLayerToStage(newSceneLayers[i]);
+      this.#addLayerToStage(newSceneLayers[i]);
     }
 
     // Update function to be called on every frame.
@@ -698,24 +700,24 @@ class Viewer {
     // to get a fresh copy of the scene's layers, since they might have changed
     // during the transition.
     function tweenDone() {
-      if (self._replacedScene) {
-        self._removeSceneEventListeners(self._replacedScene);
-        oldSceneLayers = self._replacedScene.listLayers();
+      if (self.#replacedScene) {
+        self.#removeSceneEventListeners(self.#replacedScene);
+        oldSceneLayers = self.#replacedScene.listLayers();
         for (var i = 0; i < oldSceneLayers.length; i++) {
-          self._removeLayerFromStage(oldSceneLayers[i]);
+          self.#removeLayerFromStage(oldSceneLayers[i]);
         }
-        self._replacedScene = null;
+        self.#replacedScene = null;
       }
-      self._cancelCurrentTween = null;
+      self.#cancelCurrentTween = null;
       done?.();
     }
 
     // Store the cancelable for the transition.
-    this._cancelCurrentTween = tween(duration, tweenUpdate, tweenDone);
+    this.#cancelCurrentTween = tween(duration, tweenUpdate, tweenDone);
 
     // Update the current and replaced scene.
-    this._currentScene = newScene;
-    this._replacedScene = oldScene;
+    this.#currentScene = newScene;
+    this.#replacedScene = oldScene;
 
     // Emit scene and view change events.
     this.emit("sceneChange");
@@ -725,7 +727,7 @@ class Viewer {
     // Note that event listeners can only be removed from the old scene once the
     // transition is complete, since layers might get added or removed in the
     // interim.
-    this._addSceneEventListeners(newScene);
+    this.#addSceneEventListeners(newScene);
   }
 
   emit(_arg0: string) {
@@ -737,13 +739,13 @@ eventEmitter(Viewer);
 
 var defaultSwitchDuration = 1000;
 
-function defaultTransitionUpdate(val, newScene, _oldScene) {
+function defaultTransitionUpdate(val, newScene: Scene, _oldScene) {
   var layers = newScene.listLayers();
   layers.forEach(function (layer) {
     layer.mergeEffects({ opacity: val });
   });
 
-  newScene._hotspotContainer.domElement().style.opacity = val;
+  newScene.hotspotContainer().domElement().style.opacity = val;
 }
 
 export default Viewer;

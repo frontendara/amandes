@@ -62,25 +62,25 @@ class CancelError extends Error {
  * @param {Tile} tile The underlying tile.
  */
 class TextureStoreItem {
-  _id: number;
-  _store: any;
-  _tile: any;
-  _asset: any;
-  _texture: any;
-  _changeHandler: () => void;
-  _cancel: null | ((...args: any[]) => void);
+  #id: number;
+  #store: any;
+  #tile: any;
+  #asset: any;
+  #texture: any;
+  #changeHandler: () => void;
+  #cancel: null | ((...args: any[]) => void);
 
   constructor(store, tile) {
     var id = nextId++;
 
-    this._id = id;
-    this._store = store;
-    this._tile = tile;
+    this.#id = id;
+    this.#store = store;
+    this.#tile = tile;
 
-    this._asset = null;
-    this._texture = null;
+    this.#asset = null;
+    this.#texture = null;
 
-    this._changeHandler = () => {
+    this.#changeHandler = () => {
       store.emit("textureInvalid", tile);
     };
 
@@ -99,9 +99,9 @@ class TextureStoreItem {
       console.log("loading", id, tile);
     }
 
-    this._cancel = fn(stage, tile, (err, _tile, asset, texture) => {
+    this.#cancel = fn(stage, tile, (err, _tile, asset, texture) => {
       // Make sure we do not call cancel after the operation is complete.
-      this._cancel = null;
+      this.#cancel = null;
 
       if (err) {
         // The loading process was interrupted by an error.
@@ -132,14 +132,14 @@ class TextureStoreItem {
       }
 
       // Save a local reference to the texture.
-      this._texture = texture;
+      this.#texture = texture;
 
       // If the asset is dynamic, save a local reference to it and set up a
       // handler to be called whenever it changes. Otherwise, destroy the asset
       // as we won't be needing it any longer.
       if (asset.isDynamic()) {
-        this._asset = asset;
-        asset.addEventListener("change", this._changeHandler);
+        this.#asset = asset;
+        asset.addEventListener("change", this.#changeHandler);
       } else {
         asset.destroy();
       }
@@ -152,18 +152,18 @@ class TextureStoreItem {
     });
   }
   asset() {
-    return this._asset;
+    return this.#asset;
   }
   texture() {
-    return this._texture;
+    return this.#texture;
   }
   destroy() {
-    var id = this._id;
-    var store = this._store;
-    var tile = this._tile;
-    var asset = this._asset;
-    var texture = this._texture;
-    var cancel = this._cancel;
+    var id = this.#id;
+    var store = this.#store;
+    var tile = this.#tile;
+    var asset = this.#asset;
+    var texture = this.#texture;
+    var cancel = this.#cancel;
 
     if (cancel) {
       // The texture is still loading, so cancel it.
@@ -173,7 +173,7 @@ class TextureStoreItem {
 
     // Destroy asset.
     if (asset) {
-      asset.removeEventListener("change", this._changeHandler);
+      asset.removeEventListener("change", this.#changeHandler);
       asset.destroy();
     }
 
@@ -275,50 +275,50 @@ eventEmitter(TextureStoreItem);
  *     previously visible textures to cache according to an LRU policy.
  */
 class TextureStore {
-  _source: any;
-  _stage: any;
-  _state: number;
-  _delimCount: number;
-  _itemMap: Map;
-  _visible: Set;
-  _previouslyVisible: LruSet;
-  _pinMap: Map;
-  _newVisible: Set;
-  _noLongerVisible: any[];
-  _visibleAgain: any[];
-  _evicted: any[];
+  #source: any;
+  #stage: any;
+  #state: number;
+  #delimCount: number;
+  #itemMap: Map;
+  #visible: Set;
+  #previouslyVisible: LruSet;
+  #pinMap: Map;
+  #newVisible: Set;
+  #noLongerVisible: any[];
+  #visibleAgain: any[];
+  #evicted: any[];
   constructor(source, stage, opts) {
     opts = defaults(opts || {}, defaultOptions);
 
-    this._source = source;
-    this._stage = stage;
+    this.#source = source;
+    this.#stage = stage;
 
     // The current state.
-    this._state = State.IDLE;
+    this.#state = State.IDLE;
 
     // The number of startFrame calls yet to be matched by endFrame calls during
     // the current frame.
-    this._delimCount = 0;
+    this.#delimCount = 0;
 
     // The cache proper: map cached tiles to their respective textures/assets.
-    this._itemMap = new Map();
+    this.#itemMap = new Map();
 
     // The subset of cached tiles that are currently visible.
-    this._visible = new Set();
+    this.#visible = new Set();
 
     // The subset of cached tiles that were visible recently, but are not
     // visible right now. Newly inserted tiles replace older ones.
-    this._previouslyVisible = new LruSet(opts.previouslyVisibleCacheSize);
+    this.#previouslyVisible = new LruSet(opts.previouslyVisibleCacheSize);
 
     // The subset of cached tiles that should never be evicted from the cache.
     // A tile may be pinned more than once; map each tile into a reference count.
-    this._pinMap = new Map();
+    this.#pinMap = new Map();
 
     // Temporary variables.
-    this._newVisible = new Set();
-    this._noLongerVisible = [];
-    this._visibleAgain = [];
-    this._evicted = [];
+    this.#newVisible = new Set();
+    this.#noLongerVisible = [];
+    this.#visibleAgain = [];
+    this.#evicted = [];
   }
   /**
    * Destructor.
@@ -332,14 +332,14 @@ class TextureStore {
    * @return {Stage}
    */
   stage() {
-    return this._stage;
+    return this.#stage;
   }
   /**
    * Return the underlying {@link Source}.
    * @return {Source}
    */
   source() {
-    return this._source;
+    return this.#source;
   }
   /**
    * Remove all textures from the TextureStore, including pinned textures.
@@ -348,64 +348,64 @@ class TextureStore {
     var self = this;
 
     // Collect list of tiles to be evicted.
-    self._evicted.length = 0;
-    self._itemMap.forEach(function (tile) {
-      self._evicted.push(tile);
+    self.#evicted.length = 0;
+    self.#itemMap.forEach(function (tile) {
+      self.#evicted.push(tile);
     });
 
     // Evict tiles.
-    self._evicted.forEach(function (tile) {
-      self._unloadTile(tile);
+    self.#evicted.forEach(function (tile) {
+      self.#unloadTile(tile);
     });
 
     // Clear all internal state.
-    self._itemMap.clear();
-    self._visible.clear();
-    self._previouslyVisible.clear();
-    self._pinMap.clear();
-    self._newVisible.clear();
-    self._noLongerVisible.length = 0;
-    self._visibleAgain.length = 0;
-    self._evicted.length = 0;
+    self.#itemMap.clear();
+    self.#visible.clear();
+    self.#previouslyVisible.clear();
+    self.#pinMap.clear();
+    self.#newVisible.clear();
+    self.#noLongerVisible.length = 0;
+    self.#visibleAgain.length = 0;
+    self.#evicted.length = 0;
   }
   /**
    * Remove all textures in the TextureStore, excluding unpinned textures.
    */
   clearNotPinned() {
     // Collect list of tiles to be evicted.
-    this._evicted.length = 0;
-    this._itemMap.forEach((tile) => {
-      if (!this._pinMap.has(tile)) {
-        this._evicted.push(tile);
+    this.#evicted.length = 0;
+    this.#itemMap.forEach((tile) => {
+      if (!this.#pinMap.has(tile)) {
+        this.#evicted.push(tile);
       }
     });
 
     // Evict tiles.
-    this._evicted.forEach((tile) => {
-      this._unloadTile(tile);
+    this.#evicted.forEach((tile) => {
+      this.#unloadTile(tile);
     });
 
     // Clear all caches except the pinned set.
-    this._visible.clear();
-    this._previouslyVisible.clear();
+    this.#visible.clear();
+    this.#previouslyVisible.clear();
 
     // Clear temporary variables.
-    this._evicted.length = 0;
+    this.#evicted.length = 0;
   }
   /**
    * Signal the beginning of a frame. Called from {@link Stage}.
    */
   startFrame() {
     // Check that we are in an appropriate state.
-    if (this._state !== State.IDLE && this._state !== State.START) {
+    if (this.#state !== State.IDLE && this.#state !== State.START) {
       throw new Error("TextureStore: startFrame called out of sequence");
     }
 
     // Enter the START state, if not already there.
-    this._state = State.START;
+    this.#state = State.START;
 
     // Expect one more endFrame call.
-    this._delimCount++;
+    this.#delimCount++;
   }
   /**
    * Mark a tile as visible within the current frame. Called from {@link Stage}.
@@ -413,15 +413,15 @@ class TextureStore {
    */
   markTile(tile) {
     // Check that we are in an appropriate state.
-    if (this._state !== State.START && this._state !== State.MARK) {
+    if (this.#state !== State.START && this.#state !== State.MARK) {
       throw new Error("TextureStore: markTile called out of sequence");
     }
 
     // Enter the MARK state, if not already there.
-    this._state = State.MARK;
+    this.#state = State.MARK;
 
     // Refresh texture for dynamic assets.
-    var item = this._itemMap.get(tile);
+    var item = this.#itemMap.get(tile);
     var texture = item && item.texture();
     var asset = item && item.asset();
     if (texture && asset) {
@@ -429,7 +429,7 @@ class TextureStore {
     }
 
     // Add tile to the visible set.
-    this._newVisible.add(tile);
+    this.#newVisible.add(tile);
   }
   /**
    * Signal the end of a frame. Called from {@link Stage}.
@@ -437,120 +437,120 @@ class TextureStore {
   endFrame() {
     // Check that we are in an appropriate state.
     if (
-      this._state !== State.START &&
-      this._state !== State.MARK &&
-      this._state !== State.END
+      this.#state !== State.START &&
+      this.#state !== State.MARK &&
+      this.#state !== State.END
     ) {
       throw new Error("TextureStore: endFrame called out of sequence");
     }
 
     // Enter the END state, if not already there.
-    this._state = State.END;
+    this.#state = State.END;
 
     // Expect one less call to endFrame.
-    this._delimCount--;
+    this.#delimCount--;
 
     // If no further calls are expected, process frame and enter the IDLE state.
-    if (!this._delimCount) {
-      this._update();
-      this._state = State.IDLE;
+    if (!this.#delimCount) {
+      this.#update();
+      this.#state = State.IDLE;
     }
   }
-  _update() {
+  #update() {
     var self = this;
 
     // Calculate the set of tiles that used to be visible but no longer are.
-    self._noLongerVisible.length = 0;
-    self._visible.forEach(function (tile) {
-      if (!self._newVisible.has(tile)) {
-        self._noLongerVisible.push(tile);
+    self.#noLongerVisible.length = 0;
+    self.#visible.forEach(function (tile) {
+      if (!self.#newVisible.has(tile)) {
+        self.#noLongerVisible.push(tile);
       }
     });
 
     // Calculate the set of tiles that were visible recently and have become
     // visible again.
-    self._visibleAgain.length = 0;
-    self._newVisible.forEach(function (tile) {
-      if (self._previouslyVisible.has(tile)) {
-        self._visibleAgain.push(tile);
+    self.#visibleAgain.length = 0;
+    self.#newVisible.forEach(function (tile) {
+      if (self.#previouslyVisible.has(tile)) {
+        self.#visibleAgain.push(tile);
       }
     });
 
     // Remove tiles that have become visible again from the list of previously
     // visible tiles.
-    self._visibleAgain.forEach(function (tile) {
-      self._previouslyVisible.remove(tile);
+    self.#visibleAgain.forEach(function (tile) {
+      self.#previouslyVisible.remove(tile);
     });
 
     // Cancel loading of tiles that are no longer visible.
     // Move no longer visible tiles with a loaded texture into the previously
     // visible set, and collect the tiles evicted from the latter.
-    self._evicted.length = 0;
-    self._noLongerVisible.forEach(function (tile) {
-      var item = self._itemMap.get(tile);
+    self.#evicted.length = 0;
+    self.#noLongerVisible.forEach(function (tile) {
+      var item = self.#itemMap.get(tile);
       var texture = item && item.texture();
       if (texture) {
-        var otherTile = self._previouslyVisible.add(tile);
+        var otherTile = self.#previouslyVisible.add(tile);
         if (otherTile != null) {
-          self._evicted.push(otherTile);
+          self.#evicted.push(otherTile);
         }
       } else if (item) {
-        self._unloadTile(tile);
+        self.#unloadTile(tile);
       }
     });
 
     // Unload evicted tiles, unless they are pinned.
-    self._evicted.forEach(function (tile) {
-      if (!self._pinMap.has(tile)) {
-        self._unloadTile(tile);
+    self.#evicted.forEach(function (tile) {
+      if (!self.#pinMap.has(tile)) {
+        self.#unloadTile(tile);
       }
     });
 
     // Load visible tiles that are not already in the store.
     // Refresh texture on visible tiles for dynamic assets.
-    self._newVisible.forEach(function (tile) {
-      var item = self._itemMap.get(tile);
+    self.#newVisible.forEach(function (tile) {
+      var item = self.#itemMap.get(tile);
       if (!item) {
-        self._loadTile(tile);
+        self.#loadTile(tile);
       }
     });
 
     // Swap the old visible set with the new one.
-    var tmp = self._visible;
-    self._visible = self._newVisible;
-    self._newVisible = tmp;
+    var tmp = self.#visible;
+    self.#visible = self.#newVisible;
+    self.#newVisible = tmp;
 
     // Clear the new visible set.
-    self._newVisible.clear();
+    self.#newVisible.clear();
 
     // Clear temporary variables.
-    self._noLongerVisible.length = 0;
-    self._visibleAgain.length = 0;
-    self._evicted.length = 0;
+    self.#noLongerVisible.length = 0;
+    self.#visibleAgain.length = 0;
+    self.#evicted.length = 0;
   }
-  _loadTile(tile) {
-    if (this._itemMap.has(tile)) {
+  #loadTile(tile) {
+    if (this.#itemMap.has(tile)) {
       throw new Error("TextureStore: loading texture already in cache");
     }
     var item = new TextureStoreItem(this, tile);
-    this._itemMap.set(tile, item);
+    this.#itemMap.set(tile, item);
   }
-  _unloadTile(tile) {
-    var item = this._itemMap.del(tile);
+  #unloadTile(tile) {
+    var item = this.#itemMap.del(tile);
     if (!item) {
       throw new Error("TextureStore: unloading texture not in cache");
     }
     item.destroy();
   }
   asset(tile) {
-    var item = this._itemMap.get(tile);
+    var item = this.#itemMap.get(tile);
     if (item) {
       return item.asset();
     }
     return null;
   }
   texture(tile) {
-    var item = this._itemMap.get(tile);
+    var item = this.#itemMap.get(tile);
     if (item) {
       return item.texture();
     }
@@ -568,11 +568,11 @@ class TextureStore {
    */
   pin(tile) {
     // Increment reference count.
-    var count = (this._pinMap.get(tile) || 0) + 1;
-    this._pinMap.set(tile, count);
+    var count = (this.#pinMap.get(tile) || 0) + 1;
+    this.#pinMap.set(tile, count);
     // If the texture for the tile is not present, load it now.
-    if (!this._itemMap.has(tile)) {
-      this._loadTile(tile);
+    if (!this.#itemMap.has(tile)) {
+      this.#loadTile(tile);
     }
     return count;
   }
@@ -583,7 +583,7 @@ class TextureStore {
    * @returns {number} the pin reference count.
    */
   unpin(tile) {
-    var count = this._pinMap.get(tile);
+    var count = this.#pinMap.get(tile);
     // Consistency check.
     if (!count) {
       throw new Error("TextureStore: unpin when not pinned");
@@ -591,13 +591,13 @@ class TextureStore {
       // Decrement reference count.
       count--;
       if (count > 0) {
-        this._pinMap.set(tile, count);
+        this.#pinMap.set(tile, count);
       } else {
-        this._pinMap.del(tile);
+        this.#pinMap.del(tile);
         // If the tile does not belong to either the visible or previously
         // visible sets, evict it from the cache.
-        if (!this._visible.has(tile) && !this._previouslyVisible.has(tile)) {
-          this._unloadTile(tile);
+        if (!this.#visible.has(tile) && !this.#previouslyVisible.has(tile)) {
+          this.#unloadTile(tile);
         }
       }
     }
@@ -620,11 +620,11 @@ class TextureStore {
    * @return {TileState}
    */
   query(tile) {
-    var item = this._itemMap.get(tile);
-    var pinCount = this._pinMap.get(tile) || 0;
+    var item = this.#itemMap.get(tile);
+    var pinCount = this.#pinMap.get(tile) || 0;
     return {
-      visible: this._visible.has(tile),
-      previouslyVisible: this._previouslyVisible.has(tile),
+      visible: this.#visible.has(tile),
+      previouslyVisible: this.#previouslyVisible.has(tile),
       hasAsset: item != null && item.asset() != null,
       hasTexture: item != null && item.texture() != null,
       pinned: pinCount !== 0,

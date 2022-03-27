@@ -25,42 +25,42 @@ import clearOwnProperties from "./util/clearOwnProperties";
  * @param {Stage} stage
  */
 class RenderLoop {
-  _stage: any;
-  _running: boolean;
-  _rendering: boolean;
-  _requestHandle: null | number;
-  _boundLoop: () => void;
-  _renderInvalidHandler: () => void;
+  #stage: any;
+  #running: boolean;
+  #rendering: boolean;
+  #requestHandle: null | number;
+  #boundLoop: () => void;
+  #renderInvalidHandler: () => void;
   constructor(stage) {
 
     var self = this;
 
     // The stage wrapped by the loop.
-    this._stage = stage;
+    this.#stage = stage;
 
     // Whether the loop is running.
-    this._running = false;
+    this.#running = false;
 
     // Whether the loop is currently rendering.
-    this._rendering = false;
+    this.#rendering = false;
 
     // The current requestAnimationFrame handle.
-    this._requestHandle = null;
+    this.#requestHandle = null;
 
     // The callback passed into requestAnimationFrame.
-    this._boundLoop = this._loop.bind(this);
+    this.#boundLoop = this.#loop.bind(this);
 
     // Handler for renderInvalid events emitted by the stage.
-    this._renderInvalidHandler = function () {
+    this.#renderInvalidHandler = function () {
       // If we are already rendering, there's no need to schedule a new render
       // on the next frame.
-      if (!self._rendering) {
+      if (!self.#rendering) {
         self.renderOnNextFrame();
       }
     };
 
     // Handle renderInvalid events emitted by the stage.
-    this._stage.addEventListener('renderInvalid', this._renderInvalidHandler);
+    this.#stage.addEventListener('renderInvalid', this.#renderInvalidHandler);
 
   }
   /**
@@ -68,7 +68,7 @@ class RenderLoop {
    */
   destroy() {
     this.stop();
-    this._stage.removeEventListener('renderInvalid', this._renderInvalidHandler);
+    this.#stage.removeEventListener('renderInvalid', this.#renderInvalidHandler);
     clearOwnProperties(this);
   }
   /**
@@ -76,43 +76,43 @@ class RenderLoop {
    * @return {Stage}
    */
   stage() {
-    return this._stage;
+    return this.#stage;
   }
   /**
    * Starts the render loop.
    */
   start() {
-    this._running = true;
+    this.#running = true;
     this.renderOnNextFrame();
   }
   /**
    * Stops the render loop.
    */
   stop() {
-    if (this._requestHandle) {
-      window.cancelAnimationFrame(this._requestHandle);
-      this._requestHandle = null;
+    if (this.#requestHandle) {
+      window.cancelAnimationFrame(this.#requestHandle);
+      this.#requestHandle = null;
     }
-    this._running = false;
+    this.#running = false;
   }
   /**
    * Forces the stage to render on the next frame, even if its contents remain
    * valid. Does nothing if the loop is stopped.
    */
   renderOnNextFrame() {
-    if (this._running && !this._requestHandle) {
-      this._requestHandle = window.requestAnimationFrame(this._boundLoop);
+    if (this.#running && !this.#requestHandle) {
+      this.#requestHandle = window.requestAnimationFrame(this.#boundLoop);
     }
   }
-  _loop() {
-    if (!this._running) {
+  #loop() {
+    if (!this.#running) {
       throw new Error('Render loop running while in stopped state');
     }
-    this._requestHandle = null;
-    this._rendering = true;
+    this.#requestHandle = null;
+    this.#rendering = true;
     this.emit('beforeRender');
-    this._rendering = false;
-    this._stage.render();
+    this.#rendering = false;
+    this.#stage.render();
     this.emit('afterRender');
   }
   emit(_arg0: string) {
