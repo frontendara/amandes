@@ -14,13 +14,13 @@ import type from "../util/type";
  */
 class EquirectTile {
   z: any;
-  _geometry: any;
+  #geometry: any;
   _level: any;
   static type: string;
 
   constructor(z, geometry) {
     this.z = z;
-    this._geometry = geometry;
+    this.#geometry = geometry;
     this._level = geometry.levelList[z];
   }
   rotX() {
@@ -45,14 +45,14 @@ class EquirectTile {
     if (this.z === 0) {
       return null;
     }
-    return new EquirectTile(this.z - 1, this._geometry);
+    return new EquirectTile(this.z - 1, this.#geometry);
   }
   children(result) {
-    if (this.z === this._geometry.levelList.length - 1) {
+    if (this.z === this.#geometry.levelList.length - 1) {
       return null;
     }
     result = result || [];
-    result.push(new EquirectTile(this.z + 1, this._geometry));
+    result.push(new EquirectTile(this.z + 1, this.#geometry));
     return result;
   }
   neighbors() {
@@ -62,7 +62,7 @@ class EquirectTile {
     return hash(this.z);
   }
   equals(that) {
-    return this._geometry === that._geometry && this.z === that.z;
+    return this.#geometry === that.#geometry && this.z === that.z;
   }
   cmp(that) {
     return cmp(this.z, that.z);
@@ -73,22 +73,22 @@ class EquirectTile {
 }
 
 class EquirectLevel extends Level {
-  _width: any;
+  #width: any;
   constructor(levelProperties) {
     super(levelProperties);
-    this._width = levelProperties.width;
+    this.#width = levelProperties.width;
   }
   width() {
-    return this._width;
+    return this.#width;
   }
   height() {
-    return this._width / 2;
+    return this.#width / 2;
   }
   tileWidth() {
-    return this._width;
+    return this.#width;
   }
   tileHeight() {
-    return this._width / 2;
+    return this.#width / 2;
   }
 }
 

@@ -122,19 +122,19 @@ type FlatViewConstructorParams = FlatViewParams & {
  *     limiters.
  */
 class FlatView {
-  _x: any;
-  _y: any;
-  _zoom: any;
-  _mediaAspectRatio: any;
-  _width: any;
-  _height: any;
-  _limiter: any;
-  _projMatrix: mat4;
-  _invProjMatrix: mat4;
-  _frustum: number[];
-  _projectionChanged: boolean;
-  _params: any;
-  _vec: vec4;
+  #x: any;
+  #y: any;
+  #zoom: any;
+  #mediaAspectRatio: any;
+  #width: any;
+  #height: any;
+  #limiter: any;
+  #projMatrix: mat4;
+  #invProjMatrix: mat4;
+  #frustum: number[];
+  #projectionChanged: boolean;
+  #params: any;
+  #vec: vec4;
   static limit: {
     /**
      * Returns a view limiter that constrains the x parameter.
@@ -197,23 +197,23 @@ class FlatView {
     }
 
     // The initial values for the view parameters.
-    this._x = params && params.x != null ? params.x : defaultX;
-    this._y = params && params.y != null ? params.y : defaultY;
-    this._zoom = params && params.zoom != null ? params.zoom : defaultZoom;
-    this._mediaAspectRatio = params.mediaAspectRatio;
-    this._width = params && params.width != null ? params.width : defaultWidth;
-    this._height =
+    this.#x = params && params.x != null ? params.x : defaultX;
+    this.#y = params && params.y != null ? params.y : defaultY;
+    this.#zoom = params && params.zoom != null ? params.zoom : defaultZoom;
+    this.#mediaAspectRatio = params.mediaAspectRatio;
+    this.#width = params && params.width != null ? params.width : defaultWidth;
+    this.#height =
       params && params.height != null ? params.height : defaultHeight;
 
     // The initial value for the view limiter.
-    this._limiter = limiter || null;
+    this.#limiter = limiter || null;
 
     // The last calculated projection matrix and its inverse.
-    this._projMatrix = mat4.create();
-    this._invProjMatrix = mat4.create();
+    this.#projMatrix = mat4.create();
+    this.#invProjMatrix = mat4.create();
 
     // The last calculated view frustum.
-    this._frustum = [
+    this.#frustum = [
       0,
       0,
       0,
@@ -221,14 +221,14 @@ class FlatView {
     ];
 
     // Whether the projection matrices and view frustum need to be updated.
-    this._projectionChanged = true;
+    this.#projectionChanged = true;
 
     // Temporary variables used for calculations.
-    this._params = {};
-    this._vec = vec4.create();
+    this.#params = {};
+    this.#vec = vec4.create();
 
     // Force view limiting on initial parameters.
-    this._update();
+    this.#update();
   }
   /**
    * Destructor.
@@ -241,42 +241,42 @@ class FlatView {
    * @return {number}
    */
   x() {
-    return this._x;
+    return this.#x;
   }
   /**
    * Get the y parameter.
    * @return {number}
    */
   y() {
-    return this._y;
+    return this.#y;
   }
   /**
    * Get the zoom value.
    * @return {number}
    */
   zoom() {
-    return this._zoom;
+    return this.#zoom;
   }
   /**
    * Get the media aspect ratio.
    * @return {number}
    */
   mediaAspectRatio() {
-    return this._mediaAspectRatio;
+    return this.#mediaAspectRatio;
   }
   /**
    * Get the viewport width.
    * @return {number}
    */
   width() {
-    return this._width;
+    return this.#width;
   }
   /**
    * Get the viewport height.
    * @return {number}
    */
   height() {
-    return this._height;
+    return this.#height;
   }
   /**
    * Get the viewport dimensions. If an argument is supplied, it is filled in with
@@ -286,8 +286,8 @@ class FlatView {
    */
   size(size) {
     size = size || {};
-    size.width = this._width;
-    size.height = this._height;
+    size.width = this.#width;
+    size.height = this.#height;
     return size;
   }
   /**
@@ -298,10 +298,10 @@ class FlatView {
    */
   parameters(params?: FlatViewParams) {
     params = params || {};
-    params.x = this._x;
-    params.y = this._y;
-    params.zoom = this._zoom;
-    params.mediaAspectRatio = this._mediaAspectRatio;
+    params.x = this.#x;
+    params.y = this.#y;
+    params.zoom = this.#zoom;
+    params.mediaAspectRatio = this.#mediaAspectRatio;
     return params;
   }
   /**
@@ -309,97 +309,97 @@ class FlatView {
    * @return {?FlatViewLimiter}
    */
   limiter() {
-    return this._limiter;
+    return this.#limiter;
   }
   /**
    * Set the x parameter.
    * @param {number} x
    */
   setX(x) {
-    this._resetParams();
-    this._params.x = x;
-    this._update(this._params);
+    this.#resetParams();
+    this.#params.x = x;
+    this.#update(this.#params);
   }
   /**
    * Set the y parameter.
    * @param {number} y
    */
   setY(y) {
-    this._resetParams();
-    this._params.y = y;
-    this._update(this._params);
+    this.#resetParams();
+    this.#params.y = y;
+    this.#update(this.#params);
   }
   /**
    * Set the zoom value.
    * @param {number} zoom
    */
   setZoom(zoom) {
-    this._resetParams();
-    this._params.zoom = zoom;
-    this._update(this._params);
+    this.#resetParams();
+    this.#params.zoom = zoom;
+    this.#update(this.#params);
   }
   /**
    * Add xOffset to the x parameter.
    * @param {number} xOffset
    */
   offsetX(xOffset) {
-    this.setX(this._x + xOffset);
+    this.setX(this.#x + xOffset);
   }
   /**
    * Add yOffset to the y parameter.
    * @param {number} yOffset
    */
   offsetY(yOffset) {
-    this.setY(this._y + yOffset);
+    this.setY(this.#y + yOffset);
   }
   /**
    * Add zoomOffset to the zoom value.
    * @param {number} zoomOffset
    */
   offsetZoom(zoomOffset) {
-    this.setZoom(this._zoom + zoomOffset);
+    this.setZoom(this.#zoom + zoomOffset);
   }
   /**
    * Set the media aspect ratio.
    * @param {number} mediaAspectRatio
    */
   setMediaAspectRatio(mediaAspectRatio) {
-    this._resetParams();
-    this._params.mediaAspectRatio = mediaAspectRatio;
-    this._update(this._params);
+    this.#resetParams();
+    this.#params.mediaAspectRatio = mediaAspectRatio;
+    this.#update(this.#params);
   }
   /**
    * Set the viewport dimensions.
    * @param {Size} size
    */
   setSize(size) {
-    this._resetParams();
-    this._params.width = size.width;
-    this._params.height = size.height;
-    this._update(this._params);
+    this.#resetParams();
+    this.#params.width = size.width;
+    this.#params.height = size.height;
+    this.#update(this.#params);
   }
   /**
    * Set the view parameters. Unspecified parameters are left unchanged.
    * @param {FlatViewParameters} params
    */
   setParameters(params) {
-    this._resetParams();
-    this._params.x = params.x;
-    this._params.y = params.y;
-    this._params.zoom = params.zoom;
-    this._params.mediaAspectRatio = params.mediaAspectRatio;
-    this._update(this._params);
+    this.#resetParams();
+    this.#params.x = params.x;
+    this.#params.y = params.y;
+    this.#params.zoom = params.zoom;
+    this.#params.mediaAspectRatio = params.mediaAspectRatio;
+    this.#update(this.#params);
   }
   /**
    * Set the view limiter.
    * @param {?FlatViewLimiter} limiter The new limiter, or null to unset.
    */
   setLimiter(limiter) {
-    this._limiter = limiter || null;
-    this._update();
+    this.#limiter = limiter || null;
+    this.#update();
   }
-  _resetParams() {
-    var params = this._params;
+  #resetParams() {
+    var params = this.#params;
     params.x = null;
     params.y = null;
     params.zoom = null;
@@ -407,20 +407,20 @@ class FlatView {
     params.width = null;
     params.height = null;
   }
-  _update(params?: FlatViewConstructorParams | null) {
+  #update(params?: FlatViewConstructorParams | null) {
     // Avoid object allocation when no parameters are supplied.
     if (params == null) {
-      this._resetParams();
-      params = this._params as FlatViewConstructorParams;
+      this.#resetParams();
+      params = this.#params as FlatViewConstructorParams;
     }
 
     // Save old parameters for later comparison.
-    var oldX = this._x;
-    var oldY = this._y;
-    var oldZoom = this._zoom;
-    var oldMediaAspectRatio = this._mediaAspectRatio;
-    var oldWidth = this._width;
-    var oldHeight = this._height;
+    var oldX = this.#x;
+    var oldY = this.#y;
+    var oldZoom = this.#zoom;
+    var oldMediaAspectRatio = this.#mediaAspectRatio;
+    var oldWidth = this.#width;
+    var oldHeight = this.#height;
 
     // Fill in object with the new set of parameters to pass into the limiter.
     params.x = params.x != null ? params.x : oldX;
@@ -434,8 +434,8 @@ class FlatView {
     params.height = params.height != null ? params.height : oldHeight;
 
     // Apply view limiting when defined.
-    if (this._limiter) {
-      params = this._limiter(params);
+    if (this.#limiter) {
+      params = this.#limiter(params);
       if (!params) {
         throw new Error("Bad view limiter");
       }
@@ -465,12 +465,12 @@ class FlatView {
     newZoom = clamp(Number(newZoom), zoomLimitEpsilon, Infinity);
 
     // Update parameters.
-    this._x = newX;
-    this._y = newY;
-    this._zoom = newZoom;
-    this._mediaAspectRatio = newMediaAspectRatio;
-    this._width = newWidth;
-    this._height = newHeight;
+    this.#x = newX;
+    this.#y = newY;
+    this.#zoom = newZoom;
+    this.#mediaAspectRatio = newMediaAspectRatio;
+    this.#width = newWidth;
+    this.#height = newHeight;
 
     // Check whether the parameters changed and emit the corresponding events.
     if (
@@ -481,7 +481,7 @@ class FlatView {
       newWidth !== oldWidth ||
       newHeight !== oldHeight
     ) {
-      this._projectionChanged = true;
+      this.#projectionChanged = true;
       this.emit("change");
     }
     if (newWidth !== oldWidth || newHeight !== oldHeight) {
@@ -491,13 +491,13 @@ class FlatView {
   emit(_arg0: string) {
     throw new Error("Method not implemented.");
   }
-  _zoomX() {
-    return this._zoom;
+  #zoomX() {
+    return this.#zoom;
   }
-  _zoomY() {
-    var mediaAspectRatio = this._mediaAspectRatio;
-    var aspect = this._width / this._height;
-    var zoomX = this._zoom;
+  #zoomY() {
+    var mediaAspectRatio = this.#mediaAspectRatio;
+    var aspect = this.#width / this.#height;
+    var zoomX = this.#zoom;
     var zoomY = (zoomX * mediaAspectRatio) / aspect;
     if (isNaN(zoomY)) {
       zoomY = zoomX;
@@ -506,25 +506,25 @@ class FlatView {
   }
   updateWithControlParameters(parameters) {
     var scale = this.zoom();
-    var zoomX = this._zoomX();
-    var zoomY = this._zoomY();
+    var zoomX = this.#zoomX();
+    var zoomY = this.#zoomY();
 
     // TODO: should the scale be the same for both axes?
     this.offsetX(parameters.axisScaledX * zoomX + parameters.x * scale);
     this.offsetY(parameters.axisScaledY * zoomY + parameters.y * scale);
     this.offsetZoom(parameters.zoom * scale);
   }
-  _updateProjection() {
-    var projMatrix = this._projMatrix;
-    var invProjMatrix = this._invProjMatrix;
-    var frustum = this._frustum;
+  #updateProjection() {
+    var projMatrix = this.#projMatrix;
+    var invProjMatrix = this.#invProjMatrix;
+    var frustum = this.#frustum;
 
     // Recalculate projection matrix when required.
-    if (this._projectionChanged) {
-      var x = this._x;
-      var y = this._y;
-      var zoomX = this._zoomX();
-      var zoomY = this._zoomY();
+    if (this.#projectionChanged) {
+      var x = this.#x;
+      var y = this.#y;
+      var zoomX = this.#zoomX();
+      var zoomY = this.#zoomY();
 
       // Recalculate view frustum.
       var top = (frustum[0] = 0.5 - y + 0.5 * zoomY);
@@ -536,7 +536,7 @@ class FlatView {
       mat4.ortho(projMatrix, left, right, bottom, top, -1, 1);
       mat4.invert(invProjMatrix, projMatrix);
 
-      this._projectionChanged = false;
+      this.#projectionChanged = false;
     }
   }
   /**
@@ -544,16 +544,16 @@ class FlatView {
    * @returns {mat4}
    */
   projection() {
-    this._updateProjection();
-    return this._projMatrix;
+    this.#updateProjection();
+    return this.#projMatrix;
   }
   /**
    * Returns the inverse projection matrix for the current view.
    * @returns {mat4}
    */
   inverseProjection() {
-    this._updateProjection();
-    return this._invProjMatrix;
+    this.#updateProjection();
+    return this.#invProjMatrix;
   }
   /**
    * Return whether the view frustum intersects the given rectangle.
@@ -565,9 +565,9 @@ class FlatView {
    * @param {vec3[]} rectangle The vertices of the rectangle.
    */
   intersects(rectangle) {
-    this._updateProjection();
+    this.#updateProjection();
 
-    var frustum = this._frustum;
+    var frustum = this.#frustum;
 
     // Check whether the rectangle is on the outer side of any of the frustum
     // planes. This is a sufficient condition, though not necessary, for the
@@ -610,7 +610,7 @@ class FlatView {
     // falling back on the largest level if none do.
 
     var requiredPixels = pixelRatio() * this.width();
-    var zoomFactor = this._zoom;
+    var zoomFactor = this.#zoom;
 
     for (var i = 0; i < levels.length; i++) {
       var level = levels[i];
@@ -631,14 +631,14 @@ class FlatView {
    * @return {Coords}
    */
   coordinatesToScreen(coords, result) {
-    var ray = this._vec;
+    var ray = this.#vec;
 
     if (!result) {
       result = {};
     }
 
-    var width = this._width;
-    var height = this._height;
+    var width = this.#width;
+    var height = this.#height;
 
     // Undefined on a null viewport.
     if (width <= 0 || height <= 0) {
@@ -676,14 +676,14 @@ class FlatView {
    * @return {FlatViewCoords}
    */
   screenToCoordinates(coords, result) {
-    var ray = this._vec;
+    var ray = this.#vec;
 
     if (!result) {
       result = {};
     }
 
-    var width = this._width;
-    var height = this._height;
+    var width = this.#width;
+    var height = this.#height;
 
     // Convert viewport coordinates to clip space.
     var vecx = (2 * coords.x) / width - 1;

@@ -27,6 +27,7 @@ var createImageBitmapOpts = {
  * @param {Stage} stage The stage which is going to request images to be loaded.
  */
 class HtmlImageLoader {
+  // TODO: this doesn't seem to be used anywhere. Remove?
   _stage: any;
 
   constructor(stage) {

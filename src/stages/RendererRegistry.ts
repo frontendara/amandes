@@ -9,9 +9,9 @@
  * See also {@link Stage#registerRenderer}.
  */
 class RendererRegistry {
-  _renderers: {};
+  #renderers: {};
   constructor() {
-    this._renderers = {};
+    this.#renderers = {};
   }
   /**
    * Registers a renderer for the given geometry and view type.
@@ -21,10 +21,10 @@ class RendererRegistry {
    * @param {*} Renderer The renderer class.
    */
   set(geometryType, viewType, Renderer) {
-    if (!this._renderers[geometryType]) {
-      this._renderers[geometryType] = {};
+    if (!this.#renderers[geometryType]) {
+      this.#renderers[geometryType] = {};
     }
-    this._renderers[geometryType][viewType] = Renderer;
+    this.#renderers[geometryType][viewType] = Renderer;
   }
   /**
    * Retrieves the renderer for the given geometry and view type.
@@ -35,8 +35,8 @@ class RendererRegistry {
    * registered.
    */
   get(geometryType, viewType) {
-    var Renderer = this._renderers[geometryType] &&
-      this._renderers[geometryType][viewType];
+    var Renderer = this.#renderers[geometryType] &&
+      this.#renderers[geometryType][viewType];
     return Renderer || null;
   }
 }

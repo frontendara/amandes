@@ -44,30 +44,30 @@ var defaultRetryDelay = 10000;
  *     retrying a failed request.
  */
 class ImageUrlSource implements Source {
-  _loadPool: WorkPool;
-  _retryDelay: any;
-  _retryMap: {};
-  _sourceFromTile: any;
+  #loadPool: WorkPool;
+  #retryDelay: any;
+  #retryMap: {};
+  #sourceFromTile: any;
 
   constructor(sourceFromTile, opts) {
 
     opts = opts ? opts : {};
 
-    this._loadPool = new WorkPool({
+    this.#loadPool = new WorkPool({
       concurrency: opts.concurrency || defaultConcurrency
     });
 
-    this._retryDelay = opts.retryDelay || defaultRetryDelay;
-    this._retryMap = {};
+    this.#retryDelay = opts.retryDelay || defaultRetryDelay;
+    this.#retryMap = {};
 
-    this._sourceFromTile = sourceFromTile;
+    this.#sourceFromTile = sourceFromTile;
   }
   loadAsset(stage, tile, done) {
 
-    var retryDelay = this._retryDelay;
-    var retryMap = this._retryMap;
+    var retryDelay = this.#retryDelay;
+    var retryMap = this.#retryMap;
 
-    var tileSource = this._sourceFromTile(tile);
+    var tileSource = this.#sourceFromTile(tile);
     var url = tileSource.url;
     var rect = tileSource.rect;
 
@@ -77,7 +77,7 @@ class ImageUrlSource implements Source {
       // TODO: Deduplicate load requests for the same URL. Although the browser
       // might be smart enough to avoid duplicate requests, they are still unduly
       // impacted by the concurrency parameter.
-      return this._loadPool.push(loadImage, (err, asset) => {
+      return this.#loadPool.push(loadImage, (err, asset) => {
         if (err) {
           if (err instanceof NetworkError) {
             // If a network error occurred, wait before retrying.

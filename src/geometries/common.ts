@@ -19,7 +19,8 @@ function makeSelectableLevelList(levelList) {
   var list: unknown[] = [];
 
   for (var i = 0; i < levelList.length; i++) {
-    if (!levelList[i]._fallbackOnly) {
+    // TODO: should this be using a getter
+    if (!levelList[i].fallbackOnly()) {
       list.push(levelList[i]);
     }
   }

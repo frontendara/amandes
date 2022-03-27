@@ -8,18 +8,19 @@
  * @param {Asset} asset The asset.
 */
 class SingleAssetSource {
-  _asset: any;
+  #asset: any;
   constructor(asset) {
-    this._asset = asset;
+    this.#asset = asset;
   }
   asset() {
-    return this._asset;
+    return this.#asset;
   }
+  // TODO: _stage doesn't seem to be uesd here. Remove?
   loadAsset(_stage, tile, done) {
     var self = this;
 
     var timeout = setTimeout(function () {
-      done(null, tile, self._asset);
+      done(null, tile, self.#asset);
     }, 0);
 
     function cancel() {
