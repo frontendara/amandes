@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 
 // This file provides utility functions for waiting until certain conditions
 // are true by polling repeatedly. In a test, this is faster and more robust
