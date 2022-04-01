@@ -28,7 +28,7 @@ var levelsBelow = [512].map(function (size) {
   return { size: size, tileSize: 512 };
 });
 var geometryBelow = new Marzipano.CubeGeometry(levelsBelow);
-var sourceBelow = new Marzipano.ImageUrlSource(function (tile) {
+var sourceBelow = new Marzipano.ImageUrlSource(function () {
   return { url: '//www.marzipano.net/media/pixels/red.png' };
 });
 var textureStoreBelow = new Marzipano.TextureStore(sourceBelow, stage);

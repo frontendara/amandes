@@ -21,9 +21,10 @@ import { makeLevelList as makeLevelList } from './common';
 import { makeSelectableLevelList as makeSelectableLevelList } from './common';
 import clamp from '../util/clamp';
 import cmp from '../util/cmp';
-import type from '../util/type';
+import getType from '../util/type';
 import { vec3 as vec3 } from 'gl-matrix';
 import { vec4 as vec4 } from 'gl-matrix';
+import { Size, Tile } from '../jsdoc-extras';
 
 var neighborsCacheSize = 64;
 
@@ -93,6 +94,13 @@ var neighborOffsets = [
  * A tile in a @{CubeGeometry}.
  */
 class CubeTile {
+  face: any;
+  x: any;
+  y: any;
+  z: any;
+  _geometry: any;
+  _level: any;
+  type = 'cube' as const;
   constructor(face, x, y, z, geometry) {
     this.face = face;
     this.x = x;
@@ -218,7 +226,7 @@ class CubeTile {
     var numX = level.numHorizontalTiles();
     var numY = level.numVerticalTiles();
 
-    var result = [];
+    var result: Tile[] = [];
 
     for (var i = 0; i < neighborOffsets.length; i++) {
       var xOffset = neighborOffsets[i][0];
@@ -303,19 +311,21 @@ class CubeTile {
   str() {
     return (
       'CubeTile(' +
-      tile.face +
+      this.face +
       ', ' +
-      tile.x +
+      this.x +
       ', ' +
-      tile.y +
+      this.y +
       ', ' +
-      tile.z +
+      this.z +
       ')'
     );
   }
 }
 
 class CubeLevel extends Level {
+  _size: any;
+  _tileSize: any;
   constructor(levelProperties) {
     super(levelProperties);
 
@@ -436,8 +446,17 @@ class CubeLevel extends Level {
  * @param {number} levelPropertiesList[].tileSize Tile size in pixels
  */
 class CubeGeometry {
+  levelList: any[];
+  selectableLevelList: unknown[];
+  _tileSearcher: TileSearcher;
+  _neighborsCache: LruMap;
+  _vec: vec4;
+  _viewSize: Size;
+  static Tile: typeof CubeTile;
+  Tile = CubeTile;
+  type = 'cube' as const;
   constructor(levelPropertiesList) {
-    if (type(levelPropertiesList) !== 'array') {
+    if (getType(levelPropertiesList) !== 'array') {
       throw new Error('Level list must be an array');
     }
 
@@ -448,13 +467,13 @@ class CubeGeometry {
       this.levelList[i]._validateWithParentLevel(this.levelList[i - 1]);
     }
 
-    this._tileSearcher = new TileSearcher(this);
+    this._tileSearcher = new TileSearcher();
 
     this._neighborsCache = new LruMap(neighborsCacheSize);
 
     this._vec = vec4.create();
 
-    this._viewSize = {};
+    this._viewSize = { width: 0, height: 0 };
   }
   maxTileSize() {
     var maxTileSize = 0;
@@ -490,14 +509,15 @@ class CubeGeometry {
     vec4.transformMat4(ray, ray, view.inverseProjection());
 
     var minAngle = Infinity;
-    var closestFace = null;
+    var closestFace: string | null = null;
 
     // Find the face whose vector makes a minimal angle with the view ray.
     // This is the face into which the view ray points.
     for (var face in faceVectors) {
       var vector = faceVectors[face];
       // For a small angle between two normalized vectors, angle ~ 1-cos(angle).
-      var angle = 1 - vec3.dot(vector, ray);
+      // @ts-ignore
+      var angle = 1 - vec3.dot(vector, ray); // figure out if this should be vec3 for ray
       if (angle < minAngle) {
         minAngle = angle;
         closestFace = face;
@@ -513,7 +533,7 @@ class CubeGeometry {
     }
 
     // Rotate view ray into front face.
-    var rot = faceRotation[closestFace];
+    var rot = faceRotation[closestFace as string];
     rotateVector(ray, 0, -rot.x, -rot.y);
 
     // Get the desired zoom level.
@@ -549,8 +569,15 @@ class CubeGeometry {
   }
 }
 
+// TODO: remove these when migrating to export only
+// @ts-ignore
 CubeGeometry.Tile = CubeGeometry.prototype.Tile = CubeTile;
+// @ts-ignore
 CubeGeometry.type = CubeGeometry.prototype.type = 'cube';
+// @ts-ignore
 CubeTile.type = CubeTile.prototype.type = 'cube';
 
+export {
+  CubeTile
+}
 export default CubeGeometry;

@@ -21,8 +21,7 @@ import eventEmitter from 'minimal-event-emitter';
 
 import Stage from './Stage';
 
-import CubeGeometry from '../geometries/Cube';
-var CubeTile = CubeGeometry.Tile;
+import CubeGeometry, { CubeTile } from '../geometries/Cube';
 import EquirectGeometry, { EquirectTile } from '../geometries/Equirect';
 
 // Stage is an abstract class and cannot be instantiated directly.

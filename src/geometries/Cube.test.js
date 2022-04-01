@@ -15,8 +15,7 @@
  */
 import { suite, test, beforeEach, assert } from 'vitest';
 
-import Cube from './Cube';
-var CubeTile = Cube.Tile;
+import Cube, { CubeTile } from './Cube';
 
 suite('CubeGeometry', function () {
   function containsTile(tileList, tile) {

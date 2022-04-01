@@ -165,11 +165,12 @@ export interface Source {
 }
 
 export interface Texture {
-  // TODO: figure out what would be best approach here.
-  // eslint-disable-next-line @typescript-eslint/no-misused-new
-  new (stage: Stage, tile: Tile, asset: Asset): Texture;
   refresh(tile: Tile, asset: Asset): void;
   destroy(): void;
+}
+
+export interface TextureConstructor {
+  new (stage: Stage, tile: Tile, asset: Asset): Texture;
 }
 
 /**
