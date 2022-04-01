@@ -15,7 +15,7 @@ test.describe.parallel('Demos', () => {
     test(`demo: ${demo} should match screenshot`, async ({ page }) => {
       await page.goto(`http://localhost:3333/demos/${demo}/`);
       await page.waitForLoadState('networkidle')
-      await page.waitForTimeout(5000);
+      await page.waitForTimeout(3000);
       expect(await page.screenshot()).toMatchSnapshot({ maxDiffPixelRatio: demo === 'sample-tour' ? 0.2 : 0 });
     });
   });
