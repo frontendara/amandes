@@ -15,6 +15,6 @@
  */
 import WorkPool from './WorkPool';
 
-import runTests from './WorkCommon.test';
+import runTests from './WorkCommon';
 
 runTests('WorkPool', WorkPool);

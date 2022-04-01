@@ -16,7 +16,7 @@ const useCreateImageBitmap =
 const createImageBitmapOpts = {
   imageOrientation: 'flipY',
   premultiplyAlpha: 'premultiply',
-};
+} as const;
 
 /**
  * @class HtmlImageLoader
