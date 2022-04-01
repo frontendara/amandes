@@ -15,6 +15,6 @@
  */
 import WorkQueue from './WorkQueue';
 
-import runTests from './WorkCommon.test';
+import runTests from './WorkCommon';
 
 runTests('WorkQueue', WorkQueue);
