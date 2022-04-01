@@ -28,7 +28,7 @@ import HammerGestures, {
   HammerGesturesHandle,
 } from './controls/HammerGestures';
 
-import registerDefaultControls from './controls/registerDefaultControls';
+import registerDefaultControls, { RegisterDefaultControlsOptions } from './controls/registerDefaultControls';
 import registerDefaultRenderers from './renderers/registerDefaultRenderers';
 
 import { setOverflowHidden as setOverflowHidden } from './util/dom';
@@ -64,7 +64,7 @@ interface ViewerOptions {
   /**
    * Options to be passed to {@link registerDefaultControls}.
    */
-  controls?: Controls;
+  controls?: RegisterDefaultControlsOptions;
   /**
    * Options to be passed to the {@link Stage} constructor.
    */
@@ -128,7 +128,7 @@ class Viewer {
   #resetIdleTimerHandler: () => void;
   #triggerIdleTimerHandler: () => void;
   #stopMovementHandler: () => void;
-  #idleMovement: null;
+  #idleMovement?: () => void;
 
   constructor(domElement: HTMLElement, opts?: ViewerOptions) {
     opts = opts || {};
@@ -170,9 +170,7 @@ class Viewer {
     this.#controlMethods = registerDefaultControls(
       this.#controls,
       this._controlContainer,
-      // TODO: this needs investigation, it seems that what's passed here is not necessary
-      // used inside of the registration
-      opts.controls as any
+      opts.controls
     );
     this.#controls.attach(this.#renderLoop);
 
@@ -242,9 +240,6 @@ class Viewer {
     // @ts-ignore
     this.#controls.addEventListener('active', this.#stopMovementHandler);
     this.addEventListener('sceneChange', this.#stopMovementHandler);
-
-    // The currently programmed idle movement.
-    this.#idleMovement = null;
   }
   addEventListener(_arg0: string, _resetIdleTimerHandler: any) {
     throw new Error('Method not implemented.');
@@ -609,10 +604,10 @@ class Viewer {
    * schedules it to start again after the same timeout period. To disable it
    * permanently, call with a null movement or an infinite timeout.
    *
-   * @param {number} timeout Timeout period in milliseconds.
-   * @param {function} movement Automatic movement function, or null to disable.
+   * @param timeout Timeout period in milliseconds.
+   * @param movement Automatic movement function, or null to disable.
    */
-  setIdleMovement(timeout, movement) {
+  setIdleMovement(timeout: number, movement?: () => void) {
     this.#idleTimer.setDuration(timeout);
     this.#idleMovement = movement;
   }
