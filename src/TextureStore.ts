@@ -22,6 +22,8 @@ import defaults from './util/defaults';
 import retry from './util/retry';
 import chain from './util/chain';
 import clearOwnProperties from './util/clearOwnProperties';
+import { Source } from './jsdoc-extras';
+import Stage from './stages/Stage';
 
 const debug =
   // @ts-ignore
@@ -291,8 +293,8 @@ eventEmitter(TextureStoreItem);
  *     previously visible textures to cache according to an LRU policy.
  */
 class TextureStore {
-  #source: any;
-  #stage: any;
+  #source: Source;
+  #stage: Stage;
   #state: number;
   #delimCount: number;
   #itemMap: Map;
@@ -303,7 +305,7 @@ class TextureStore {
   #noLongerVisible: any[];
   #visibleAgain: any[];
   #evicted: any[];
-  constructor(source, stage, opts) {
+  constructor(source: Source, stage: Stage, opts?: { previouslyVisibleCacheSize?: number }) {
     opts = defaults(opts || {}, defaultOptions);
 
     this.#source = source;

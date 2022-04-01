@@ -147,8 +147,8 @@ class ImageUrlSource implements Source {
   static fromString(
     url: string,
     opts?: {
-      cubeMapPreviewFaceOrder: unknown[];
-      cubeMapPreviewUrl: unknown;
+      cubeMapPreviewFaceOrder?: unknown[];
+      cubeMapPreviewUrl: string;
     } | null
   ) {
     const faceOrder =

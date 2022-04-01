@@ -21,6 +21,8 @@ import cancelize from '../util/cancelize';
 import clearOwnProperties from '../util/clearOwnProperties';
 
 import RendererRegistry from './RendererRegistry';
+import { Asset, Rect, Renderer, Size, Texture, Tile } from '../jsdoc-extras';
+import Layer from '../Layer';
 
 function forwardTileCmp(t1, t2) {
   return t1.cmp(t2);
@@ -69,6 +71,22 @@ function reverseTileCmp(t1, t2) {
  * bandwidth.
  */
 class Stage {
+  _progressive: boolean;
+  _layers: Layer[];
+  _renderers: Renderer[];
+  _tilesToLoad: never[];
+  _tilesToRender: never[];
+  _tmpVisible: never[];
+  _tmpChildren: never[];
+  _width: number;
+  _height: number;
+  _tmpRect: Required<Rect>;
+  _tmpSize: Size;
+  _createTextureWorkQueue: WorkQueue;
+  _rendererRegistry: RendererRegistry;
+  type = 'stage';
+  // TODO: adding this breaks everything
+  TextureClass: Texture | null = null;
   constructor(opts) {
     this._progressive = !!(opts && opts.progressive);
 
@@ -92,10 +110,10 @@ class Stage {
     this._height = 0;
 
     // Temporary variable for rect.
-    this._tmpRect = {};
+    this._tmpRect = { x: 0, y: 0, width: 0, height: 0 };
 
     // Temporary variable for size.
-    this._tmpSize = {};
+    this._tmpSize = { width: 0, height: 0 };
 
     // Work queue for createTexture.
     this._createTextureWorkQueue = new WorkQueue();
@@ -127,7 +145,7 @@ class Stage {
    * @param {string} viewType The view type, as given by {@link View#type}.
    * @param {*} Renderer The renderer class.
    */
-  registerRenderer(geometryType, viewType, Renderer) {
+  registerRenderer(geometryType: string, viewType: string, Renderer: any) {
     return this._rendererRegistry.set(geometryType, viewType, Renderer);
   }
   /**
@@ -137,31 +155,29 @@ class Stage {
    *
    * @return {Element}
    */
-  domElement() {
+  domElement(): Element {
     throw new Error('Stage implementation must override domElement');
   }
   /**
    * Get the stage width.
    * @return {number}
    */
-  width() {
+  width(): number {
     return this._width;
   }
   /**
    * Get the stage height.
    * @return {number}
    */
-  height() {
+  height(): number {
     return this._height;
   }
   /**
    * Get the stage dimensions. If an argument is supplied, it is filled in with
    * the result and returned. Otherwise, a fresh object is filled in and returned.
-   *
-   * @param {Size=} size
    */
-  size(size) {
-    size = size || {};
+  size(size?: Size) {
+    size = size || { width: 0, height: 0 };
     size.width = this._width;
     size.height = this._height;
     return size;
@@ -175,7 +191,7 @@ class Stage {
    *
    * @param {Size} size
    */
-  setSize(size) {
+  setSize(size: Size) {
     this._width = size.width;
     this._height = size.height;
 
@@ -184,6 +200,9 @@ class Stage {
     this.emit('resize');
     this._emitRenderInvalid();
   }
+  emit(_arg0: string, _arg1?: any) {
+    throw new Error('Method not implemented.');
+  }
   /**
    * Call {@link Stage#setSize} instead.
    *
@@ -191,9 +210,9 @@ class Stage {
    * {@link Stage#setSize} after the base class has been updated to reflect the
    * new size, but before any events are emitted.
    *
-   * @param {Size} size
+   * @param {Size} _size
    */
-  setSizeForType(size) {
+  setSizeForType(_size?: Size) {
     throw new Error('Stage implementation must override setSizeForType');
   }
   /**
@@ -204,17 +223,17 @@ class Stage {
    * @param {function(?Error, Asset)} done The callback.
    * @return {function()} A function to cancel loading.
    */
-  loadImage() {
+  loadImage(): () => any {
     throw new Error('Stage implementation must override loadImage');
   }
   /**
    * Verifies that the layer is valid for this stage, throwing an exception
    * otherwise.
    *
-   * @param {Layer} layer
+   * @param {Layer} _layer
    * @throws {Error} If the layer is not valid for this stage.
    */
-  validateLayer(layer) {
+  validateLayer(_layer: Layer) {
     throw new Error('Stage implementation must override validateLayer');
   }
   /**
@@ -222,16 +241,16 @@ class Stage {
    * returned list is in display order, background to foreground.
    * @return {Layer[]}
    */
-  listLayers() {
+  listLayers(): Layer[] {
     // Return a copy to prevent unintended mutation by the caller.
-    return [].concat(this._layers);
+    return [...this._layers];
   }
   /**
    * Return whether a {@link Layer layer} belongs to the stage.
-   * @param {Layer} layer
+   * @param layer
    * @return {boolean}
    */
-  hasLayer(layer) {
+  hasLayer(layer: Layer): boolean {
     return this._layers.indexOf(layer) >= 0;
   }
   /**
@@ -243,7 +262,7 @@ class Stage {
    * @throws An error if the layer already belongs to the stage or if the position
    *     is invalid.
    */
-  addLayer(layer, i) {
+  addLayer(layer: Layer, i?: number) {
     if (this._layers.indexOf(layer) >= 0) {
       throw new Error('Layer already in stage');
     }
@@ -284,6 +303,9 @@ class Stage {
 
     this._emitRenderInvalid();
   }
+  createRenderer(_rendererClass: any): Renderer {
+    throw new Error('Method not implemented.');
+  }
   /**
    * Moves a {@link Layer layer} into a different position in the display stack.
    * @param {Layer} layer The layer to move.
@@ -292,7 +314,7 @@ class Stage {
    * @throws An error if the layer does not belong to the stage or if the position
    *     is invalid.
    */
-  moveLayer(layer, i) {
+  moveLayer(layer: Layer, i: number) {
     var index = this._layers.indexOf(layer);
     if (index < 0) {
       throw new Error('No such layer in stage');
@@ -315,7 +337,7 @@ class Stage {
    * @param {Layer} layer The layer to remove.
    * @throws An error if the layer does not belong to the stage.
    */
-  removeLayer(layer) {
+  removeLayer(layer: Layer) {
     var index = this._layers.indexOf(layer);
     if (index < 0) {
       throw new Error('No such layer in stage');
@@ -338,6 +360,9 @@ class Stage {
     );
 
     this._emitRenderInvalid();
+  }
+  destroyRenderer(_renderer: any) {
+    throw new Error('Method not implemented.');
   }
   /**
    * Removes all {@link Layer layers} from the stage.
@@ -404,11 +429,11 @@ class Stage {
       var textureStore = layer.textureStore();
       var renderer = this._renderers[i];
       var depth = this._layers.length - i;
-      var tile, texture;
+      var tile: Tile, texture: Texture;
 
       // Convert the rect effect into a normalized rect.
       // TODO: avoid doing this on every frame.
-      calcRect(width, height, effects && effects.rect, rect);
+      calcRect(width, height, effects?.rect, rect);
 
       if (rect.width <= 0 || rect.height <= 0) {
         // Skip rendering on a null viewport.
@@ -591,11 +616,13 @@ class Stage {
    * @param {Asset} asset
    * @param {Function} done
    */
-  createTexture(tile, asset, done) {
+  createTexture(tile: Tile, asset: Asset, done: Function) {
     var self = this;
 
     function makeTexture() {
-      return new self.TextureClass(self, tile, asset);
+      if (self.TextureClass) {
+        return new self.TextureClass(self, tile, asset);
+      }
     }
 
     var fn = cancelize(async(makeTexture));

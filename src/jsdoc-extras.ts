@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
+import { mat4, vec4 } from 'gl-matrix';
 import Level from './geometries/Level';
+import Layer from './Layer';
 import Stage from './stages/Stage';
 
 // This file contains no executable code, only documentation.
@@ -162,6 +164,14 @@ export interface Source {
   loadAsset(stage: Stage, tile: Tile, done?: Function): Function;
 }
 
+export interface Texture {
+  // TODO: figure out what would be best approach here.
+  // eslint-disable-next-line @typescript-eslint/no-misused-new
+  new (stage: Stage, tile: Tile, asset: Asset): Texture;
+  refresh(tile: Tile, asset: Asset): void;
+  destroy(): void;
+}
+
 /**
  * @interface Asset
  * @classdesc A rectangular pixel source from which a {@link Texture} may be
@@ -219,19 +229,34 @@ export interface Asset {
   isDynamic(): boolean;
 }
 
-/**
- * @interface Effects
- * @classdesc Effects to be applied on the rendering
- * @property {Number} opacity Between 1 (fully opaque) and 0 (fully transparent)
- * @property {RectSpec} rect The rectangular region on which to render. Useful
- *     for side-by-side rendering or to otherwise compose a scene from
- *     non-overlapping layers.
- * @property {vec4} colorOffset
- * @property {mat4} colorMatrix
- * @property {Rect} textureCrop Use only a portion of the texture when
- *     rendering. Only supported on {@link WebGlEquirectRenderer}. Useful for
- *     rendering stereoscopic 360° video.
- */
+/*
+ * Effects to be applied on the rendering
+*/
+export interface Effects {
+  /**
+   * Between 1 (fully opaque) and 0 (fully transparent)
+   */
+  opacity?: number;
+  /**
+   * The rectangular region on which to render. Useful for side-by-side
+   * rendering or to otherwise compose a scene from non-overlapping layers.
+   */
+  rect?: RectSpec;
+  /**
+   * The color offset to apply to the texture.
+   */
+  colorOffset?: vec4;
+  /**
+   * The color matrix to apply to the texture.
+   */
+  colorMatrix?: mat4;
+  /**
+   * Use only a portion of the texture when rendering. Only supported on
+   * {@link WebGlEquirectRenderer}. Useful for rendering stereoscopic 360°
+   * video.
+   */
+  textureCrop?: Rect;
+}
 
 /**
  * @interface Geometry
@@ -357,6 +382,12 @@ export interface Tile {
  * @param {Layer} layer The layer onto which to render.
  * @param {Rect} rect The rectangular region into which to render.
  */
+
+export interface Renderer {
+  startLayer(layer: Layer, rect: Rect): void;
+  renderTile(tile: Tile, texture: Texture, layer: Layer, layerZ: number): void;
+  endLayer(layer: Layer, rect: Rect): void;
+}
 
 /**
  * @interface ControlMethod

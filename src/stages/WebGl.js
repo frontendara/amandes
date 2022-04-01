@@ -91,6 +91,8 @@ function initWebGlContext(canvas, opts) {
  * Also see the available {@link Stage} options.
  */
 class WebGlStage extends Stage {
+  TextureClass = WebGlTexture;
+  type = 'webgl';
   constructor(opts) {
     opts = opts || {};
 

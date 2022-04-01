@@ -27,13 +27,18 @@ class WorkTask {
   }
 }
 
+interface WorkQueueOptions {
+  delay?: number;
+  paused?: boolean;
+}
+
 class WorkQueue {
   #queue: any[];
   #delay: any;
   #paused: any;
   #currentTask: null;
   #lastFinished: null | number;
-  constructor(opts) {
+  constructor(opts?: WorkQueueOptions) {
     this.#queue = [];
     this.#delay = (opts && opts.delay) || 0;
     this.#paused = (opts && !!opts.paused) || false;

@@ -16,6 +16,7 @@
 
 import { vec4 as vec4 } from 'gl-matrix';
 import { mat4 as mat4 } from 'gl-matrix';
+import { Effects } from './jsdoc-extras';
 
 /**
  * Helper functions for color transformation {@link Effects}.
@@ -39,7 +40,7 @@ import { mat4 as mat4 } from 'gl-matrix';
  *
  * @memberof colorEffects
  */
-function identity(resultArg) {
+function identity(resultArg?: Effects) {
   const result = resultArg || {};
   result.colorOffset = result.colorOffset || vec4.create();
   result.colorMatrix = result.colorMatrix || mat4.create();
@@ -112,7 +113,7 @@ function applyToImageData(imageData, effect) {
 
 // TODO: refactor to named exports
 export default {
-  identity: identity,
-  applyToPixel: applyToPixel,
-  applyToImageData: applyToImageData,
+  identity,
+  applyToPixel,
+  applyToImageData,
 };
