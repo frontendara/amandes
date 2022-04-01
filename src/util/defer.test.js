@@ -14,29 +14,27 @@
  * limitations under the License.
  */
 import { suite, test, assert } from 'vitest';
-import sinon from "sinon";
-import wait from "../../test/wait";
+import sinon from 'sinon';
+import wait from '../../test/wait';
 
-import defer from "./defer";
+import defer from './defer';
 
-suite('defer', function() {
-
-  test('without arguments', function(done) {
+suite('defer', function () {
+  test('without arguments', function (done) {
     var spy = sinon.spy();
     defer(spy);
-    wait.untilSpyCalled(spy, function() {
+    wait.untilSpyCalled(spy, function () {
       assert.isTrue(spy.calledWithExactly());
       done();
     });
   });
 
-  test('with arguments', function(done) {
+  test('with arguments', function (done) {
     var spy = sinon.spy();
     defer(spy, [1, 2, 3]);
-    wait.untilSpyCalled(spy, function() {
+    wait.untilSpyCalled(spy, function () {
       assert.isTrue(spy.calledWithExactly(1, 2, 3));
       done();
     });
   });
-
 });

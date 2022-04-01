@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import StaticAsset from "./Static";
-import eventEmitter from "minimal-event-emitter";
-import clearOwnProperties from "../util/clearOwnProperties";
+import StaticAsset from './Static';
+import eventEmitter from 'minimal-event-emitter';
+import clearOwnProperties from '../util/clearOwnProperties';
 
 /**
  * @class DynamicAsset

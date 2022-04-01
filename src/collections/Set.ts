@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import mod from "../util/mod";
+import mod from '../util/mod';
 
-var defaultCapacity = 64;
+const defaultCapacity = 64;
 
 // TODO: is this needed? Could we just use js Set
 // A set data structure for elements implementing hash() and equals().
@@ -26,14 +26,16 @@ class Set {
   #buckets: any[];
   #size: number;
   constructor(capacity?: number) {
-    if (capacity != null &&
-      (!isFinite(capacity) || Math.floor(capacity) !== capacity || capacity < 1)) {
+    if (
+      capacity != null &&
+      (!isFinite(capacity) || Math.floor(capacity) !== capacity || capacity < 1)
+    ) {
       throw new Error('Set: invalid capacity');
     }
     this.#capacity = capacity || defaultCapacity;
 
     this.#buckets = [];
-    for (var i = 0; i < this.#capacity; i++) {
+    for (let i = 0; i < this.#capacity; i++) {
       this.#buckets.push([]);
     }
     this.#size = 0;
@@ -41,10 +43,10 @@ class Set {
   // Adds an element, replacing an existing element.
   // Returns the replaced element, or null if no element was replaced.
   add(element) {
-    var h = mod(element.hash(), this.#capacity);
-    var bucket = this.#buckets[h];
-    for (var i = 0; i < bucket.length; i++) {
-      var existingElement = bucket[i];
+    const h = mod(element.hash(), this.#capacity);
+    const bucket = this.#buckets[h];
+    for (let i = 0; i < bucket.length; i++) {
+      const existingElement = bucket[i];
       if (element.equals(existingElement)) {
         bucket[i] = element;
         return existingElement;
@@ -57,13 +59,13 @@ class Set {
   // Removes an element.
   // Returns the removed element, or null if the element was not found.
   remove(element) {
-    var h = mod(element.hash(), this.#capacity);
-    var bucket = this.#buckets[h];
-    for (var i = 0; i < bucket.length; i++) {
-      var existingElement = bucket[i];
+    const h = mod(element.hash(), this.#capacity);
+    const bucket = this.#buckets[h];
+    for (let i = 0; i < bucket.length; i++) {
+      const existingElement = bucket[i];
       if (element.equals(existingElement)) {
         // Splice manually to avoid Array#splice return value allocation.
-        for (var j = i; j < bucket.length - 1; j++) {
+        for (let j = i; j < bucket.length - 1; j++) {
           bucket[j] = bucket[j + 1];
         }
         bucket.length = bucket.length - 1;
@@ -75,10 +77,10 @@ class Set {
   }
   // Returns whether an element is in the set.
   has(element) {
-    var h = mod(element.hash(), this.#capacity);
-    var bucket = this.#buckets[h];
-    for (var i = 0; i < bucket.length; i++) {
-      var existingElement = bucket[i];
+    const h = mod(element.hash(), this.#capacity);
+    const bucket = this.#buckets[h];
+    for (let i = 0; i < bucket.length; i++) {
+      const existingElement = bucket[i];
       if (element.equals(existingElement)) {
         return true;
       }
@@ -91,7 +93,7 @@ class Set {
   }
   // Removes all elements from the set.
   clear() {
-    for (var i = 0; i < this.#capacity; i++) {
+    for (let i = 0; i < this.#capacity; i++) {
       this.#buckets[i].length = 0;
     }
     this.#size = 0;
@@ -100,10 +102,10 @@ class Set {
   // Returns the number of times fn was called.
   // The result is unspecified if the set is mutated during iteration.
   forEach(fn) {
-    var count = 0;
-    for (var i = 0; i < this.#capacity; i++) {
-      var bucket = this.#buckets[i];
-      for (var j = 0; j < bucket.length; j++) {
+    let count = 0;
+    for (let i = 0; i < this.#capacity; i++) {
+      const bucket = this.#buckets[i];
+      for (let j = 0; j < bucket.length; j++) {
         fn(bucket[j]);
         count += 1;
       }

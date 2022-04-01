@@ -15,7 +15,7 @@
  */
 
 function getNow() {
-  if (typeof performance !== "undefined" && performance.now) {
+  if (typeof performance !== 'undefined' && performance.now) {
     return function performanceNow() {
       return performance.now();
     };

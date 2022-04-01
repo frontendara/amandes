@@ -13,7 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { CubeGeometry, ImageUrlSource, RectilinearView, Viewer } from '../../src/index';
+import {
+  CubeGeometry,
+  ImageUrlSource,
+  RectilinearView,
+  Viewer,
+} from '../../src/index';
 import DeviceOrientationControlMethod from './DeviceOrientationControlMethod.js';
 
 // Create viewer.
@@ -26,14 +31,14 @@ controls.registerMethod('deviceOrientation', deviceOrientationControlMethod);
 
 // Create source.
 var source = ImageUrlSource.fromString(
-  "//www.marzipano.net/media/cubemap/{f}.jpg"
+  '//www.marzipano.net/media/cubemap/{f}.jpg'
 );
 
 // Create geometry.
 var geometry = new CubeGeometry([{ tileSize: 1024, size: 1024 }]);
 
 // Create view.
-var limiter = RectilinearView.limit.traditional(1024, 100 * Math.PI / 180);
+var limiter = RectilinearView.limit.traditional(1024, (100 * Math.PI) / 180);
 var view = new RectilinearView(null, limiter);
 
 // Create scene.
@@ -41,7 +46,7 @@ var scene = viewer.createScene({
   source: source,
   geometry: geometry,
   view: view,
-  pinFirstLevel: true
+  pinFirstLevel: true,
 });
 
 // Display scene.
@@ -55,13 +60,14 @@ var toggleElement = document.getElementById('toggleDeviceOrientation');
 
 function requestPermissionForIOS() {
   window.DeviceOrientationEvent.requestPermission()
-    .then(response => {
+    .then((response) => {
       if (response === 'granted') {
-        enableDeviceOrientation()
+        enableDeviceOrientation();
       }
-    }).catch((e) => {
-      console.error(e)
     })
+    .catch((e) => {
+      console.error(e);
+    });
 }
 
 function enableDeviceOrientation() {
@@ -77,10 +83,10 @@ function enableDeviceOrientation() {
 
 function enable() {
   if (window.DeviceOrientationEvent) {
-    if (typeof (window.DeviceOrientationEvent.requestPermission) == 'function') {
-      requestPermissionForIOS()
+    if (typeof window.DeviceOrientationEvent.requestPermission == 'function') {
+      requestPermissionForIOS();
     } else {
-      enableDeviceOrientation()
+      enableDeviceOrientation();
     }
   }
 }

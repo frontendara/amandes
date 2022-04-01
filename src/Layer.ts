@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import eventEmitter from "minimal-event-emitter";
-import extend from "./util/extend";
-import clearOwnProperties from "./util/clearOwnProperties";
-import { Geometry, Source } from "./jsdoc-extras";
-import TextureStore from "./TextureStore";
+import eventEmitter from 'minimal-event-emitter';
+import extend from './util/extend';
+import clearOwnProperties from './util/clearOwnProperties';
+import { Geometry, Source } from './jsdoc-extras';
+import TextureStore from './TextureStore';
 
 /**
  * Signals that the layer has been rendered.
@@ -53,7 +53,7 @@ class Layer {
   ) {
     opts = opts || {};
 
-    var self = this;
+    const self = this;
 
     this.#source = source;
     this.#geometry = geometry;
@@ -65,46 +65,46 @@ class Layer {
     this.#fixedLevelIndex = null;
 
     this.#viewChangeHandler = function () {
-      self.emit("viewChange", self.view());
+      self.emit('viewChange', self.view());
     };
 
-    this.#view.addEventListener("change", this.#viewChangeHandler);
+    this.#view.addEventListener('change', this.#viewChangeHandler);
 
     this.#textureStoreChangeHandler = function () {
-      self.emit("textureStoreChange", self.textureStore());
+      self.emit('textureStoreChange', self.textureStore());
     };
 
     this.#textureStore.addEventListener(
-      "textureLoad",
+      'textureLoad',
       this.#textureStoreChangeHandler
     );
     this.#textureStore.addEventListener(
-      "textureError",
+      'textureError',
       this.#textureStoreChangeHandler
     );
     this.#textureStore.addEventListener(
-      "textureInvalid",
+      'textureInvalid',
       this.#textureStoreChangeHandler
     );
   }
   emit(_arg0: string, _arg1: any) {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
   /**
    * Destructor.
    */
   destroy() {
-    this.#view.removeEventListener("change", this.#viewChangeHandler);
+    this.#view.removeEventListener('change', this.#viewChangeHandler);
     this.#textureStore.removeEventListener(
-      "textureLoad",
+      'textureLoad',
       this.#textureStoreChangeHandler
     );
     this.#textureStore.removeEventListener(
-      "textureError",
+      'textureError',
       this.#textureStoreChangeHandler
     );
     this.#textureStore.removeEventListener(
-      "textureInvalid",
+      'textureInvalid',
       this.#textureStoreChangeHandler
     );
     clearOwnProperties(this);
@@ -150,7 +150,7 @@ class Layer {
    */
   setEffects(effects) {
     this.#effects = effects;
-    this.emit("effectsChange", this.#effects);
+    this.emit('effectsChange', this.#effects);
   }
   /**
    * Merges effects into the currently set ones. The merge is non-recursive; for
@@ -162,7 +162,7 @@ class Layer {
    */
   mergeEffects(effects) {
     extend(this.#effects, effects);
-    this.emit("effectsChange", this.#effects);
+    this.emit('effectsChange', this.#effects);
   }
   /**
    * Returns the fixed level index.
@@ -184,14 +184,14 @@ class Layer {
         levelIndex != null &&
         (levelIndex >= this.#geometry.levelList.length || levelIndex < 0)
       ) {
-        throw new Error("Level index out of range: " + levelIndex);
+        throw new Error('Level index out of range: ' + levelIndex);
       }
       this.#fixedLevelIndex = levelIndex;
-      this.emit("fixedLevelChange", this.#fixedLevelIndex);
+      this.emit('fixedLevelChange', this.#fixedLevelIndex);
     }
   }
   #selectLevel() {
-    var level;
+    let level;
     if (this.#fixedLevelIndex != null) {
       level = this.#geometry.levelList[this.#fixedLevelIndex];
     } else {
@@ -200,7 +200,7 @@ class Layer {
     return level;
   }
   visibleTiles(result) {
-    var level = this.#selectLevel();
+    const level = this.#selectLevel();
     return this.#geometry.visibleTiles(this.#view, level, result);
   }
   /**
@@ -208,9 +208,9 @@ class Layer {
    * @param {Number} levelIndex
    */
   pinLevel(levelIndex) {
-    var level = this.#geometry.levelList[levelIndex];
-    var tiles = this.#geometry.levelTiles(level);
-    for (var i = 0; i < tiles.length; i++) {
+    const level = this.#geometry.levelList[levelIndex];
+    const tiles = this.#geometry.levelTiles(level);
+    for (let i = 0; i < tiles.length; i++) {
       this.#textureStore.pin(tiles[i]);
     }
   }
@@ -219,9 +219,9 @@ class Layer {
    * @param {Number} levelIndex
    */
   unpinLevel(levelIndex) {
-    var level = this.#geometry.levelList[levelIndex];
-    var tiles = this.#geometry.levelTiles(level);
-    for (var i = 0; i < tiles.length; i++) {
+    const level = this.#geometry.levelList[levelIndex];
+    const tiles = this.#geometry.levelTiles(level);
+    for (let i = 0; i < tiles.length; i++) {
       this.#textureStore.unpin(tiles[i]);
     }
   }

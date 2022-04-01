@@ -42,7 +42,9 @@ class VideoAsset {
     this._wrappedVideo = wrappedVideo;
 
     if (this._wrappedVideo) {
-      this._wrappedVideo.videoElement().removeEventListener('timeupdate', this._emitChange);
+      this._wrappedVideo
+        .videoElement()
+        .removeEventListener('timeupdate', this._emitChange);
     }
 
     if (wrappedVideo == null) {
@@ -65,7 +67,8 @@ class VideoAsset {
         self.emit('change');
       }
       if (!self._destroyed) {
-        self._emitChangeIfPlayingLoop = requestAnimationFrame(emitChangeIfPlaying);
+        self._emitChangeIfPlayingLoop =
+          requestAnimationFrame(emitChangeIfPlaying);
       }
     }
     emitChangeIfPlaying();
@@ -110,7 +113,9 @@ class VideoAsset {
   destroy() {
     this._destroyed = true;
     if (this._wrappedVideo) {
-      this._wrappedVideo.videoElement().removeEventListener('timeupdate', this._emitChange);
+      this._wrappedVideo
+        .videoElement()
+        .removeEventListener('timeupdate', this._emitChange);
     }
     if (this._emitChangeIfPlayingLoop) {
       cancelAnimationFrame(this._emitChangeIfPlayingLoop);

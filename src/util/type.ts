@@ -15,7 +15,7 @@
  */
 
 function type(x: null) {
-  var typ = typeof x;
+  const typ = typeof x;
   if (typ === 'object') {
     if (x === null) {
       return 'null';

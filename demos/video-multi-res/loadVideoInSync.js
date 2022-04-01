@@ -34,7 +34,7 @@ export default function loadVideoInSync(url, syncElement, cb) {
   element.playsInline = true;
   element.webkitPlaysInline = true;
 
-  element.onerror = function(e) {
+  element.onerror = function (e) {
     cb(e.target.error);
   };
 
@@ -45,39 +45,35 @@ export default function loadVideoInSync(url, syncElement, cb) {
   element.src = url;
 
   // Checking readyState on an interval seems to be more reliable than using events
-  waitForReadyState(element, element.HAVE_CURRENT_DATA, 0.2, function() {
-    if(syncElement) {
-      if(syncElement.paused) {
+  waitForReadyState(element, element.HAVE_CURRENT_DATA, 0.2, function () {
+    if (syncElement) {
+      if (syncElement.paused) {
         // If the video is not playing, we can load the new one to the correct time
         element.currentTime = syncElement.currentTime;
-      }
-      else {
+      } else {
         //If it is playing, we will need to load to a time ahead of the current,
         // to account for the time that the loading will take
         element.currentTime = syncElement.currentTime + syncTime / 1000;
       }
     }
 
-    waitForReadyState(element, element.HAVE_ENOUGH_DATA, 0.2, function() {
-      if(!syncElement) {
+    waitForReadyState(element, element.HAVE_ENOUGH_DATA, 0.2, function () {
+      if (!syncElement) {
         // If there is no element to sync with we are done
         cb(null, element);
-      }
-      else if(syncElement.paused) {
+      } else if (syncElement.paused) {
         // If the element to sync with is paused, we are done
         cb(null, element);
-      }
-      else {
-        if(element.currentTime <= syncElement.currentTime) {
+      } else {
+        if (element.currentTime <= syncElement.currentTime) {
           // The loading took too long, start playing immediately
           // We will be a bit out of sync
           element.play();
           cb(null, element);
-        }
-        else {
+        } else {
           // If the loading was too fast, wait before playing
           // We should be in sync
-          setTimeout(function() {
+          setTimeout(function () {
             element.play();
             cb(null, element);
           }, (element.currentTime - syncElement.currentTime) * 1000);
@@ -88,8 +84,8 @@ export default function loadVideoInSync(url, syncElement, cb) {
 }
 
 function waitForReadyState(element, readyState, interval, callback) {
-  var timer = setInterval(function() {
-    if(element.readyState >= readyState) {
+  var timer = setInterval(function () {
+    if (element.readyState >= readyState) {
       clearInterval(timer);
       callback(null, true);
     }
@@ -98,8 +94,8 @@ function waitForReadyState(element, readyState, interval, callback) {
 
 function once(f) {
   var called = false;
-  return function() {
-    if(!called) {
+  return function () {
+    if (!called) {
       called = true;
       f.apply(null, arguments);
     }

@@ -22,9 +22,9 @@ var quat = Marzipano.dependencies.glMatrix.quat;
 
 var degToRad = Marzipano.util.degToRad;
 
-var viewerElement = document.querySelector("#pano");
-var enterVrElement = document.querySelector("#enter-vr");
-var noVrElement = document.querySelector("#no-vr");
+var viewerElement = document.querySelector('#pano');
+var enterVrElement = document.querySelector('#enter-vr');
+var noVrElement = document.querySelector('#no-vr');
 
 // Install the WebVR polyfill, which makes the demo functional on "fake" WebVR
 // displays such as Google Cardboard.
@@ -41,7 +41,7 @@ viewerElement.appendChild(stage.domElement());
 function updateSize() {
   stage.setSize({
     width: viewerElement.clientWidth,
-    height: viewerElement.clientHeight
+    height: viewerElement.clientHeight,
   });
 }
 updateSize();
@@ -53,19 +53,26 @@ var geometry = new Marzipano.CubeGeometry([
   { tileSize: 512, size: 512 },
   { tileSize: 512, size: 1024 },
   { tileSize: 512, size: 2048 },
-  { tileSize: 512, size: 4096 }
+  { tileSize: 512, size: 4096 },
 ]);
 
 // Create view.
-var limiter = Marzipano.RectilinearView.limit.traditional(4096, 110*Math.PI/180);
+var limiter = Marzipano.RectilinearView.limit.traditional(
+  4096,
+  (110 * Math.PI) / 180
+);
 var viewLeft = new WebVrView();
 var viewRight = new WebVrView();
 
 // Create layers.
-var layerLeft = createLayer(stage, viewLeft, geometry, 'left',
-  { relativeWidth: 0.5, relativeX: 0 });
-var layerRight = createLayer(stage, viewRight, geometry, 'right',
-  { relativeWidth: 0.5, relativeX: 0.5 });
+var layerLeft = createLayer(stage, viewLeft, geometry, 'left', {
+  relativeWidth: 0.5,
+  relativeX: 0,
+});
+var layerRight = createLayer(stage, viewRight, geometry, 'right', {
+  relativeWidth: 0.5,
+  relativeX: 0.5,
+});
 
 // Add layers into stage.
 stage.addLayer(layerLeft);
@@ -73,7 +80,7 @@ stage.addLayer(layerRight);
 
 // Check for an available VR device and initialize accordingly.
 var vrDisplay = null;
-navigator.getVRDisplays().then(function(vrDisplays) {
+navigator.getVRDisplays().then(function (vrDisplays) {
   if (vrDisplays.length > 0) {
     vrDisplay = vrDisplays[0];
     vrDisplay.requestAnimationFrame(render);
@@ -83,15 +90,15 @@ navigator.getVRDisplays().then(function(vrDisplays) {
 });
 
 // Enter WebVR mode when the button is clicked.
-enterVrElement.addEventListener('click', function() {
-  vrDisplay.requestPresent([{source: stage.domElement()}]);
+enterVrElement.addEventListener('click', function () {
+  vrDisplay.requestPresent([{ source: stage.domElement() }]);
 });
 
 var proj = mat4.create();
 var pose = mat4.create();
 
 function render() {
-  var frameData = new VRFrameData;
+  var frameData = new VRFrameData();
   vrDisplay.getFrameData(frameData);
 
   // Update the view.
@@ -120,14 +127,16 @@ function render() {
 }
 
 function createLayer(stage, view, geometry, eye, rect) {
-  var urlPrefix = "//www.marzipano.net/media/music-room";
+  var urlPrefix = '//www.marzipano.net/media/music-room';
   var source = Marzipano.ImageUrlSource.fromString(
-    urlPrefix + "/" + eye + "/{z}/{f}/{y}/{x}.jpg",
-    { cubeMapPreviewUrl: urlPrefix + "/" + eye + "/preview.jpg" });
+    urlPrefix + '/' + eye + '/{z}/{f}/{y}/{x}.jpg',
+    { cubeMapPreviewUrl: urlPrefix + '/' + eye + '/preview.jpg' }
+  );
 
   var textureStore = new Marzipano.TextureStore(source, stage);
-  var layer = new Marzipano.Layer(source, geometry, view, textureStore,
-    { effects: { rect: rect }});
+  var layer = new Marzipano.Layer(source, geometry, view, textureStore, {
+    effects: { rect: rect },
+  });
 
   layer.pinFirstLevel();
 

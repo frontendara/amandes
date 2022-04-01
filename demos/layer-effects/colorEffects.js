@@ -16,8 +16,7 @@
 import * as Marzipano from '../../src/index';
 
 export var colorEffects = {
-
-  brightness: function(amount, result) {
+  brightness: function (amount, result) {
     result = Marzipano.colorEffects.identity(result);
 
     result.colorOffset[0] = amount;
@@ -27,22 +26,22 @@ export var colorEffects = {
     return result;
   },
 
-  sepia: function(amount, result) {
+  sepia: function (amount, result) {
     result = Marzipano.colorEffects.identity(result);
 
-    result.colorMatrix[0] = 1.0 - (0.607 * amount);
+    result.colorMatrix[0] = 1.0 - 0.607 * amount;
     result.colorMatrix[1] = 0.769 * amount;
     result.colorMatrix[2] = 0.189 * amount;
     result.colorMatrix[3] = 0;
 
     result.colorMatrix[4] = 0.349 * amount;
-    result.colorMatrix[5] = 1.0 - (0.314 * amount);
+    result.colorMatrix[5] = 1.0 - 0.314 * amount;
     result.colorMatrix[6] = 0.168 * amount;
     result.colorMatrix[7] = 0;
 
     result.colorMatrix[8] = 0.272 * amount;
     result.colorMatrix[9] = 0.534 * amount;
-    result.colorMatrix[10] = 1.0 - (0.869 * amount);
+    result.colorMatrix[10] = 1.0 - 0.869 * amount;
     result.colorMatrix[11] = 0;
 
     result.colorMatrix[12] = 0;
@@ -57,12 +56,12 @@ export var colorEffects = {
     return result;
   },
 
-  saturation: function(amount, result) {
+  saturation: function (amount, result) {
     result = Marzipano.colorEffects.identity(result);
 
     var lumR = 0.3086;
     var lumG = 0.6094;
-    var lumB = 0.0820;
+    var lumB = 0.082;
 
     var sr = (1 - amount) * lumR;
     var sg = (1 - amount) * lumG;
@@ -95,7 +94,7 @@ export var colorEffects = {
     return result;
   },
 
-  contrast: function(amount, result) {
+  contrast: function (amount, result) {
     result = Marzipano.colorEffects.identity(result);
 
     result.colorMatrix[0] = amount;
@@ -118,11 +117,10 @@ export var colorEffects = {
     result.colorMatrix[14] = 0;
     result.colorMatrix[15] = 1;
 
-    result.colorOffset[0] = (1 - amount)/2;
-    result.colorOffset[1] = (1 - amount)/2;
-    result.colorOffset[2] = (1 - amount)/2;
+    result.colorOffset[0] = (1 - amount) / 2;
+    result.colorOffset[1] = (1 - amount) / 2;
+    result.colorOffset[2] = (1 - amount) / 2;
 
     return result;
-  }
-
+  },
 };

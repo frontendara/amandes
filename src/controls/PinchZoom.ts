@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import eventEmitter from "minimal-event-emitter";
-import Dynamics from "./Dynamics";
-import HammerGestures, { HammerGesturesHandle } from "./HammerGestures";
-import clearOwnProperties from "../util/clearOwnProperties";
+import eventEmitter from 'minimal-event-emitter';
+import Dynamics from './Dynamics';
+import HammerGestures, { HammerGesturesHandle } from './HammerGestures';
+import clearOwnProperties from '../util/clearOwnProperties';
 
 /**
  * @class PinchZoomControlMethod
@@ -30,7 +30,7 @@ import clearOwnProperties from "../util/clearOwnProperties";
  * @param {Object} opts
  */
 class PinchZoomControlMethod {
-  #lastEvent: null | { scale: number; };
+  #lastEvent: null | { scale: number };
   #active: boolean;
   #dynamics: Dynamics;
   #hammer: HammerGesturesHandle;
@@ -63,7 +63,7 @@ class PinchZoomControlMethod {
     }
   }
   emit(_arg0: string, _parameter?: string, _dynamics?: Dynamics) {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
   #handleEnd() {
     this.#lastEvent = null;
@@ -74,7 +74,7 @@ class PinchZoomControlMethod {
     }
   }
   #handleEvent(e) {
-    var scale = e.scale;
+    let scale = e.scale;
 
     if (this.#lastEvent) {
       scale /= this.#lastEvent.scale;

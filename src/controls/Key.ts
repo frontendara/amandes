@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import eventEmitter from "minimal-event-emitter";
-import Dynamics from "./Dynamics";
-import clearOwnProperties from "../util/clearOwnProperties";
+import eventEmitter from 'minimal-event-emitter';
+import Dynamics from './Dynamics';
+import clearOwnProperties from '../util/clearOwnProperties';
 
 /**
  * @class KeyControlMethod
@@ -44,18 +44,24 @@ class KeyControlMethod {
   #dynamics: Dynamics;
   #pressing: boolean;
 
-  constructor(keyCode: number, parameter: string, velocity: number, friction: number, element?: Document) {
+  constructor(
+    keyCode: number,
+    parameter: string,
+    velocity: number,
+    friction: number,
+    element?: Document
+  ) {
     if (!keyCode) {
-      throw new Error("KeyControlMethod: keyCode must be defined");
+      throw new Error('KeyControlMethod: keyCode must be defined');
     }
     if (!parameter) {
-      throw new Error("KeyControlMethod: parameter must be defined");
+      throw new Error('KeyControlMethod: parameter must be defined');
     }
     if (!velocity) {
-      throw new Error("KeyControlMethod: velocity must be defined");
+      throw new Error('KeyControlMethod: velocity must be defined');
     }
     if (!friction) {
-      throw new Error("KeyControlMethod: friction must be defined");
+      throw new Error('KeyControlMethod: friction must be defined');
     }
 
     element = element || document;
@@ -87,7 +93,9 @@ class KeyControlMethod {
     clearOwnProperties(this);
   }
   #handlePress(e) {
-    if (e.keyCode !== this.#keyCode) { return; }
+    if (e.keyCode !== this.#keyCode) {
+      return;
+    }
 
     this.#pressing = true;
 
@@ -97,10 +105,12 @@ class KeyControlMethod {
     this.emit('active');
   }
   emit(_arg0: string, _parameter?: any, _dynamics?: any) {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
   #handleRelease(e) {
-    if (e.keyCode !== this.#keyCode) { return; }
+    if (e.keyCode !== this.#keyCode) {
+      return;
+    }
 
     if (this.#pressing) {
       this.#dynamics.friction = this.#friction;

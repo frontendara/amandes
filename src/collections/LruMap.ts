@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import mod from "../util/mod";
+import mod from '../util/mod';
 
 // An LruMap holds up to a maximum number of key-value pairs, ordered by their
 // time of insertion. When the addition of a key-value pair would cause the
@@ -31,7 +31,11 @@ class LruMap {
   #size: number;
 
   constructor(capacity) {
-    if (!isFinite(capacity) || Math.floor(capacity) !== capacity || capacity < 0) {
+    if (
+      !isFinite(capacity) ||
+      Math.floor(capacity) !== capacity ||
+      capacity < 0
+    ) {
       throw new Error('LruMap: invalid capacity');
     }
     this.#capacity = capacity;
@@ -49,8 +53,8 @@ class LruMap {
   }
   // Returns the value associated to the specified key, or null if not found.
   get(key) {
-    for (var i = 0; i < this.#size; i++) {
-      var existingKey = this.#keys[this._index(i)];
+    for (let i = 0; i < this.#size; i++) {
+      const existingKey = this.#keys[this._index(i)];
       if (key.equals(existingKey)) {
         return this.#values[this._index(i)];
       }
@@ -67,7 +71,8 @@ class LruMap {
       return key;
     }
     this.del(key);
-    var evictedKey = this.#size === this.#capacity ? this.#keys[this._index(0)] : null;
+    const evictedKey =
+      this.#size === this.#capacity ? this.#keys[this._index(0)] : null;
     this.#keys[this._index(this.#size)] = key;
     this.#values[this._index(this.#size)] = value;
     if (this.#size < this.#capacity) {
@@ -80,10 +85,10 @@ class LruMap {
   // Removes the key-value pair associated with the specified key.
   // Returns the removed value, or null if not found.
   del(key) {
-    for (var i = 0; i < this.#size; i++) {
+    for (let i = 0; i < this.#size; i++) {
       if (key.equals(this.#keys[this._index(i)])) {
-        var existingValue = this.#values[this._index(i)];
-        for (var j = i; j < this.#size - 1; j++) {
+        const existingValue = this.#values[this._index(i)];
+        for (let j = i; j < this.#size - 1; j++) {
           this.#keys[this._index(j)] = this.#keys[this._index(j + 1)];
           this.#values[this._index(j)] = this.#values[this._index(j + 1)];
         }
@@ -95,7 +100,7 @@ class LruMap {
   }
   // Returns whether there is a value associated with the specified key.
   has(key) {
-    for (var i = 0; i < this.#size; i++) {
+    for (let i = 0; i < this.#size; i++) {
       if (key.equals(this.#keys[this._index(i)])) {
         return true;
       }
@@ -117,8 +122,8 @@ class LruMap {
   // Returns the number of times fn was called.
   // The result is unspecified if the map is mutated during iteration.
   forEach(fn) {
-    var count = 0;
-    for (var i = 0; i < this.#size; i++) {
+    let count = 0;
+    for (let i = 0; i < this.#size; i++) {
       fn(this.#keys[this._index(i)], this.#values[this._index(i)]);
       count += 1;
     }

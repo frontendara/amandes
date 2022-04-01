@@ -58,7 +58,8 @@ class VideoAsset {
         self.emit('change');
       }
       if (!self._destroyed) {
-        self._emitChangeIfPlayingLoop = requestAnimationFrame(emitChangeIfPlaying);
+        self._emitChangeIfPlayingLoop =
+          requestAnimationFrame(emitChangeIfPlaying);
       }
     }
     emitChangeIfPlaying();

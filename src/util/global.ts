@@ -16,7 +16,7 @@
 
 // TODO: thinkg about globalThis
 // The global object.
-var globalObject = (function() {
+const globalObject = (function () {
   if (typeof window !== 'undefined') {
     return window;
   }

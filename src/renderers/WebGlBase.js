@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { mat4 as mat4 } from "gl-matrix";
-import { vec3 as vec3 } from "gl-matrix";
-import clearOwnProperties from "../util/clearOwnProperties";
+import { mat4 as mat4 } from 'gl-matrix';
+import { vec3 as vec3 } from 'gl-matrix';
+import clearOwnProperties from '../util/clearOwnProperties';
 
-import WebGlCommon from "./WebGlCommon";
+import WebGlCommon from './WebGlCommon';
 var createConstantBuffers = WebGlCommon.createConstantBuffers;
 var destroyConstantBuffers = WebGlCommon.destroyConstantBuffers;
 var createShaderProgram = WebGlCommon.createShaderProgram;
@@ -30,19 +30,25 @@ var setupPixelEffectUniforms = WebGlCommon.setupPixelEffectUniforms;
 var setDepth = WebGlCommon.setDepth;
 var setTexture = WebGlCommon.setTexture;
 
-import vertexSrc from "../shaders/vertexNormal";
-import fragmentSrc from "../shaders/fragmentNormal";
+import vertexSrc from '../shaders/vertexNormal';
+import fragmentSrc from '../shaders/fragmentNormal';
 
 var vertexIndices = [0, 1, 2, 0, 2, 3];
-var vertexPositions = [-0.5, -0.5, 0.0, 0.5, -0.5, 0.0, 0.5, 0.5, 0.0, -0.5, 0.5, 0.0];
+var vertexPositions = [
+  -0.5, -0.5, 0.0, 0.5, -0.5, 0.0, 0.5, 0.5, 0.0, -0.5, 0.5, 0.0,
+];
 var textureCoords = [0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0];
 
 var attribList = ['aVertexPosition', 'aTextureCoord'];
 var uniformList = [
-  'uDepth', 'uOpacity', 'uSampler', 'uProjMatrix', 'uViewportMatrix',
-  'uColorOffset', 'uColorMatrix'
+  'uDepth',
+  'uOpacity',
+  'uSampler',
+  'uProjMatrix',
+  'uViewportMatrix',
+  'uColorOffset',
+  'uColorMatrix',
 ];
-
 
 class WebGlBaseRenderer {
   constructor(gl) {
@@ -61,9 +67,20 @@ class WebGlBaseRenderer {
     this.translateVector = vec3.create();
     this.scaleVector = vec3.create();
 
-    this.constantBuffers = createConstantBuffers(gl, vertexIndices, vertexPositions, textureCoords);
+    this.constantBuffers = createConstantBuffers(
+      gl,
+      vertexIndices,
+      vertexPositions,
+      textureCoords
+    );
 
-    this.shaderProgram = createShaderProgram(gl, vertexSrc, fragmentSrc, attribList, uniformList);
+    this.shaderProgram = createShaderProgram(
+      gl,
+      vertexSrc,
+      fragmentSrc,
+      attribList,
+      uniformList
+    );
   }
   destroy() {
     destroyConstantBuffers(this.gl, this.constantBuffers);
@@ -84,14 +101,28 @@ class WebGlBaseRenderer {
     gl.uniformMatrix4fv(shaderProgram.uViewportMatrix, false, viewportMatrix);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, constantBuffers.vertexPositions);
-    gl.vertexAttribPointer(shaderProgram.aVertexPosition, 3, gl.FLOAT, gl.FALSE, 0, 0);
+    gl.vertexAttribPointer(
+      shaderProgram.aVertexPosition,
+      3,
+      gl.FLOAT,
+      gl.FALSE,
+      0,
+      0
+    );
     gl.bindBuffer(gl.ARRAY_BUFFER, constantBuffers.textureCoords);
-    gl.vertexAttribPointer(shaderProgram.aTextureCoord, 2, gl.FLOAT, gl.FALSE, 0, 0);
+    gl.vertexAttribPointer(
+      shaderProgram.aTextureCoord,
+      2,
+      gl.FLOAT,
+      gl.FALSE,
+      0,
+      0
+    );
 
     setupPixelEffectUniforms(gl, layer.effects(), {
       opacity: shaderProgram.uOpacity,
       colorOffset: shaderProgram.uColorOffset,
-      colorMatrix: shaderProgram.uColorMatrix
+      colorMatrix: shaderProgram.uColorMatrix,
     });
   }
   endLayer(layer, rect) {

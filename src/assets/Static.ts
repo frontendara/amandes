@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import global from "../util/global";
-import eventEmitter from "minimal-event-emitter";
-import clearOwnProperties from "../util/clearOwnProperties";
+import global from '../util/global';
+import eventEmitter from 'minimal-event-emitter';
+import clearOwnProperties from '../util/clearOwnProperties';
 
-var propertyMap = {
+const propertyMap = {
   HTMLImageElement: ['naturalWidth', 'naturalHeight'],
   HTMLCanvasElement: ['width', 'height'],
-  ImageBitmap: ['width', 'height']
+  ImageBitmap: ['width', 'height'],
 };
 
 /**
@@ -40,8 +40,8 @@ class StaticAsset {
   #element: any;
 
   constructor(element) {
-    var supported = false;
-    for (var type in propertyMap) {
+    let supported = false;
+    for (const type in propertyMap) {
       if (global?.[type] && element instanceof global[type]) {
         supported = true;
         this.#widthProp = propertyMap[type][0];

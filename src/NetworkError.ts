@@ -24,9 +24,9 @@
  */
 class NetworkError extends Error {
   constructor(...args: ConstructorParameters<typeof Error>) {
-    super(...args)
-    if(typeof args[0] === 'string') {
-      this.message = args[0]
+    super(...args);
+    if (typeof args[0] === 'string') {
+      this.message = args[0];
     }
   }
 }

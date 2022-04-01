@@ -15,11 +15,11 @@
  */
 
 import { suite, test, beforeEach, afterEach, assert } from 'vitest';
-import sinon from "sinon";
+import sinon from 'sinon';
 
-import eventEmitter from "minimal-event-emitter";
+import eventEmitter from 'minimal-event-emitter';
 
-import RenderLoop from "./RenderLoop";
+import RenderLoop from './RenderLoop';
 
 class MockStage {
   constructor() {
@@ -29,8 +29,7 @@ class MockStage {
 
 eventEmitter(MockStage);
 
-suite('RenderLoop', function() {
-
+suite('RenderLoop', function () {
   // Replace requestAnimationFrame() and cancelAnimationFrame() with fakes so
   // that the tests still pass when the browser window has no focus. As a side
   // effect, it also makes the tests less flaky since no timeouts are involved.
@@ -44,19 +43,19 @@ suite('RenderLoop', function() {
   var runMap = {};
   var nextId = 0;
 
-  var fakeRequestAnimationFrame = function(fn) {
+  var fakeRequestAnimationFrame = function (fn) {
     var id = nextId++;
     runMap[id] = fn;
     return id;
   };
 
-  var fakeCancelAnimationFrame = function(id) {
+  var fakeCancelAnimationFrame = function (id) {
     if (runMap.hasOwnProperty(id)) {
       delete runMap[id];
     }
   };
 
-  var fakeTickFrame = function() {
+  var fakeTickFrame = function () {
     for (var id in runMap) {
       var fn = runMap[id];
       fn();
@@ -64,17 +63,17 @@ suite('RenderLoop', function() {
     runMap = {};
   };
 
-  beforeEach(function() {
+  beforeEach(function () {
     window.requestAnimationFrame = fakeRequestAnimationFrame;
     window.cancelAnimationFrame = fakeCancelAnimationFrame;
   });
 
-  afterEach(function() {
+  afterEach(function () {
     window.requestAnimationFrame = realRequestAnimationFrame;
     window.cancelAnimationFrame = realCancelAnimationFrame;
   });
 
-  test('initial state', function() {
+  test('initial state', function () {
     var stage = new MockStage();
     var loop = new RenderLoop(stage);
     stage.emit('renderInvalid');
@@ -82,7 +81,7 @@ suite('RenderLoop', function() {
     assert.isTrue(stage.render.notCalled);
   });
 
-  test('start', function() {
+  test('start', function () {
     var stage = new MockStage();
     var loop = new RenderLoop(stage);
     loop.start();
@@ -91,7 +90,7 @@ suite('RenderLoop', function() {
     assert.isTrue(stage.render.called);
   });
 
-  test('stop', function() {
+  test('stop', function () {
     var stage = new MockStage();
     var loop = new RenderLoop(stage);
     loop.start();
@@ -101,7 +100,7 @@ suite('RenderLoop', function() {
     assert.isTrue(stage.render.notCalled);
   });
 
-  test('renderOnNextFrame', function() {
+  test('renderOnNextFrame', function () {
     var stage = new MockStage();
     var loop = new RenderLoop(stage);
     loop.start();
@@ -109,5 +108,4 @@ suite('RenderLoop', function() {
     fakeTickFrame();
     assert.isTrue(stage.render.called);
   });
-
 });

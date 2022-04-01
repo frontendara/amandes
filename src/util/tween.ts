@@ -14,21 +14,26 @@
  * limitations under the License.
  */
 
-import now from "./now";
+import now from './now';
 
-function tween(duration: number, update: (arg0: number) => void, done: { (): void; apply: (arg0: null, arg1: IArguments) => void; }) {
-  var cancelled = false;
+function tween(
+  duration: number,
+  update: (arg0: number) => void,
+  done: { (): void; apply: (arg0: null, arg1: IArguments) => void }
+) {
+  let cancelled = false;
 
-  var startTime = now();
+  const startTime = now();
 
   function runUpdate() {
-    if(cancelled) { return; }
-    var tweenVal = (now() - startTime)/duration;
-    if(tweenVal < 1) {
+    if (cancelled) {
+      return;
+    }
+    const tweenVal = (now() - startTime) / duration;
+    if (tweenVal < 1) {
       update(tweenVal);
       requestAnimationFrame(runUpdate);
-    }
-    else {
+    } else {
       update(1);
       done();
     }
@@ -40,7 +45,7 @@ function tween(duration: number, update: (arg0: number) => void, done: { (): voi
   return function cancel() {
     cancelled = true;
     done.apply(null, arguments);
-  }
+  };
 }
 
 export default tween;

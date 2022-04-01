@@ -15,7 +15,7 @@
  */
 import { suite, test, assert } from 'vitest';
 
-import Set from "./Set";
+import Set from './Set';
 
 class Item {
   constructor(element) {
@@ -30,11 +30,9 @@ class Item {
   }
 }
 
-suite('Set', function() {
-
-  suite('add', function() {
-
-    test('single element', function() {
+suite('Set', function () {
+  suite('add', function () {
+    test('single element', function () {
       var set = new Set();
       var element1 = new Item(1);
       var element2 = new Item(1);
@@ -43,7 +41,7 @@ suite('Set', function() {
       assert.strictEqual(set.size(), 1);
     });
 
-    test('nonexisting element with same hash as existing element', function() {
+    test('nonexisting element with same hash as existing element', function () {
       var set = new Set();
       var element1 = new Item(1);
       var element2 = new Item(-1);
@@ -54,7 +52,7 @@ suite('Set', function() {
       assert.strictEqual(set.size(), 2);
     });
 
-    test('nonexisting element with different hash than existing element', function() {
+    test('nonexisting element with different hash than existing element', function () {
       var set = new Set();
       var element1 = new Item(1);
       var element2 = new Item(2);
@@ -65,7 +63,7 @@ suite('Set', function() {
       assert.strictEqual(set.size(), 2);
     });
 
-    test('existing element', function() {
+    test('existing element', function () {
       var set = new Set();
       var element1 = new Item(1);
       var element2 = new Item(1);
@@ -75,12 +73,10 @@ suite('Set', function() {
       assert.isTrue(set.has(element2));
       assert.strictEqual(set.size(), 1);
     });
-
   });
 
-  suite('remove', function() {
-
-    test('existing element', function() {
+  suite('remove', function () {
+    test('existing element', function () {
       var set = new Set();
       var element1 = new Item(1);
       var element2 = new Item(1);
@@ -90,7 +86,7 @@ suite('Set', function() {
       assert.strictEqual(set.size(), 0);
     });
 
-    test('nonexisting element', function() {
+    test('nonexisting element', function () {
       var set = new Set();
       var element1 = new Item(1);
       var element2 = new Item(2);
@@ -100,7 +96,7 @@ suite('Set', function() {
       assert.strictEqual(set.size(), 1);
     });
 
-    test('existing element with same hash as existing element', function() {
+    test('existing element with same hash as existing element', function () {
       var set = new Set();
       var element1 = new Item(1);
       var element2 = new Item(-1);
@@ -112,7 +108,7 @@ suite('Set', function() {
       assert.strictEqual(set.size(), 1);
     });
 
-    test('nonexisting element with same hash as existing element', function() {
+    test('nonexisting element with same hash as existing element', function () {
       var set = new Set();
       var element1 = new Item(1);
       var element2 = new Item(-1);
@@ -121,47 +117,41 @@ suite('Set', function() {
       assert.isTrue(set.has(element1));
       assert.strictEqual(set.size(), 1);
     });
-
   });
 
-  suite('has', function() {
-
-    test('nonexisting element', function() {
+  suite('has', function () {
+    test('nonexisting element', function () {
       var set = new Set();
       var element = new Item(1);
       assert.isFalse(set.has(element));
     });
 
-    test('nonexisting element with same hash as existing element', function() {
+    test('nonexisting element with same hash as existing element', function () {
       var set = new Set();
       var element1 = new Item(1);
       var element2 = new Item(-1);
       assert.isNull(set.add(element1));
       assert.isFalse(set.has(element2));
     });
-
   });
 
-  suite('size', function() {
-
-    test('empty', function() {
+  suite('size', function () {
+    test('empty', function () {
       var set = new Set();
       assert.strictEqual(set.size(), 0);
     });
 
-    test('more elements than buckets', function() {
+    test('more elements than buckets', function () {
       var set = new Set(16);
       for (var i = 0; i < 32; i++) {
         set.add(new Item(i));
       }
       assert.strictEqual(set.size(), 32);
     });
-
   });
 
-  suite('clear', function() {
-
-    test('clear', function() {
+  suite('clear', function () {
+    test('clear', function () {
       var set = new Set();
       for (var i = 0; i < 10; i++) {
         set.add(new Item(i));
@@ -172,19 +162,20 @@ suite('Set', function() {
       }
       assert.strictEqual(set.size(), 0);
     });
-
   });
 
-  suite('forEach', function() {
-
-    test('empty', function() {
+  suite('forEach', function () {
+    test('empty', function () {
       var set = new Set();
-      assert.strictEqual(set.forEach(function() {
-        assert.fail('unexpected call');
-      }), 0);
+      assert.strictEqual(
+        set.forEach(function () {
+          assert.fail('unexpected call');
+        }),
+        0
+      );
     });
 
-    test('nonempty', function() {
+    test('nonempty', function () {
       var set = new Set();
       var elements = [];
       for (var i = 0; i < 10; i++) {
@@ -194,14 +185,12 @@ suite('Set', function() {
       }
 
       var seenElements = [];
-      var count = set.forEach(function(element) {
+      var count = set.forEach(function (element) {
         seenElements.push(element);
       });
 
       assert.strictEqual(count, 10);
       assert.sameMembers(elements, seenElements);
     });
-
   });
-
 });

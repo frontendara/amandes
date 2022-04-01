@@ -15,18 +15,18 @@
  */
 
 // TODO: issues in constructor awith event emitter emit when using typescript
-import Layer from "./Layer";
-import TextureStore from "./TextureStore";
-import HotspotContainer from "./HotspotContainer";
-import eventEmitter from "minimal-event-emitter";
-import now from "./util/now";
-import noop from "./util/noop";
-import type from "./util/type";
-import defaults from "./util/defaults";
-import clearOwnProperties from "./util/clearOwnProperties";
-import Viewer from "./Viewer";
-import RectilinearView, { RectilinearViewCoords } from "./views/Rectilinear";
-import FlatView from "./views/Flat";
+import Layer from './Layer';
+import TextureStore from './TextureStore';
+import HotspotContainer from './HotspotContainer';
+import eventEmitter from 'minimal-event-emitter';
+import now from './util/now';
+import noop from './util/noop';
+import type from './util/type';
+import defaults from './util/defaults';
+import clearOwnProperties from './util/clearOwnProperties';
+import Viewer from './Viewer';
+import RectilinearView, { RectilinearViewCoords } from './views/Rectilinear';
+import FlatView from './views/Flat';
 
 type View = RectilinearView | FlatView;
 
@@ -97,15 +97,15 @@ class Scene {
     this.#updateHotspotContainerHandler =
       this.#updateHotspotContainer.bind(this);
     this.#viewer.addEventListener(
-      "sceneChange",
+      'sceneChange',
       this.#updateHotspotContainerHandler
     );
 
     // Emit event when view changes.
-    this.#viewChangeHandler = this.emit.bind(this, "viewChange");
+    this.#viewChangeHandler = this.emit.bind(this, 'viewChange');
     // TODO: fix this event emitter issue
     // @ts-ignore
-    this.#view.addEventListener("change", this.#viewChangeHandler);
+    this.#view.addEventListener('change', this.#viewChangeHandler);
 
     // Update the hotspot container.
     this.#updateHotspotContainer();
@@ -117,11 +117,11 @@ class Scene {
     // TODO: fix this event emitter issue
     // @ts-ignore
 
-    this.#view.removeEventListener("change", this.#viewChangeHandler);
+    this.#view.removeEventListener('change', this.#viewChangeHandler);
     // TODO: fix this event emitter issue
     // @ts-ignore
     this.#viewer.removeEventListener(
-      "sceneChange",
+      'sceneChange',
       this.#updateHotspotContainerHandler
     );
 
@@ -198,15 +198,15 @@ class Scene {
   createLayer(opts) {
     opts = opts || {};
 
-    var textureStoreOpts = opts.textureStoreOpts || {};
-    var layerOpts = opts.layerOpts || {};
+    const textureStoreOpts = opts.textureStoreOpts || {};
+    const layerOpts = opts.layerOpts || {};
 
-    var source = opts.source;
-    var geometry = opts.geometry;
-    var view = this.#view;
-    var stage = this.#viewer.stage();
-    var textureStore = new TextureStore(source, stage, textureStoreOpts);
-    var layer = new Layer(source, geometry, view, textureStore, layerOpts);
+    const source = opts.source;
+    const geometry = opts.geometry;
+    const view = this.#view;
+    const stage = this.#viewer.stage();
+    const textureStore = new TextureStore(source, stage, textureStoreOpts);
+    const layer = new Layer(source, geometry, view, textureStore, layerOpts);
 
     this.#layers.push(layer);
 
@@ -215,7 +215,7 @@ class Scene {
     }
 
     // Signal that the layers have changed.
-    this.emit("layerChange");
+    this.emit('layerChange');
 
     return layer;
   }
@@ -225,15 +225,15 @@ class Scene {
    * @throws An error if the layer does not belong to the scene.
    */
   destroyLayer(layer) {
-    var i = this.#layers.indexOf(layer);
+    const i = this.#layers.indexOf(layer);
     if (i < 0) {
-      throw new Error("No such layer in scene");
+      throw new Error('No such layer in scene');
     }
 
     this.#layers.splice(i, 1);
 
     // Signal that the layers have changed.
-    this.emit("layerChange");
+    this.emit('layerChange');
 
     layer.textureStore().destroy();
     layer.destroy();
@@ -275,57 +275,57 @@ class Scene {
    *    interrupted.
    */
   lookTo(params, opts, done) {
-    var self = this;
+    const self = this;
 
     opts = opts || {};
     done = done || noop;
 
-    if (type(params) !== "object") {
-      throw new Error("Target view parameters must be an object");
+    if (type(params) !== 'object') {
+      throw new Error('Target view parameters must be an object');
     }
 
     // Quadratic in/out easing.
-    var easeInOutQuad = function (k) {
+    const easeInOutQuad = function (k) {
       if ((k *= 2) < 1) {
         return 0.5 * k * k;
       }
       return -0.5 * (--k * (k - 2) - 1);
     };
 
-    var ease = opts.ease != null ? opts.ease : easeInOutQuad;
-    var controlsInterrupt =
+    const ease = opts.ease != null ? opts.ease : easeInOutQuad;
+    const controlsInterrupt =
       opts.controlsInterrupt != null ? opts.controlsInterrupt : false;
-    var duration =
+    const duration =
       opts.transitionDuration != null ? opts.transitionDuration : 1000;
-    var shortest = opts.shortest != null ? opts.shortest : true;
+    const shortest = opts.shortest != null ? opts.shortest : true;
 
-    var view = this.#view;
+    const view = this.#view;
 
-    var initialParams = view.parameters();
+    const initialParams = view.parameters();
 
-    var finalParams = {} as RectilinearViewCoords;
+    const finalParams = {} as RectilinearViewCoords;
     defaults(finalParams, params);
     defaults(finalParams, initialParams);
 
     // Tween through the shortest path if requested.
     // The view must implement the normalizeToClosest() method.
-    if (shortest && "normalizeToClosest" in view && view.normalizeToClosest) {
+    if (shortest && 'normalizeToClosest' in view && view.normalizeToClosest) {
       view.normalizeToClosest(finalParams, finalParams);
     }
 
-    var movement = function () {
-      var finalUpdate = false;
+    const movement = function () {
+      let finalUpdate = false;
 
       return function (params, elapsed) {
         if (elapsed >= duration && finalUpdate) {
           return null;
         }
 
-        var delta = Math.min(elapsed / duration, 1);
+        const delta = Math.min(elapsed / duration, 1);
 
-        for (var param in params) {
-          var start = initialParams[param];
-          var end = finalParams[param];
+        for (const param in params) {
+          const start = initialParams[param];
+          const end = finalParams[param];
           params[param] = start + ease(delta) * (end - start);
         }
 
@@ -335,7 +335,7 @@ class Scene {
       };
     };
 
-    var reenableControls = this.#viewer.controls()?.enabled();
+    const reenableControls = this.#viewer.controls()?.enabled();
 
     if (!controlsInterrupt) {
       this.#viewer.controls()?.disable();
@@ -356,15 +356,15 @@ class Scene {
    *     interrupted.
    */
   startMovement(fn, done) {
-    var renderLoop = this.#viewer.renderLoop();
+    const renderLoop = this.#viewer.renderLoop();
 
     if (this.#movement) {
       this.stopMovement();
     }
 
-    var step = fn();
-    if (typeof step !== "function") {
-      throw new Error("Bad movement");
+    const step = fn();
+    if (typeof step !== 'function') {
+      throw new Error('Bad movement');
     }
 
     this.#movement = fn;
@@ -375,15 +375,15 @@ class Scene {
 
     // TODO: fix this event-emitter issue
     // @ts-ignore
-    renderLoop.addEventListener("beforeRender", this.#updateMovementHandler);
+    renderLoop.addEventListener('beforeRender', this.#updateMovementHandler);
     renderLoop.renderOnNextFrame();
   }
   /**
    * Stops the current movement.
    */
   stopMovement() {
-    var done = this.#movementCallback;
-    var renderLoop = this.#viewer.renderLoop();
+    const done = this.#movementCallback;
+    const renderLoop = this.#viewer.renderLoop();
 
     if (!this.#movement) {
       return;
@@ -399,7 +399,7 @@ class Scene {
 
     // TODO: fix this event-emitter issue
     // @ts-ignore
-    renderLoop.removeEventListener("beforeRender", this.#updateMovementHandler);
+    renderLoop.removeEventListener('beforeRender', this.#updateMovementHandler);
 
     if (done) {
       done();
@@ -414,15 +414,15 @@ class Scene {
   }
   #updateMovement() {
     if (!this.#movement) {
-      throw new Error("Should not call update");
+      throw new Error('Should not call update');
     }
 
-    var renderLoop = this.#viewer.renderLoop();
-    var view = this.#view;
+    const renderLoop = this.#viewer.renderLoop();
+    const view = this.#view;
 
-    var elapsed = now() - Number(this.#movementStartTime);
-    var step = this.#movementStep;
-    var params = this.#movementParams;
+    const elapsed = now() - Number(this.#movementStartTime);
+    const step = this.#movementStep;
+    let params = this.#movementParams;
 
     params = view.parameters(params);
     params = step(params, elapsed);
@@ -441,7 +441,7 @@ class Scene {
     }
   }
   emit(_arg0: string) {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
 }
 

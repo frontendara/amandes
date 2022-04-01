@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import eventEmitter from "minimal-event-emitter";
-import Dynamics from "./Dynamics";
-import HammerGestures, { HammerGesturesHandle } from "./HammerGestures";
-import defaults from "../util/defaults";
-import { maxFriction as maxFriction } from "./util";
-import clearOwnProperties from "../util/clearOwnProperties";
+import eventEmitter from 'minimal-event-emitter';
+import Dynamics from './Dynamics';
+import HammerGestures, { HammerGesturesHandle } from './HammerGestures';
+import defaults from '../util/defaults';
+import { maxFriction as maxFriction } from './util';
+import clearOwnProperties from '../util/clearOwnProperties';
 
-var defaultOptions = {
+const defaultOptions = {
   speed: 8,
   friction: 6,
   maxFrictionTime: 0.3,
@@ -65,10 +65,10 @@ class QtvrControlMethod {
       y: new Dynamics(),
     };
 
-    this.#hammer.on("panstart", this.#handleStart.bind(this));
-    this.#hammer.on("panmove", this.#handleMove.bind(this));
-    this.#hammer.on("panend", this.#handleRelease.bind(this));
-    this.#hammer.on("pancancel", this.#handleRelease.bind(this));
+    this.#hammer.on('panstart', this.#handleStart.bind(this));
+    this.#hammer.on('panmove', this.#handleMove.bind(this));
+    this.#hammer.on('panend', this.#handleRelease.bind(this));
+    this.#hammer.on('pancancel', this.#handleRelease.bind(this));
   }
   /**
    * Destructor.
@@ -83,11 +83,11 @@ class QtvrControlMethod {
 
     if (!this.#active) {
       this.#active = true;
-      this.emit("active");
+      this.emit('active');
     }
   }
   emit(_arg0: string, _arg1?: any, _arg2?: any) {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
   #handleMove(e) {
     // Prevent event dragging other DOM elements and causing strange behavior on Chrome
@@ -103,17 +103,17 @@ class QtvrControlMethod {
 
     if (this.#active) {
       this.#active = false;
-      this.emit("inactive");
+      this.emit('inactive');
     }
   }
   #updateDynamics(e, release) {
-    var elementRect = this.#element.getBoundingClientRect();
-    var width = elementRect.right - elementRect.left;
-    var height = elementRect.bottom - elementRect.top;
-    var maxDim = Math.max(width, height);
+    const elementRect = this.#element.getBoundingClientRect();
+    const width = elementRect.right - elementRect.left;
+    const height = elementRect.bottom - elementRect.top;
+    const maxDim = Math.max(width, height);
 
-    var x = (e.deltaX / maxDim) * this.#opts.speed;
-    var y = (e.deltaY / maxDim) * this.#opts.speed;
+    const x = (e.deltaX / maxDim) * this.#opts.speed;
+    const y = (e.deltaY / maxDim) * this.#opts.speed;
 
     this.#dynamics.x.reset();
     this.#dynamics.y.reset();
@@ -132,8 +132,8 @@ class QtvrControlMethod {
       this.#dynamics.y.friction = tmpReleaseFriction[1];
     }
 
-    this.emit("parameterDynamics", "x", this.#dynamics.x);
-    this.emit("parameterDynamics", "y", this.#dynamics.y);
+    this.emit('parameterDynamics', 'x', this.#dynamics.x);
+    this.emit('parameterDynamics', 'y', this.#dynamics.y);
   }
 }
 

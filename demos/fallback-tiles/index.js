@@ -20,33 +20,53 @@ var stage = new Marzipano.WebGlStage();
 Marzipano.registerDefaultRenderers(stage);
 
 // Set up view.
-var initialViewParams = { yaw: Math.PI/16, pitch: 0, fov: Math.PI/2 };
+var initialViewParams = { yaw: Math.PI / 16, pitch: 0, fov: Math.PI / 2 };
 var view = new Marzipano.RectilinearView(initialViewParams);
 
 // Set up the bottom layer.
-var levelsBelow = [512].map(function(size) {
-  return {size: size, tileSize: 512};
+var levelsBelow = [512].map(function (size) {
+  return { size: size, tileSize: 512 };
 });
 var geometryBelow = new Marzipano.CubeGeometry(levelsBelow);
-var sourceBelow = new Marzipano.ImageUrlSource(function(tile) {
-  return { url: "//www.marzipano.net/media/pixels/red.png" };
+var sourceBelow = new Marzipano.ImageUrlSource(function (tile) {
+  return { url: '//www.marzipano.net/media/pixels/red.png' };
 });
 var textureStoreBelow = new Marzipano.TextureStore(sourceBelow, stage);
 var layerBelow = new Marzipano.Layer(
-    sourceBelow, geometryBelow, view, textureStoreBelow, { effects: { opacity: 1 } });
+  sourceBelow,
+  geometryBelow,
+  view,
+  textureStoreBelow,
+  { effects: { opacity: 1 } }
+);
 
 // Set up the top layer.
-var levelsAbove = [512, 1024, 2048, 4096].map(function(size) {
-  return {size: size, tileSize: 512};
+var levelsAbove = [512, 1024, 2048, 4096].map(function (size) {
+  return { size: size, tileSize: 512 };
 });
 var geometryAbove = new Marzipano.CubeGeometry(levelsAbove);
-var sourceAbove = new Marzipano.ImageUrlSource(function(tile) {
-  return { url: "//www.marzipano.net/media/generated-tiles/" +
-    tile.z + '_' + tile.face + '_' + tile.x + '_' + tile.y + '.png' };
+var sourceAbove = new Marzipano.ImageUrlSource(function (tile) {
+  return {
+    url:
+      '//www.marzipano.net/media/generated-tiles/' +
+      tile.z +
+      '_' +
+      tile.face +
+      '_' +
+      tile.x +
+      '_' +
+      tile.y +
+      '.png',
+  };
 });
 var textureStoreAbove = new Marzipano.TextureStore(sourceAbove, stage);
 var layerAbove = new Marzipano.Layer(
-    sourceAbove, geometryAbove, view, textureStoreAbove, { effects: { opacity: 0.6 } });
+  sourceAbove,
+  geometryAbove,
+  view,
+  textureStoreAbove,
+  { effects: { opacity: 0.6 } }
+);
 
 // Add layers to stage.
 stage.addLayer(layerBelow);
@@ -78,7 +98,7 @@ var preloadTiles = [
   new Marzipano.CubeGeometry.Tile('f', 7, 7, 3, geometryAbove),
   // Level 3 tiles on bottom right of front face (incomplete children fallback).
   new Marzipano.CubeGeometry.Tile('f', 4, 4, 3, geometryAbove),
-  new Marzipano.CubeGeometry.Tile('f', 4, 5, 3, geometryAbove)
+  new Marzipano.CubeGeometry.Tile('f', 4, 5, 3, geometryAbove),
 ];
 
 // Pin tiles to force them to load.

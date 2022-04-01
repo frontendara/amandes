@@ -1,13 +1,13 @@
-import eventEmitter from "minimal-event-emitter";
-import positionAbsolutely from "./util/positionAbsolutely";
-import { setTransform as setTransform } from "./util/dom";
-import clearOwnProperties from "./util/clearOwnProperties";
-import { RectilinearViewCoords } from "./views/Rectilinear";
-import { FlatViewCoords } from "./views/Flat";
+import eventEmitter from 'minimal-event-emitter';
+import positionAbsolutely from './util/positionAbsolutely';
+import { setTransform as setTransform } from './util/dom';
+import clearOwnProperties from './util/clearOwnProperties';
+import { RectilinearViewCoords } from './views/Rectilinear';
+import { FlatViewCoords } from './views/Flat';
 
 export interface Perspective {
-    radius: number | null;
-    extraTransforms?: string;
+  radius: number | null;
+  extraTransforms?: string;
 }
 export interface HotspotOptions {
   perspective?: Perspective;
@@ -68,16 +68,16 @@ class Hotspot {
     coords: HotspotCoords,
     opts?: HotspotOptions
   ) {
-    opts = opts || {} as HotspotOptions;
-    opts.perspective = opts.perspective || {} as Perspective;
+    opts = opts || ({} as HotspotOptions);
+    opts.perspective = opts.perspective || ({} as Perspective);
     // TODO: fix this ignore madness
     // @ts-ignore
     opts.perspective.extraTransforms =
-    // @ts-ignore
+      // @ts-ignore
       opts.perspective.extraTransforms != null
-    // @ts-ignore
-        ? opts.perspective.extraTransforms
-        : "";
+        ? // @ts-ignore
+          opts.perspective.extraTransforms
+        : '';
 
     this.#domElement = domElement;
     this.#parentDomElement = parentDomElement;
@@ -115,7 +115,7 @@ class Hotspot {
     return this.#coords;
   }
   setPosition(coords: HotspotCoords) {
-    for (var key in coords) {
+    for (const key in coords) {
       this.#coords[key] = coords[key];
     }
     this.update();
@@ -126,7 +126,7 @@ class Hotspot {
     return this.#perspective;
   }
   setPerspective(perspective: Perspective) {
-    for (var key in perspective) {
+    for (const key in perspective) {
       this.#perspective[key] = perspective[key];
     }
     this.update();
@@ -150,16 +150,16 @@ class Hotspot {
     }
   }
   update() {
-    var element = this.#domElement;
+    const element = this.#domElement;
 
-    var params = this.#coords;
-    var position = this.#position;
-    var x, y;
+    const params = this.#coords;
+    const position = this.#position;
+    let x, y;
 
-    var isVisible = false;
+    let isVisible = false;
 
     if (this.#visible) {
-      var view = this.#view;
+      const view = this.#view;
 
       if (this.#perspective.radius) {
         // Hotspots that are embedded in the panorama may be visible even when
@@ -183,15 +183,24 @@ class Hotspot {
 
     // Show if visible, hide if not.
     if (isVisible) {
-      element.style.display = "block";
-      element.style.position = "absolute";
+      element.style.display = 'block';
+      element.style.position = 'absolute';
     } else {
-      element.style.display = "none";
-      element.style.position = "";
+      element.style.display = 'none';
+      element.style.position = '';
     }
   }
-  #setEmbeddedPosition(view: { coordinatesToPerspectiveTransform: (arg0: any, arg1: number | null, arg2: string | undefined) => any; }, params: HotspotCoords) {
-    var transform = view.coordinatesToPerspectiveTransform(
+  #setEmbeddedPosition(
+    view: {
+      coordinatesToPerspectiveTransform: (
+        arg0: any,
+        arg1: number | null,
+        arg2: string | undefined
+      ) => any;
+    },
+    params: HotspotCoords
+  ) {
+    const transform = view.coordinatesToPerspectiveTransform(
       params,
       this.#perspective.radius,
       this.#perspective.extraTransforms

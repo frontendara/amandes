@@ -16,19 +16,21 @@
 
 import { suite, test, assert } from 'vitest';
 
-import TileSearcher from "./TileSearcher";
+import TileSearcher from './TileSearcher';
 
-import CubeGeometry from "./geometries/Cube";
+import CubeGeometry from './geometries/Cube';
 var CubeTile = CubeGeometry.Tile;
-import RectilinearView from "./views/Rectilinear";
+import RectilinearView from './views/Rectilinear';
 
-suite('TileSearcher', function() {
-
-  test('none visible', function() {
-    var geometry = new CubeGeometry([{size: 512, tileSize: 512}]);
+suite('TileSearcher', function () {
+  test('none visible', function () {
+    var geometry = new CubeGeometry([{ size: 512, tileSize: 512 }]);
     var startingTile = new CubeTile('f', 0, 0, 0, geometry);
     var view = new RectilinearView({
-      yaw: Math.PI, fov: Math.PI/4, width: 100, height: 100
+      yaw: Math.PI,
+      fov: Math.PI / 4,
+      width: 100,
+      height: 100,
     });
     var result = [];
     var count = new TileSearcher().search(view, startingTile, result);
@@ -36,11 +38,14 @@ suite('TileSearcher', function() {
     assert.isEmpty(result);
   });
 
-  test('one visible', function() {
-    var geometry = new CubeGeometry([{size: 512, tileSize: 512}]);
+  test('one visible', function () {
+    var geometry = new CubeGeometry([{ size: 512, tileSize: 512 }]);
     var startingTile = new CubeTile('b', 0, 0, 0, geometry);
     var view = new RectilinearView({
-        yaw: Math.PI, fov: Math.PI/4, width: 100, height: 100
+      yaw: Math.PI,
+      fov: Math.PI / 4,
+      width: 100,
+      height: 100,
     });
     var result = [];
     var count = new TileSearcher().search(view, startingTile, result);
@@ -49,17 +54,20 @@ suite('TileSearcher', function() {
     assert.isTrue(result[0].equals(startingTile));
   });
 
-  test('many visible', function() {
-    var geometry = new CubeGeometry([{size: 512, tileSize: 128}]);
+  test('many visible', function () {
+    var geometry = new CubeGeometry([{ size: 512, tileSize: 128 }]);
     var startingTile = new CubeTile('f', 1, 1, 0, geometry);
     var expectedTiles = [
       new CubeTile('f', 1, 1, 0, geometry),
       new CubeTile('f', 1, 2, 0, geometry),
       new CubeTile('f', 2, 1, 0, geometry),
-      new CubeTile('f', 2, 2, 0, geometry)
+      new CubeTile('f', 2, 2, 0, geometry),
     ];
     var view = new RectilinearView({
-      yaw: 0, fov: Math.PI/6, width: 100, height: 100
+      yaw: 0,
+      fov: Math.PI / 6,
+      width: 100,
+      height: 100,
     });
     var result = [];
     var count = new TileSearcher().search(view, startingTile, result);
@@ -76,11 +84,14 @@ suite('TileSearcher', function() {
     assert.equal(seen, expectedTiles.length);
   });
 
-  test('preserves existing array members', function() {
-    var geometry = new CubeGeometry([{size: 512, tileSize: 512}]);
+  test('preserves existing array members', function () {
+    var geometry = new CubeGeometry([{ size: 512, tileSize: 512 }]);
     var startingTile = new CubeTile('b', 0, 0, 0, geometry);
     var view = new RectilinearView({
-      yaw: Math.PI, fov: Math.PI/4, width: 100, height: 100
+      yaw: Math.PI,
+      fov: Math.PI / 4,
+      width: 100,
+      height: 100,
     });
     var result = [42];
     var count = new TileSearcher().search(view, startingTile, result);
@@ -90,15 +101,21 @@ suite('TileSearcher', function() {
     assert.isTrue(result[1].equals(startingTile));
   });
 
-  test('consecutive searches work correctly', function() {
-    var geometry = new CubeGeometry([{size: 512, tileSize: 512}]);
+  test('consecutive searches work correctly', function () {
+    var geometry = new CubeGeometry([{ size: 512, tileSize: 512 }]);
     var startingTile1 = new CubeTile('f', 0, 0, 0, geometry);
     var view1 = new RectilinearView({
-      yaw: 0, fov: Math.PI/4, width: 100, height: 100
+      yaw: 0,
+      fov: Math.PI / 4,
+      width: 100,
+      height: 100,
     });
     var startingTile2 = new CubeTile('b', 0, 0, 0, geometry);
     var view2 = new RectilinearView({
-      yaw: Math.PI, fov: Math.PI/4, width: 100, height: 100
+      yaw: Math.PI,
+      fov: Math.PI / 4,
+      width: 100,
+      height: 100,
     });
     var searcher = new TileSearcher();
     var result = [];
@@ -110,5 +127,4 @@ suite('TileSearcher', function() {
     assert.equal(result[0], startingTile1);
     assert.equal(result[1], startingTile2);
   });
-
 });

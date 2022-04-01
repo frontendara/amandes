@@ -1,9 +1,9 @@
-import fs from "node:fs/promises";
+import fs from 'node:fs/promises';
 
-const dirs = await fs.readdir("./demos");
+const dirs = await fs.readdir('./demos');
 
 await fs.writeFile(
-  "./index.html",
+  './index.html',
   `
 <!DOCTYPE html>
 <html lang="en">
@@ -14,9 +14,11 @@ await fs.writeFile(
     <title>Document</title>
 </head>
 <body>
-   ${dirs.map((dir) => `<a href="/demos/${dir}/index.html">${dir}</a>`).join("<br>\n   ")} 
+   ${dirs
+     .map((dir) => `<a href="/demos/${dir}/index.html">${dir}</a>`)
+     .join('<br>\n   ')} 
 </body>
 </html>
 `,
-  "utf-8"
+  'utf-8'
 );

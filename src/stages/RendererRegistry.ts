@@ -50,8 +50,8 @@ class RendererRegistry {
    * registered.
    */
   get(geometryType, viewType) {
-    var Renderer = this.#renderers[geometryType] &&
-      this.#renderers[geometryType][viewType];
+    const Renderer =
+      this.#renderers[geometryType] && this.#renderers[geometryType][viewType];
     return Renderer || null;
   }
 }

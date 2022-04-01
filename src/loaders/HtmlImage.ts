@@ -1,20 +1,21 @@
-import StaticAsset from "../assets/Static";
-import NetworkError from "../NetworkError";
-import browser from "bowser";
-import global from "../util/global";
-import once from "../util/once";
+import StaticAsset from '../assets/Static';
+import NetworkError from '../NetworkError';
+import browser from 'bowser';
+import global from '../util/global';
+import once from '../util/once';
 
 // TODO: Move the load queue into the loader.
 
 // Whether to use createImageBitmap instead of a canvas for cropping.
 // See https://caniuse.com/?search=createimagebitmap
 // @ts-ignore
-var useCreateImageBitmap = !!global?.createImageBitmap && !browser.firefox && !browser.safari;
+const useCreateImageBitmap =
+  !!global?.createImageBitmap && !browser.firefox && !browser.safari;
 
 // Options for createImageBitmap.
-var createImageBitmapOpts = {
+const createImageBitmapOpts = {
   imageOrientation: 'flipY',
-  premultiplyAlpha: 'premultiply'
+  premultiplyAlpha: 'premultiply',
 };
 
 /**
@@ -42,9 +43,9 @@ class HtmlImageLoader {
    * @return {function()} A function to cancel loading.
    */
   loadImage(url, rect, done) {
-    var self = this;
+    const self = this;
 
-    var img = new Image();
+    const img = new Image();
 
     // Allow cross-domain image loading.
     // This is required to be able to create WebGL textures from images fetched
@@ -58,10 +59,10 @@ class HtmlImageLoader {
     // https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
     img.crossOrigin = 'anonymous';
 
-    var x = rect && rect.x || 0;
-    var y = rect && rect.y || 0;
-    var width = rect && rect.width || 1;
-    var height = rect && rect.height || 1;
+    const x = (rect && rect.x) || 0;
+    const y = (rect && rect.y) || 0;
+    const width = (rect && rect.width) || 1;
+    const height = (rect && rect.height) || 1;
 
     done = once(done);
 
@@ -100,17 +101,18 @@ class HtmlImageLoader {
       // work to another thread and avoid blocking the user interface.
       // Assume that the promise is never rejected.
       // @ts-ignore
-      global?.createImageBitmap(img, x, y, width, height, createImageBitmapOpts)
+      global
+        ?.createImageBitmap(img, x, y, width, height, createImageBitmapOpts)
         .then(function (bitmap) {
           done(null, new StaticAsset(bitmap));
         });
     } else {
       // Fall back to cropping using a canvas, which can potentially block the
       // user interface, but is the best we can do.
-      var canvas = document.createElement('canvas');
+      const canvas = document.createElement('canvas');
       canvas.width = width;
       canvas.height = height;
-      var context = canvas.getContext('2d');
+      const context = canvas.getContext('2d');
       context?.drawImage(img, x, y, width, height, 0, 0, width, height);
       done(null, new StaticAsset(canvas));
     }

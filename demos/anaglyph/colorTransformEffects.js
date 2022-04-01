@@ -32,7 +32,7 @@ import { colorEffects } from '../../src/index';
 // Luminance values.
 var lumR = 0.3086;
 var lumG = 0.6094;
-var lumB = 0.0820;
+var lumB = 0.082;
 
 function gray() {
   var leftEffects = colorEffects.identity();
@@ -238,5 +238,5 @@ export var colorTransformEffects = {
   gray: gray,
   color: color,
   halfcolor: halfcolor,
-  optimized: optimized
+  optimized: optimized,
 };

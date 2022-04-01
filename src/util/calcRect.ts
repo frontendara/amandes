@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Rect, RectSpec } from "../jsdoc-extras";
+import { Rect, RectSpec } from '../jsdoc-extras';
 
 /**
  * Converts a {@link RectSpec} into an equivalent {@link Rect}.
@@ -32,11 +32,15 @@ import { Rect, RectSpec } from "../jsdoc-extras";
  * @param {Rect} result The output spec. If the argument is present, it is
  *     filled in and returned; otherwise, a fresh object is returned.
  */
-function calcRect(totalWidth: number, totalHeight: number, spec: RectSpec, result: Rect) {
-
+function calcRect(
+  totalWidth: number,
+  totalHeight: number,
+  spec: RectSpec,
+  result: Rect
+) {
   result = result || {};
 
-  var width;
+  let width;
   if (spec != null && spec.absoluteWidth != null) {
     width = spec.absoluteWidth / totalWidth;
   } else if (spec != null && spec.relativeWidth != null) {
@@ -45,7 +49,7 @@ function calcRect(totalWidth: number, totalHeight: number, spec: RectSpec, resul
     width = 1;
   }
 
-  var height;
+  let height;
   if (spec && spec.absoluteHeight != null) {
     height = spec.absoluteHeight / totalHeight;
   } else if (spec != null && spec.relativeHeight != null) {
@@ -54,7 +58,7 @@ function calcRect(totalWidth: number, totalHeight: number, spec: RectSpec, resul
     height = 1;
   }
 
-  var x;
+  let x;
   if (spec != null && spec.absoluteX != null) {
     x = spec.absoluteX / totalWidth;
   } else if (spec != null && spec.relativeX != null) {
@@ -63,7 +67,7 @@ function calcRect(totalWidth: number, totalHeight: number, spec: RectSpec, resul
     x = 0;
   }
 
-  var y;
+  let y;
   if (spec != null && spec.absoluteY != null) {
     y = spec.absoluteY / totalHeight;
   } else if (spec != null && spec.relativeY != null) {

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { dependencies } from "../../src/index";
+import { dependencies } from '../../src/index';
 
 class EditMode {
   constructor() {
@@ -22,7 +22,7 @@ class EditMode {
     this.shiftPressed = false;
     this.ctrlPressed = false;
 
-    window.addEventListener("keydown", function (e) {
+    window.addEventListener('keydown', function (e) {
       var previousEditMode = self.get();
       if (e.keyCode === 16) {
         self.shiftPressed = true;
@@ -31,11 +31,11 @@ class EditMode {
         self.ctrlPressed = true;
       }
       if (self.get() !== previousEditMode) {
-        self.emit("changed");
+        self.emit('changed');
       }
     });
 
-    window.addEventListener("keyup", function (e) {
+    window.addEventListener('keyup', function (e) {
       var previousEditMode = self.get();
       if (e.keyCode === 16) {
         self.shiftPressed = false;
@@ -44,24 +44,24 @@ class EditMode {
         self.ctrlPressed = false;
       }
       if (self.get() !== previousEditMode) {
-        self.emit("changed");
+        self.emit('changed');
       }
     });
 
-    window.addEventListener("blur", function () {
+    window.addEventListener('blur', function () {
       var previousEditMode = self.get();
       self.shiftPressed = false;
       self.ctrlPressed = false;
       if (self.get() !== previousEditMode) {
-        self.emit("changed");
+        self.emit('changed');
       }
     });
   }
   get() {
     if (this.shiftPressed) {
-      return "hide";
+      return 'hide';
     } else if (this.ctrlPressed) {
-      return "show";
+      return 'show';
     } else {
       return false;
     }

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { vec4 as vec4 } from "gl-matrix";
-import { mat4 as mat4 } from "gl-matrix";
+import { vec4 as vec4 } from 'gl-matrix';
+import { mat4 as mat4 } from 'gl-matrix';
 
 /**
  * Helper functions for color transformation {@link Effects}.
@@ -40,7 +40,7 @@ import { mat4 as mat4 } from "gl-matrix";
  * @memberof colorEffects
  */
 function identity(resultArg) {
-  var result = resultArg || {};
+  const result = resultArg || {};
   result.colorOffset = result.colorOffset || vec4.create();
   result.colorMatrix = result.colorMatrix || mat4.create();
   return result;
@@ -67,7 +67,10 @@ function applyToPixel(pixel, effect, result) {
 // way as multiplying on the shader.
 // TODO: investigate this further
 function vec4TransformMat4Transposed(out, a, m) {
-  var x = a[0], y = a[1], z = a[2], w = a[3];
+  const x = a[0],
+    y = a[1],
+    z = a[2],
+    w = a[3];
   out[0] = m[0] * x + m[1] * y + m[2] * z + m[3] * w;
   out[1] = m[4] * x + m[5] * y + m[6] * z + m[7] * w;
   out[2] = m[8] * x + m[9] * y + m[10] * z + m[11] * w;
@@ -85,19 +88,25 @@ function vec4TransformMat4Transposed(out, a, m) {
  *
  * @memberof colorEffects
  */
-var tmpPixel = vec4.create();
+const tmpPixel = vec4.create();
 function applyToImageData(imageData, effect) {
-  var width = imageData.width;
-  var height = imageData.height;
-  var data = imageData.data;
+  const width = imageData.width;
+  const height = imageData.height;
+  const data = imageData.data;
 
-  for(var i = 0; i < width * height; i++) {
-    vec4.set(tmpPixel, data[i*4+0]/255, data[i*4+1]/255, data[i*4+2]/255, data[i*4+3]/255);
+  for (let i = 0; i < width * height; i++) {
+    vec4.set(
+      tmpPixel,
+      data[i * 4 + 0] / 255,
+      data[i * 4 + 1] / 255,
+      data[i * 4 + 2] / 255,
+      data[i * 4 + 3] / 255
+    );
     applyToPixel(tmpPixel, effect, tmpPixel);
-    data[i*4+0] = tmpPixel[0]*255;
-    data[i*4+1] = tmpPixel[1]*255;
-    data[i*4+2] = tmpPixel[2]*255;
-    data[i*4+3] = tmpPixel[3]*255;
+    data[i * 4 + 0] = tmpPixel[0] * 255;
+    data[i * 4 + 1] = tmpPixel[1] * 255;
+    data[i * 4 + 2] = tmpPixel[2] * 255;
+    data[i * 4 + 3] = tmpPixel[3] * 255;
   }
 }
 
@@ -105,5 +114,5 @@ function applyToImageData(imageData, effect) {
 export default {
   identity: identity,
   applyToPixel: applyToPixel,
-  applyToImageData: applyToImageData
+  applyToImageData: applyToImageData,
 };

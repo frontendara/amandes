@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import Level from "./geometries/Level";
-import Stage from "./stages/Stage";
+import Level from './geometries/Level';
+import Stage from './stages/Stage';
 
 // This file contains no executable code, only documentation.
 
@@ -92,7 +92,7 @@ export interface Rect {
   height?: number;
 }
 
-type ViewType = "rectilinear" | "flat";
+type ViewType = 'rectilinear' | 'flat';
 
 /**
  * Defines the camera direction, aperture and projection used to
@@ -267,7 +267,7 @@ export interface Asset {
  * @return {Tile[]} result
  */
 
-type GeometryType = "cube" | "equirect" | "flat";
+type GeometryType = 'cube' | 'equirect' | 'flat';
 
 export interface Geometry {
   type: GeometryType;

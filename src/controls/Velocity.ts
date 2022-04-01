@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import eventEmitter from "minimal-event-emitter";
-import Dynamics from "./Dynamics";
-import clearOwnProperties from "../util/clearOwnProperties";
+import eventEmitter from 'minimal-event-emitter';
+import Dynamics from './Dynamics';
+import clearOwnProperties from '../util/clearOwnProperties';
 
 /**
  * @class VelocityControlMethod
@@ -27,14 +27,14 @@ import clearOwnProperties from "../util/clearOwnProperties";
  * The user should emit 'active' and 'inactive' events if required.
  *
  * @param {String} parameter The parameter to be controlled (e.g. `x`, `y` or `zoom`)
-*/
+ */
 class VelocityControlMethod {
   #parameter: any;
   #dynamics: Dynamics;
 
   constructor(parameter) {
     if (!parameter) {
-      throw new Error("VelocityControlMethod: parameter must be defined");
+      throw new Error('VelocityControlMethod: parameter must be defined');
     }
 
     this.#parameter = parameter;
@@ -55,7 +55,7 @@ class VelocityControlMethod {
     this.emit('parameterDynamics', this.#parameter, this.#dynamics);
   }
   emit(_arg0: string, _parameter: any, _dynamics: any) {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
   /**
    * Set the parameter's friction.

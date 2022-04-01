@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import WorkPool from "./WorkPool";
+import WorkPool from './WorkPool';
 
-import runTests from "./WorkCommon.test";
+import runTests from './WorkCommon.test';
 
 runTests('WorkPool', WorkPool);

@@ -28,18 +28,21 @@ var source = new Marzipano.SingleAssetSource(asset);
 // The level size need not match the actual video dimensions because it is
 // only used to determine the most appropriate level to render, and no such
 // choice has to be made in this case.
-var geometry = new Marzipano.EquirectGeometry([ { width: 1 } ]);
+var geometry = new Marzipano.EquirectGeometry([{ width: 1 }]);
 
 // Create view.
 // We display the video at a fixed vertical fov.
-var limiter = Marzipano.RectilinearView.limit.vfov(90*Math.PI/180, 90*Math.PI/180);
-var view = new Marzipano.RectilinearView({ fov: Math.PI/2 }, limiter);
+var limiter = Marzipano.RectilinearView.limit.vfov(
+  (90 * Math.PI) / 180,
+  (90 * Math.PI) / 180
+);
+var view = new Marzipano.RectilinearView({ fov: Math.PI / 2 }, limiter);
 
 // Create scene.
 var scene = viewer.createScene({
   source: source,
   geometry: geometry,
-  view: view
+  view: view,
 });
 
 // Display scene.
@@ -74,8 +77,8 @@ function tryStart() {
 
   video.play();
 
-  waitForReadyState(video, video.HAVE_METADATA, 100, function() {
-    waitForReadyState(video, video.HAVE_ENOUGH_DATA, 100, function() {
+  waitForReadyState(video, video.HAVE_METADATA, 100, function () {
+    waitForReadyState(video, video.HAVE_ENOUGH_DATA, 100, function () {
       asset.setVideo(video);
     });
   });
@@ -85,7 +88,7 @@ function tryStart() {
 // The HTML5 video element exposes a `readystatechange` event that could be
 // listened for instead, but it seems to be unreliable on some browsers.
 function waitForReadyState(element, readyState, interval, done) {
-  var timer = setInterval(function() {
+  var timer = setInterval(function () {
     if (element.readyState >= readyState) {
       clearInterval(timer);
       done(null, true);

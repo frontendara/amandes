@@ -14,32 +14,34 @@
  * limitations under the License.
  */
 import { suite, test, assert } from 'vitest';
-import sinon from "sinon";
-sinon.assert.expose(assert, {prefix: ''});
+import sinon from 'sinon';
+sinon.assert.expose(assert, { prefix: '' });
 
-import eventEmitter from "minimal-event-emitter";
+import eventEmitter from 'minimal-event-emitter';
 
-import Stage from "./Stage";
+import Stage from './Stage';
 
-import CubeGeometry from "../geometries/Cube";
+import CubeGeometry from '../geometries/Cube';
 var CubeTile = CubeGeometry.Tile;
-import EquirectGeometry from "../geometries/Equirect";
+import EquirectGeometry from '../geometries/Equirect';
 var EquirectTile = EquirectGeometry.Tile;
 
 // Stage is an abstract class and cannot be instantiated directly.
 // We must stub methods and properties expected to be implemented by subclasses.
 class TestStage extends Stage {
   constructor(progressive) {
-    super({ progressive: progressive })
+    super({ progressive: progressive });
     var renderers = [].slice.call(arguments, 1);
     var nextRendererIndex = 0;
     this.validateLayer = sinon.stub();
     this.setSizeForType = sinon.stub();
     this.startFrame = sinon.stub();
     this.endFrame = sinon.stub();
-    this.createRenderer = function () { return renderers[nextRendererIndex++]; };
+    this.createRenderer = function () {
+      return renderers[nextRendererIndex++];
+    };
     this.destroyRenderer = sinon.stub();
-    this.registerRenderer('fake', 'fake', function () { });
+    this.registerRenderer('fake', 'fake', function () {});
   }
 }
 
@@ -88,9 +90,8 @@ class MockTextureStore {
   }
 }
 
-suite('Stage', function() {
-
-  test('manages the layer stack correctly', function() {
+suite('Stage', function () {
+  test('manages the layer stack correctly', function () {
     var stage = new TestStage();
 
     var layer1 = new MockLayer();
@@ -99,9 +100,15 @@ suite('Stage', function() {
 
     assert.isFalse(stage.hasLayer(layer1));
     assert.sameOrderedMembers([], stage.listLayers());
-    assert.throws(function() { stage.addLayer(layer1, 1); });
-    assert.throws(function() { stage.moveLayer(layer1, 1); });
-    assert.throws(function() { stage.removeLayer(layer1); });
+    assert.throws(function () {
+      stage.addLayer(layer1, 1);
+    });
+    assert.throws(function () {
+      stage.moveLayer(layer1, 1);
+    });
+    assert.throws(function () {
+      stage.removeLayer(layer1);
+    });
 
     stage.addLayer(layer1);
     assert.isTrue(stage.hasLayer(layer1));
@@ -111,15 +118,23 @@ suite('Stage', function() {
     assert.isTrue(stage.hasLayer(layer2));
     assert.sameOrderedMembers([layer1, layer2], stage.listLayers());
 
-    assert.throws(function() { stage.addLayer(layer3, -1); });
-    assert.throws(function() { stage.addLayer(layer3, 3); });
+    assert.throws(function () {
+      stage.addLayer(layer3, -1);
+    });
+    assert.throws(function () {
+      stage.addLayer(layer3, 3);
+    });
 
     stage.addLayer(layer3, 1);
     assert.isTrue(stage.hasLayer(layer3));
     assert.sameOrderedMembers([layer1, layer3, layer2], stage.listLayers());
 
-    assert.throws(function() { stage.moveLayer(layer1, -1); });
-    assert.throws(function() { stage.moveLayer(layer1, 3); });
+    assert.throws(function () {
+      stage.moveLayer(layer1, -1);
+    });
+    assert.throws(function () {
+      stage.moveLayer(layer1, 3);
+    });
 
     stage.moveLayer(layer1, 2);
     assert.isTrue(stage.hasLayer(layer1));
@@ -134,15 +149,17 @@ suite('Stage', function() {
     assert.sameOrderedMembers([layer3], stage.listLayers());
   });
 
-  test('throws if layer validation fails', function() {
+  test('throws if layer validation fails', function () {
     var stage = new TestStage();
     var layer = new MockLayer();
 
     stage.validateLayer.throws();
-    assert.throws(function() { stage.addLayer(layer); });
+    assert.throws(function () {
+      stage.addLayer(layer);
+    });
   });
 
-  test('emits invalidation event', function() {
+  test('emits invalidation event', function () {
     var stage = new TestStage();
     var layer = new MockLayer();
 
@@ -171,7 +188,7 @@ suite('Stage', function() {
     assert.equal(spy.callCount, 7);
   });
 
-  test('gets and sets size', function() {
+  test('gets and sets size', function () {
     var stage = new TestStage();
 
     var size = {};
@@ -180,7 +197,7 @@ suite('Stage', function() {
     assert.equal(size.width, 0);
     assert.equal(size.height, 0);
 
-    stage.setSize({width: 200, height: 100});
+    stage.setSize({ width: 200, height: 100 });
     assert.isTrue(stage.setSizeForType.called);
 
     size = stage.size();
@@ -188,9 +205,8 @@ suite('Stage', function() {
     assert.equal(size.height, 100);
   });
 
-  suite('general rendering', function() {
-
-    test('renders a single layer', function() {
+  suite('general rendering', function () {
+    test('renders a single layer', function () {
       var renderer = new MockRenderer();
       var stage = new TestStage(false, renderer);
 
@@ -199,12 +215,12 @@ suite('Stage', function() {
       var store = new MockTextureStore();
       store.texture.withArgs(tile).returns(texture);
       var layer = new MockLayer(store);
-      layer.visibleTiles.callsFake(function(result) {
+      layer.visibleTiles.callsFake(function (result) {
         result.push(tile);
       });
 
       stage.addLayer(layer);
-      stage.setSize({width: 100, height: 100});
+      stage.setSize({ width: 100, height: 100 });
       stage.render();
 
       assert.callOrder(
@@ -212,7 +228,8 @@ suite('Stage', function() {
         renderer.startLayer,
         renderer.renderTile,
         renderer.endLayer,
-        stage.endFrame);
+        stage.endFrame
+      );
 
       assert.calledOnce(renderer.renderTile);
       assert.calledWith(renderer.renderTile, tile, texture, layer, 1);
@@ -222,7 +239,7 @@ suite('Stage', function() {
       assert.callOrder(store.startFrame, store.markTile, store.endFrame);
     });
 
-    test('renders multiple layers', function() {
+    test('renders multiple layers', function () {
       var renderer1 = new MockRenderer();
       var renderer2 = new MockRenderer();
       var stage = new TestStage(false, renderer1, renderer2);
@@ -232,7 +249,7 @@ suite('Stage', function() {
       var store1 = new MockTextureStore();
       store1.texture.withArgs(tile1).returns(texture1);
       var layer1 = new MockLayer(store1);
-      layer1.visibleTiles.callsFake(function(result) {
+      layer1.visibleTiles.callsFake(function (result) {
         result.push(tile1);
       });
 
@@ -241,13 +258,13 @@ suite('Stage', function() {
       var store2 = new MockTextureStore();
       store2.texture.withArgs(tile2).returns(texture2);
       var layer2 = new MockLayer(store2);
-      layer2.visibleTiles.callsFake(function(result) {
+      layer2.visibleTiles.callsFake(function (result) {
         result.push(tile2);
       });
 
       stage.addLayer(layer1);
       stage.addLayer(layer2);
-      stage.setSize({width: 100, height: 100});
+      stage.setSize({ width: 100, height: 100 });
       stage.render();
 
       assert.callOrder(
@@ -258,7 +275,8 @@ suite('Stage', function() {
         renderer2.startLayer,
         renderer2.renderTile,
         renderer2.endLayer,
-        stage.endFrame);
+        stage.endFrame
+      );
 
       assert.calledOnce(stage.startFrame);
       assert.calledOnce(stage.endFrame);
@@ -282,7 +300,7 @@ suite('Stage', function() {
       assert.callOrder(store2.startFrame, store2.markTile, store2.endFrame);
     });
 
-    test('renders multiple layers with the same renderer', function() {
+    test('renders multiple layers with the same renderer', function () {
       var renderer = new MockRenderer();
       var stage = new TestStage(false, renderer, renderer);
 
@@ -291,7 +309,7 @@ suite('Stage', function() {
       var store1 = new MockTextureStore();
       store1.texture.withArgs(tile1).returns(texture1);
       var layer1 = new MockLayer(store1);
-      layer1.visibleTiles.callsFake(function(result) {
+      layer1.visibleTiles.callsFake(function (result) {
         result.push(tile1);
       });
 
@@ -300,13 +318,13 @@ suite('Stage', function() {
       var store2 = new MockTextureStore();
       store2.texture.withArgs(tile2).returns(texture2);
       var layer2 = new MockLayer(store2);
-      layer2.visibleTiles.callsFake(function(result) {
+      layer2.visibleTiles.callsFake(function (result) {
         result.push(tile2);
       });
 
       stage.addLayer(layer1);
       stage.addLayer(layer2);
-      stage.setSize({width: 100, height: 100});
+      stage.setSize({ width: 100, height: 100 });
       stage.render();
 
       assert.callOrder(
@@ -314,7 +332,8 @@ suite('Stage', function() {
         renderer.startLayer,
         renderer.renderTile,
         renderer.endLayer,
-        stage.endFrame);
+        stage.endFrame
+      );
 
       assert.calledOnce(stage.startFrame);
       assert.calledOnce(stage.endFrame);
@@ -334,7 +353,7 @@ suite('Stage', function() {
       assert.callOrder(store2.startFrame, store2.markTile, store2.endFrame);
     });
 
-    test('renders multiple layers with the same texture store', function() {
+    test('renders multiple layers with the same texture store', function () {
       var renderer1 = new MockRenderer();
       var renderer2 = new MockRenderer();
       var stage = new TestStage(false, renderer1, renderer2);
@@ -345,7 +364,7 @@ suite('Stage', function() {
       var texture1 = {};
       store.texture.withArgs(tile1).returns(texture1);
       var layer1 = new MockLayer(store);
-      layer1.visibleTiles.callsFake(function(result) {
+      layer1.visibleTiles.callsFake(function (result) {
         result.push(tile1);
       });
 
@@ -353,13 +372,13 @@ suite('Stage', function() {
       var texture2 = {};
       store.texture.withArgs(tile2).returns(texture2);
       var layer2 = new MockLayer(store);
-      layer2.visibleTiles.callsFake(function(result) {
+      layer2.visibleTiles.callsFake(function (result) {
         result.push(tile2);
       });
 
       stage.addLayer(layer1);
       stage.addLayer(layer2);
-      stage.setSize({width: 100, height: 100});
+      stage.setSize({ width: 100, height: 100 });
       stage.render();
 
       assert.calledTwice(store.startFrame);
@@ -369,19 +388,17 @@ suite('Stage', function() {
       assert.calledWith(store.markTile, tile2);
       assert.callOrder(store.startFrame, store.markTile, store.endFrame);
     });
-
   });
 
-  suite('non-progressive rendering', function() {
-
-    test('falls back to a parent tile', function() {
+  suite('non-progressive rendering', function () {
+    test('falls back to a parent tile', function () {
       var renderer = new MockRenderer();
       var stage = new TestStage(false, renderer);
 
       var geometry = new CubeGeometry([
         { tileSize: 512, size: 512 },
         { tileSize: 512, size: 1024 },
-        { tileSize: 512, size: 2048 }
+        { tileSize: 512, size: 2048 },
       ]);
       var visibleTile = new CubeTile('f', 0, 0, 2, geometry);
       var parentTile = new CubeTile('f', 0, 0, 1, geometry);
@@ -389,12 +406,12 @@ suite('Stage', function() {
       var store = new MockTextureStore();
       store.texture.returns(null).withArgs(parentTile).returns({});
       var layer = new MockLayer(store);
-      layer.visibleTiles.callsFake(function(result) {
+      layer.visibleTiles.callsFake(function (result) {
         result.push(visibleTile);
       });
 
       stage.addLayer(layer);
-      stage.setSize({width: 100, height: 100});
+      stage.setSize({ width: 100, height: 100 });
       stage.render();
 
       assert.calledOnce(renderer.renderTile);
@@ -405,14 +422,14 @@ suite('Stage', function() {
       assert.calledWith(store.markTile, parentTile);
     });
 
-    test('falls back to a grandparent tile', function() {
+    test('falls back to a grandparent tile', function () {
       var renderer = new MockRenderer();
       var stage = new TestStage(false, renderer);
 
       var geometry = new CubeGeometry([
         { tileSize: 512, size: 512 },
         { tileSize: 512, size: 1024 },
-        { tileSize: 512, size: 2048 }
+        { tileSize: 512, size: 2048 },
       ]);
       var visibleTile = new CubeTile('f', 0, 0, 2, geometry);
       var parentTile = new CubeTile('f', 0, 0, 1, geometry);
@@ -420,12 +437,12 @@ suite('Stage', function() {
       var store = new MockTextureStore();
       store.texture.returns(null).withArgs(grandparentTile).returns({});
       var layer = new MockLayer(store);
-      layer.visibleTiles.callsFake(function(result) {
+      layer.visibleTiles.callsFake(function (result) {
         result.push(visibleTile);
       });
 
       stage.addLayer(layer);
-      stage.setSize({width: 100, height: 100});
+      stage.setSize({ width: 100, height: 100 });
       stage.render();
 
       assert.calledOnce(renderer.renderTile);
@@ -436,14 +453,14 @@ suite('Stage', function() {
       assert.calledWith(store.markTile, grandparentTile);
     });
 
-    test('falls back to children tiles', function() {
+    test('falls back to children tiles', function () {
       var renderer = new MockRenderer();
       var stage = new TestStage(false, renderer);
 
       var geometry = new CubeGeometry([
         { tileSize: 512, size: 512 },
         { tileSize: 512, size: 1024 },
-        { tileSize: 512, size: 2048 }
+        { tileSize: 512, size: 2048 },
       ]);
       var visibleTile = new CubeTile('f', 0, 0, 1, geometry);
       var parentTile = new CubeTile('f', 0, 0, 0, geometry);
@@ -454,18 +471,23 @@ suite('Stage', function() {
       var store = new MockTextureStore();
       store.texture
         .returns(null)
-        .withArgs(parentTile).returns({})
-        .withArgs(childTile1).returns({})
-        .withArgs(childTile2).returns({})
-        .withArgs(childTile3).returns({})
-        .withArgs(childTile4).returns({});
+        .withArgs(parentTile)
+        .returns({})
+        .withArgs(childTile1)
+        .returns({})
+        .withArgs(childTile2)
+        .returns({})
+        .withArgs(childTile3)
+        .returns({})
+        .withArgs(childTile4)
+        .returns({});
       var layer = new MockLayer(store);
-      layer.visibleTiles.callsFake(function(result) {
+      layer.visibleTiles.callsFake(function (result) {
         result.push(visibleTile);
       });
 
       stage.addLayer(layer);
-      stage.setSize({width: 100, height: 100});
+      stage.setSize({ width: 100, height: 100 });
       stage.render();
 
       assert.callCount(renderer.renderTile, 4);
@@ -482,14 +504,14 @@ suite('Stage', function() {
       assert.calledWith(store.markTile, childTile4);
     });
 
-    test('falls back to both children and parent tiles', function() {
+    test('falls back to both children and parent tiles', function () {
       var renderer = new MockRenderer();
       var stage = new TestStage(false, renderer);
 
       var geometry = new CubeGeometry([
         { tileSize: 512, size: 512 },
         { tileSize: 512, size: 1024 },
-        { tileSize: 512, size: 2048 }
+        { tileSize: 512, size: 2048 },
       ]);
       var visibleTile = new CubeTile('f', 0, 0, 1, geometry);
       var parentTile = new CubeTile('f', 0, 0, 0, geometry);
@@ -499,17 +521,21 @@ suite('Stage', function() {
       var store = new MockTextureStore();
       store.texture
         .returns(null)
-        .withArgs(parentTile).returns({})
-        .withArgs(childTile1).returns({})
-        .withArgs(childTile2).returns({})
-        .withArgs(childTile3).returns({});
+        .withArgs(parentTile)
+        .returns({})
+        .withArgs(childTile1)
+        .returns({})
+        .withArgs(childTile2)
+        .returns({})
+        .withArgs(childTile3)
+        .returns({});
       var layer = new MockLayer(store);
-      layer.visibleTiles.callsFake(function(result) {
+      layer.visibleTiles.callsFake(function (result) {
         result.push(visibleTile);
       });
 
       stage.addLayer(layer);
-      stage.setSize({width: 100, height: 100});
+      stage.setSize({ width: 100, height: 100 });
       stage.render();
 
       assert.callCount(renderer.renderTile, 4);
@@ -526,28 +552,26 @@ suite('Stage', function() {
       assert.calledWith(store.markTile, parentTile);
     });
 
-    test('falls back to grandchildren tiles on trivial geometries', function() {
+    test('falls back to grandchildren tiles on trivial geometries', function () {
       var renderer = new MockRenderer();
       var stage = new TestStage(false, renderer);
 
       var geometry = new EquirectGeometry([
         { width: 512 },
         { width: 1024 },
-        { width: 2048 }
+        { width: 2048 },
       ]);
       var visibleTile = new EquirectTile(0, geometry);
       var grandchildTile = new EquirectTile(2, geometry);
       var store = new MockTextureStore();
-      store.texture
-        .returns(null)
-        .withArgs(grandchildTile).returns({});
+      store.texture.returns(null).withArgs(grandchildTile).returns({});
       var layer = new MockLayer(store);
-      layer.visibleTiles.callsFake(function(result) {
+      layer.visibleTiles.callsFake(function (result) {
         result.push(visibleTile);
       });
 
       stage.addLayer(layer);
-      stage.setSize({width: 100, height: 100});
+      stage.setSize({ width: 100, height: 100 });
       stage.render();
 
       assert.calledOnce(renderer.renderTile);
@@ -558,7 +582,7 @@ suite('Stage', function() {
       assert.calledWith(store.markTile, grandchildTile);
     });
 
-    test('does not fall back to grandchildren tiles on nontrivial geometries', function() {
+    test('does not fall back to grandchildren tiles on nontrivial geometries', function () {
       var renderer = new MockRenderer();
       var stage = new TestStage(false, renderer);
 
@@ -574,15 +598,17 @@ suite('Stage', function() {
       var store = new MockTextureStore();
       store.texture
         .returns(null)
-        .withArgs(parentTile).returns({})
-        .withArgs(grandchildTile).returns({});
+        .withArgs(parentTile)
+        .returns({})
+        .withArgs(grandchildTile)
+        .returns({});
       var layer = new MockLayer(store);
-      layer.visibleTiles.callsFake(function(result) {
+      layer.visibleTiles.callsFake(function (result) {
         result.push(visibleTile);
       });
 
       stage.addLayer(layer);
-      stage.setSize({width: 100, height: 100});
+      stage.setSize({ width: 100, height: 100 });
       stage.render();
 
       assert.calledOnce(renderer.renderTile);
@@ -593,14 +619,14 @@ suite('Stage', function() {
       assert.calledWith(store.markTile, parentTile);
     });
 
-    test('does not render a fallback tile more than once', function() {
+    test('does not render a fallback tile more than once', function () {
       var renderer = new MockRenderer();
       var stage = new TestStage(false, renderer);
 
       var geometry = new CubeGeometry([
         { tileSize: 512, size: 512 },
         { tileSize: 512, size: 1024 },
-        { tileSize: 512, size: 2048 }
+        { tileSize: 512, size: 2048 },
       ]);
       var visibleTile1 = new CubeTile('f', 0, 0, 2, geometry);
       var visibleTile2 = new CubeTile('f', 1, 1, 2, geometry);
@@ -609,12 +635,12 @@ suite('Stage', function() {
       var store = new MockTextureStore();
       store.texture.returns(null).withArgs(parentTile).returns({});
       var layer = new MockLayer(store);
-      layer.visibleTiles.callsFake(function(result) {
+      layer.visibleTiles.callsFake(function (result) {
         result.push(visibleTile1, visibleTile2);
       });
 
       stage.addLayer(layer);
-      stage.setSize({width: 100, height: 100});
+      stage.setSize({ width: 100, height: 100 });
       stage.render();
 
       assert.calledOnce(renderer.renderTile);
@@ -626,31 +652,34 @@ suite('Stage', function() {
       assert.calledWith(store.markTile, parentTile);
     });
 
-    test('does not fall back when unnecessary', function() {
+    test('does not fall back when unnecessary', function () {
       var renderer = new MockRenderer();
       var stage = new TestStage(false, renderer);
 
       var geometry = new CubeGeometry([
         { tileSize: 512, size: 512 },
         { tileSize: 512, size: 1024 },
-        { tileSize: 512, size: 2048 }
+        { tileSize: 512, size: 2048 },
       ]);
       var visibleTile = new CubeTile('f', 0, 0, 1, geometry);
       var parentTile = new CubeTile('f', 0, 0, 0, geometry);
       var childTile = new CubeTile('f', 0, 0, 2, geometry);
       var store = new MockTextureStore();
       store.texture
-          .returns(null)
-          .withArgs(visibleTile).returns({})
-          .withArgs(parentTile).returns({})
-          .withArgs(childTile).returns({});
+        .returns(null)
+        .withArgs(visibleTile)
+        .returns({})
+        .withArgs(parentTile)
+        .returns({})
+        .withArgs(childTile)
+        .returns({});
       var layer = new MockLayer(store);
-      layer.visibleTiles.callsFake(function(result) {
+      layer.visibleTiles.callsFake(function (result) {
         result.push(visibleTile);
       });
 
       stage.addLayer(layer);
-      stage.setSize({width: 100, height: 100});
+      stage.setSize({ width: 100, height: 100 });
       stage.render();
 
       assert.calledOnce(renderer.renderTile);
@@ -660,7 +689,7 @@ suite('Stage', function() {
       assert.calledWith(store.markTile, visibleTile);
     });
 
-    test('renders and loads tiles in the right order', function() {
+    test('renders and loads tiles in the right order', function () {
       var renderer = new MockRenderer();
       var stage = new TestStage(false, renderer);
 
@@ -683,17 +712,21 @@ suite('Stage', function() {
       var store = new MockTextureStore();
       store.texture
         .returns(null)
-        .withArgs(visibleTile2).returns({})
-        .withArgs(grandparentTile).returns({})
-        .withArgs(parentTile1).returns({})
-        .withArgs(childTile).returns({});
+        .withArgs(visibleTile2)
+        .returns({})
+        .withArgs(grandparentTile)
+        .returns({})
+        .withArgs(parentTile1)
+        .returns({})
+        .withArgs(childTile)
+        .returns({});
       var layer = new MockLayer(store);
-      layer.visibleTiles.callsFake(function(result) {
+      layer.visibleTiles.callsFake(function (result) {
         result.push(visibleTile1, visibleTile2, visibleTile3);
       });
 
       stage.addLayer(layer);
-      stage.setSize({width: 100, height: 100});
+      stage.setSize({ width: 100, height: 100 });
       stage.render();
 
       assert.callCount(renderer.renderTile, 4);
@@ -710,19 +743,17 @@ suite('Stage', function() {
       assert.calledWith(store.markTile.getCall(4), visibleTile3);
       assert.calledWith(store.markTile.getCall(5), childTile);
     });
-
   });
 
-  suite('progressive rendering', function() {
-
-    test('falls back to a parent tile', function() {
+  suite('progressive rendering', function () {
+    test('falls back to a parent tile', function () {
       var renderer = new MockRenderer();
       var stage = new TestStage(true, renderer);
 
       var geometry = new CubeGeometry([
         { tileSize: 512, size: 512 },
         { tileSize: 512, size: 1024 },
-        { tileSize: 512, size: 2048 }
+        { tileSize: 512, size: 2048 },
       ]);
       var visibleTile = new CubeTile('f', 0, 0, 2, geometry);
       var parentTile = new CubeTile('f', 0, 0, 1, geometry);
@@ -730,12 +761,12 @@ suite('Stage', function() {
       var store = new MockTextureStore();
       store.texture.returns(null).withArgs(parentTile).returns({});
       var layer = new MockLayer(store);
-      layer.visibleTiles.callsFake(function(result) {
+      layer.visibleTiles.callsFake(function (result) {
         result.push(visibleTile);
       });
 
       stage.addLayer(layer);
-      stage.setSize({width: 100, height: 100});
+      stage.setSize({ width: 100, height: 100 });
       stage.render();
 
       assert.calledOnce(renderer.renderTile);
@@ -747,14 +778,14 @@ suite('Stage', function() {
       assert.calledWith(store.markTile, grandparentTile);
     });
 
-    test('falls back to a grandparent tile', function() {
+    test('falls back to a grandparent tile', function () {
       var renderer = new MockRenderer();
       var stage = new TestStage(true, renderer);
 
       var geometry = new CubeGeometry([
         { tileSize: 512, size: 512 },
         { tileSize: 512, size: 1024 },
-        { tileSize: 512, size: 2048 }
+        { tileSize: 512, size: 2048 },
       ]);
       var visibleTile = new CubeTile('f', 0, 0, 2, geometry);
       var parentTile = new CubeTile('f', 0, 0, 1, geometry);
@@ -762,12 +793,12 @@ suite('Stage', function() {
       var store = new MockTextureStore();
       store.texture.returns(null).withArgs(grandparentTile).returns({});
       var layer = new MockLayer(store);
-      layer.visibleTiles.callsFake(function(result) {
+      layer.visibleTiles.callsFake(function (result) {
         result.push(visibleTile);
       });
 
       stage.addLayer(layer);
-      stage.setSize({width: 100, height: 100});
+      stage.setSize({ width: 100, height: 100 });
       stage.render();
 
       assert.calledOnce(renderer.renderTile);
@@ -779,14 +810,14 @@ suite('Stage', function() {
       assert.calledWith(store.markTile, grandparentTile);
     });
 
-    test('falls back to children tiles', function() {
+    test('falls back to children tiles', function () {
       var renderer = new MockRenderer();
       var stage = new TestStage(true, renderer);
 
       var geometry = new CubeGeometry([
         { tileSize: 512, size: 512 },
         { tileSize: 512, size: 1024 },
-        { tileSize: 512, size: 2048 }
+        { tileSize: 512, size: 2048 },
       ]);
       var visibleTile = new CubeTile('f', 0, 0, 1, geometry);
       var parentTile = new CubeTile('f', 0, 0, 0, geometry);
@@ -797,18 +828,23 @@ suite('Stage', function() {
       var store = new MockTextureStore();
       store.texture
         .returns(null)
-        .withArgs(parentTile).returns({})
-        .withArgs(childTile1).returns({})
-        .withArgs(childTile2).returns({})
-        .withArgs(childTile3).returns({})
-        .withArgs(childTile4).returns({});
+        .withArgs(parentTile)
+        .returns({})
+        .withArgs(childTile1)
+        .returns({})
+        .withArgs(childTile2)
+        .returns({})
+        .withArgs(childTile3)
+        .returns({})
+        .withArgs(childTile4)
+        .returns({});
       var layer = new MockLayer(store);
-      layer.visibleTiles.callsFake(function(result) {
+      layer.visibleTiles.callsFake(function (result) {
         result.push(visibleTile);
       });
 
       stage.addLayer(layer);
-      stage.setSize({width: 100, height: 100});
+      stage.setSize({ width: 100, height: 100 });
       stage.render();
 
       assert.callCount(renderer.renderTile, 4);
@@ -826,14 +862,14 @@ suite('Stage', function() {
       assert.calledWith(store.markTile, childTile4);
     });
 
-    test('falls back to both children and parent tiles', function() {
+    test('falls back to both children and parent tiles', function () {
       var renderer = new MockRenderer();
       var stage = new TestStage(true, renderer);
 
       var geometry = new CubeGeometry([
         { tileSize: 512, size: 512 },
         { tileSize: 512, size: 1024 },
-        { tileSize: 512, size: 2048 }
+        { tileSize: 512, size: 2048 },
       ]);
       var visibleTile = new CubeTile('f', 0, 0, 1, geometry);
       var parentTile = new CubeTile('f', 0, 0, 0, geometry);
@@ -843,17 +879,21 @@ suite('Stage', function() {
       var store = new MockTextureStore();
       store.texture
         .returns(null)
-        .withArgs(parentTile).returns({})
-        .withArgs(childTile1).returns({})
-        .withArgs(childTile2).returns({})
-        .withArgs(childTile3).returns({});
+        .withArgs(parentTile)
+        .returns({})
+        .withArgs(childTile1)
+        .returns({})
+        .withArgs(childTile2)
+        .returns({})
+        .withArgs(childTile3)
+        .returns({});
       var layer = new MockLayer(store);
-      layer.visibleTiles.callsFake(function(result) {
+      layer.visibleTiles.callsFake(function (result) {
         result.push(visibleTile);
       });
 
       stage.addLayer(layer);
-      stage.setSize({width: 100, height: 100});
+      stage.setSize({ width: 100, height: 100 });
       stage.render();
 
       assert.callCount(renderer.renderTile, 4);
@@ -870,28 +910,26 @@ suite('Stage', function() {
       assert.calledWith(store.markTile, parentTile);
     });
 
-    test('falls back to grandchildren tiles on trivial geometries', function() {
+    test('falls back to grandchildren tiles on trivial geometries', function () {
       var renderer = new MockRenderer();
       var stage = new TestStage(true, renderer);
 
       var geometry = new EquirectGeometry([
         { width: 512 },
         { width: 1024 },
-        { width: 2048 }
+        { width: 2048 },
       ]);
       var visibleTile = new EquirectTile(0, geometry);
       var grandchildTile = new EquirectTile(2, geometry);
       var store = new MockTextureStore();
-      store.texture
-        .returns(null)
-        .withArgs(grandchildTile).returns({});
+      store.texture.returns(null).withArgs(grandchildTile).returns({});
       var layer = new MockLayer(store);
-      layer.visibleTiles.callsFake(function(result) {
+      layer.visibleTiles.callsFake(function (result) {
         result.push(visibleTile);
       });
 
       stage.addLayer(layer);
-      stage.setSize({width: 100, height: 100});
+      stage.setSize({ width: 100, height: 100 });
       stage.render();
 
       assert.calledOnce(renderer.renderTile);
@@ -902,7 +940,7 @@ suite('Stage', function() {
       assert.calledWith(store.markTile, grandchildTile);
     });
 
-    test('does not fall back to grandchildren tiles on nontrivial geometries', function() {
+    test('does not fall back to grandchildren tiles on nontrivial geometries', function () {
       var renderer = new MockRenderer();
       var stage = new TestStage(true, renderer);
 
@@ -918,15 +956,17 @@ suite('Stage', function() {
       var store = new MockTextureStore();
       store.texture
         .returns(null)
-        .withArgs(parentTile).returns({})
-        .withArgs(grandchildTile).returns({});
+        .withArgs(parentTile)
+        .returns({})
+        .withArgs(grandchildTile)
+        .returns({});
       var layer = new MockLayer(store);
-      layer.visibleTiles.callsFake(function(result) {
+      layer.visibleTiles.callsFake(function (result) {
         result.push(visibleTile);
       });
 
       stage.addLayer(layer);
-      stage.setSize({width: 100, height: 100});
+      stage.setSize({ width: 100, height: 100 });
       stage.render();
 
       assert.calledOnce(renderer.renderTile);
@@ -937,14 +977,14 @@ suite('Stage', function() {
       assert.calledWith(store.markTile, parentTile);
     });
 
-    test('does not render a fallback tile more than once', function() {
+    test('does not render a fallback tile more than once', function () {
       var renderer = new MockRenderer();
       var stage = new TestStage(true, renderer);
 
       var geometry = new CubeGeometry([
         { tileSize: 512, size: 512 },
         { tileSize: 512, size: 1024 },
-        { tileSize: 512, size: 2048 }
+        { tileSize: 512, size: 2048 },
       ]);
       var visibleTile1 = new CubeTile('f', 0, 0, 2, geometry);
       var visibleTile2 = new CubeTile('f', 1, 1, 2, geometry);
@@ -953,12 +993,12 @@ suite('Stage', function() {
       var store = new MockTextureStore();
       store.texture.returns(null).withArgs(parentTile).returns({});
       var layer = new MockLayer(store);
-      layer.visibleTiles.callsFake(function(result) {
+      layer.visibleTiles.callsFake(function (result) {
         result.push(visibleTile1, visibleTile2);
       });
 
       stage.addLayer(layer);
-      stage.setSize({width: 100, height: 100});
+      stage.setSize({ width: 100, height: 100 });
       stage.render();
 
       assert.calledOnce(renderer.renderTile);
@@ -971,31 +1011,34 @@ suite('Stage', function() {
       assert.calledWith(store.markTile, grandparentTile);
     });
 
-    test('does not fall back when unnecessary', function() {
+    test('does not fall back when unnecessary', function () {
       var renderer = new MockRenderer();
       var stage = new TestStage(true, renderer);
 
       var geometry = new CubeGeometry([
         { tileSize: 512, size: 512 },
         { tileSize: 512, size: 1024 },
-        { tileSize: 512, size: 2048 }
+        { tileSize: 512, size: 2048 },
       ]);
       var visibleTile = new CubeTile('f', 0, 0, 1, geometry);
       var parentTile = new CubeTile('f', 0, 0, 0, geometry);
       var childTile = new CubeTile('f', 0, 0, 2, geometry);
       var store = new MockTextureStore();
       store.texture
-          .returns(null)
-          .withArgs(visibleTile).returns({})
-          .withArgs(parentTile).returns({})
-          .withArgs(childTile).returns({});
+        .returns(null)
+        .withArgs(visibleTile)
+        .returns({})
+        .withArgs(parentTile)
+        .returns({})
+        .withArgs(childTile)
+        .returns({});
       var layer = new MockLayer(store);
-      layer.visibleTiles.callsFake(function(result) {
+      layer.visibleTiles.callsFake(function (result) {
         result.push(visibleTile);
       });
 
       stage.addLayer(layer);
-      stage.setSize({width: 100, height: 100});
+      stage.setSize({ width: 100, height: 100 });
       stage.render();
 
       assert.calledOnce(renderer.renderTile);
@@ -1006,7 +1049,7 @@ suite('Stage', function() {
       assert.calledWith(store.markTile, parentTile);
     });
 
-    test('renders and loads tiles in the right order', function() {
+    test('renders and loads tiles in the right order', function () {
       var renderer = new MockRenderer();
       var stage = new TestStage(true, renderer);
 
@@ -1029,17 +1072,21 @@ suite('Stage', function() {
       var store = new MockTextureStore();
       store.texture
         .returns(null)
-        .withArgs(visibleTile2).returns({})
-        .withArgs(grandparentTile).returns({})
-        .withArgs(parentTile1).returns({})
-        .withArgs(childTile).returns({});
+        .withArgs(visibleTile2)
+        .returns({})
+        .withArgs(grandparentTile)
+        .returns({})
+        .withArgs(parentTile1)
+        .returns({})
+        .withArgs(childTile)
+        .returns({});
       var layer = new MockLayer(store);
-      layer.visibleTiles.callsFake(function(result) {
+      layer.visibleTiles.callsFake(function (result) {
         result.push(visibleTile1, visibleTile2, visibleTile3);
       });
 
       stage.addLayer(layer);
-      stage.setSize({width: 100, height: 100});
+      stage.setSize({ width: 100, height: 100 });
       stage.render();
 
       assert.callCount(renderer.renderTile, 4);
@@ -1057,6 +1104,5 @@ suite('Stage', function() {
       assert.calledWith(store.markTile.getCall(5), visibleTile3);
       assert.calledWith(store.markTile.getCall(6), childTile);
     });
-
   });
 });

@@ -15,128 +15,274 @@
  */
 import { suite, test, assert } from 'vitest';
 
-import convertFov from "./convertFov";
+import convertFov from './convertFov';
 
-suite('convertFov', function() {
-
-  test('htov', function() {
-
+suite('convertFov', function () {
+  test('htov', function () {
     var htov = convertFov.htov;
 
     var testMatrix = [
       { width: 100, height: 100, hfov: 1, vfov: 1 },
-      { width: 200, height: 100, hfov: 1, vfov: 2 * Math.atan(0.5 * Math.tan(0.5)) },
-      { width: 100, height: 200, hfov: 1, vfov: 2 * Math.atan(2 * Math.tan(0.5)) },
+      {
+        width: 200,
+        height: 100,
+        hfov: 1,
+        vfov: 2 * Math.atan(0.5 * Math.tan(0.5)),
+      },
+      {
+        width: 100,
+        height: 200,
+        hfov: 1,
+        vfov: 2 * Math.atan(2 * Math.tan(0.5)),
+      },
       { width: 100, height: 100, hfov: 2, vfov: 2 },
-      { width: 200, height: 100, hfov: 2, vfov: 2 * Math.atan(0.5 * Math.tan(1)) },
-      { width: 100, height: 200, hfov: 2, vfov: 2 * Math.atan(2 * Math.tan(1)) }
+      {
+        width: 200,
+        height: 100,
+        hfov: 2,
+        vfov: 2 * Math.atan(0.5 * Math.tan(1)),
+      },
+      {
+        width: 100,
+        height: 200,
+        hfov: 2,
+        vfov: 2 * Math.atan(2 * Math.tan(1)),
+      },
     ];
 
     for (var i = 0; i < testMatrix.length; i++) {
       var t = testMatrix[i];
       assert.closeTo(htov(t.hfov, t.width, t.height), t.vfov, 0.00000001);
     }
-
   });
 
-  test('htod', function() {
-
+  test('htod', function () {
     var htod = convertFov.htod;
 
     var testMatrix = [
-      { width: 100, height: 100, hfov: 1, dfov: 2 * Math.atan(Math.sqrt(2) * Math.tan(0.5)) },
-      { width: 200, height: 100, hfov: 1, dfov: 2 * Math.atan(0.5*Math.sqrt(5) * Math.tan(0.5)) },
-      { width: 100, height: 200, hfov: 1, dfov: 2 * Math.atan(Math.sqrt(5) * Math.tan(0.5)) },
-      { width: 100, height: 100, hfov: 2, dfov: 2 * Math.atan(Math.sqrt(2) * Math.tan(1)) },
-      { width: 200, height: 100, hfov: 2, dfov: 2 * Math.atan(0.5*Math.sqrt(5) * Math.tan(1)) },
-      { width: 100, height: 200, hfov: 2, dfov: 2 * Math.atan(Math.sqrt(5) * Math.tan(1)) }
+      {
+        width: 100,
+        height: 100,
+        hfov: 1,
+        dfov: 2 * Math.atan(Math.sqrt(2) * Math.tan(0.5)),
+      },
+      {
+        width: 200,
+        height: 100,
+        hfov: 1,
+        dfov: 2 * Math.atan(0.5 * Math.sqrt(5) * Math.tan(0.5)),
+      },
+      {
+        width: 100,
+        height: 200,
+        hfov: 1,
+        dfov: 2 * Math.atan(Math.sqrt(5) * Math.tan(0.5)),
+      },
+      {
+        width: 100,
+        height: 100,
+        hfov: 2,
+        dfov: 2 * Math.atan(Math.sqrt(2) * Math.tan(1)),
+      },
+      {
+        width: 200,
+        height: 100,
+        hfov: 2,
+        dfov: 2 * Math.atan(0.5 * Math.sqrt(5) * Math.tan(1)),
+      },
+      {
+        width: 100,
+        height: 200,
+        hfov: 2,
+        dfov: 2 * Math.atan(Math.sqrt(5) * Math.tan(1)),
+      },
     ];
 
     for (var i = 0; i < testMatrix.length; i++) {
       var t = testMatrix[i];
       assert.closeTo(htod(t.hfov, t.width, t.height), t.dfov, 0.00000001);
     }
-
   });
 
-  test('vtoh', function() {
-
+  test('vtoh', function () {
     var vtoh = convertFov.vtoh;
 
     var testMatrix = [
       { width: 100, height: 100, vfov: 1, hfov: 1 },
-      { width: 200, height: 100, vfov: 1, hfov: 2 * Math.atan(2 * Math.tan(0.5)) },
-      { width: 100, height: 200, vfov: 1, hfov: 2 * Math.atan(0.5 * Math.tan(0.5)) },
+      {
+        width: 200,
+        height: 100,
+        vfov: 1,
+        hfov: 2 * Math.atan(2 * Math.tan(0.5)),
+      },
+      {
+        width: 100,
+        height: 200,
+        vfov: 1,
+        hfov: 2 * Math.atan(0.5 * Math.tan(0.5)),
+      },
       { width: 100, height: 100, vfov: 2, hfov: 2 },
-      { width: 200, height: 100, vfov: 2, hfov: 2 * Math.atan(2 * Math.tan(1)) },
-      { width: 100, height: 200, vfov: 2, hfov: 2 * Math.atan(0.5 * Math.tan(1)) }
+      {
+        width: 200,
+        height: 100,
+        vfov: 2,
+        hfov: 2 * Math.atan(2 * Math.tan(1)),
+      },
+      {
+        width: 100,
+        height: 200,
+        vfov: 2,
+        hfov: 2 * Math.atan(0.5 * Math.tan(1)),
+      },
     ];
 
     for (var i = 0; i < testMatrix.length; i++) {
       var t = testMatrix[i];
       assert.closeTo(vtoh(t.vfov, t.width, t.height), t.hfov, 0.00000001);
     }
-
   });
 
-  test('vtod', function() {
-
+  test('vtod', function () {
     var vtod = convertFov.vtod;
 
     var testMatrix = [
-      { width: 100, height: 100, vfov: 1, dfov: 2 * Math.atan(Math.sqrt(2) * Math.tan(0.5)) },
-      { width: 200, height: 100, vfov: 1, dfov: 2 * Math.atan(Math.sqrt(5) * Math.tan(0.5)) },
-      { width: 100, height: 200, vfov: 1, dfov: 2 * Math.atan(0.5*Math.sqrt(5) * Math.tan(0.5)) },
-      { width: 100, height: 100, vfov: 2, dfov: 2 * Math.atan(Math.sqrt(2) * Math.tan(1)) },
-      { width: 200, height: 100, vfov: 2, dfov: 2 * Math.atan(Math.sqrt(5) * Math.tan(1)) },
-      { width: 100, height: 200, vfov: 2, dfov: 2 * Math.atan(0.5*Math.sqrt(5) * Math.tan(1)) }
+      {
+        width: 100,
+        height: 100,
+        vfov: 1,
+        dfov: 2 * Math.atan(Math.sqrt(2) * Math.tan(0.5)),
+      },
+      {
+        width: 200,
+        height: 100,
+        vfov: 1,
+        dfov: 2 * Math.atan(Math.sqrt(5) * Math.tan(0.5)),
+      },
+      {
+        width: 100,
+        height: 200,
+        vfov: 1,
+        dfov: 2 * Math.atan(0.5 * Math.sqrt(5) * Math.tan(0.5)),
+      },
+      {
+        width: 100,
+        height: 100,
+        vfov: 2,
+        dfov: 2 * Math.atan(Math.sqrt(2) * Math.tan(1)),
+      },
+      {
+        width: 200,
+        height: 100,
+        vfov: 2,
+        dfov: 2 * Math.atan(Math.sqrt(5) * Math.tan(1)),
+      },
+      {
+        width: 100,
+        height: 200,
+        vfov: 2,
+        dfov: 2 * Math.atan(0.5 * Math.sqrt(5) * Math.tan(1)),
+      },
     ];
 
     for (var i = 0; i < testMatrix.length; i++) {
       var t = testMatrix[i];
       assert.closeTo(vtod(t.vfov, t.width, t.height), t.dfov, 0.00000001);
     }
-
   });
 
-  test('dtoh', function() {
-
+  test('dtoh', function () {
     var dtoh = convertFov.dtoh;
 
     var testMatrix = [
-      { width: 100, height: 100, dfov: 1, hfov: 2 * Math.atan(1/Math.sqrt(2) * Math.tan(0.5)) },
-      { width: 200, height: 100, dfov: 1, hfov: 2 * Math.atan(2/Math.sqrt(5) * Math.tan(0.5)) },
-      { width: 100, height: 200, dfov: 1, hfov: 2 * Math.atan(1/Math.sqrt(5) * Math.tan(0.5)) },
-      { width: 100, height: 100, dfov: 2, hfov: 2 * Math.atan(1/Math.sqrt(2) * Math.tan(1)) },
-      { width: 200, height: 100, dfov: 2, hfov: 2 * Math.atan(2/Math.sqrt(5) * Math.tan(1)) },
-      { width: 100, height: 200, dfov: 2, hfov: 2 * Math.atan(1/Math.sqrt(5) * Math.tan(1)) }
+      {
+        width: 100,
+        height: 100,
+        dfov: 1,
+        hfov: 2 * Math.atan((1 / Math.sqrt(2)) * Math.tan(0.5)),
+      },
+      {
+        width: 200,
+        height: 100,
+        dfov: 1,
+        hfov: 2 * Math.atan((2 / Math.sqrt(5)) * Math.tan(0.5)),
+      },
+      {
+        width: 100,
+        height: 200,
+        dfov: 1,
+        hfov: 2 * Math.atan((1 / Math.sqrt(5)) * Math.tan(0.5)),
+      },
+      {
+        width: 100,
+        height: 100,
+        dfov: 2,
+        hfov: 2 * Math.atan((1 / Math.sqrt(2)) * Math.tan(1)),
+      },
+      {
+        width: 200,
+        height: 100,
+        dfov: 2,
+        hfov: 2 * Math.atan((2 / Math.sqrt(5)) * Math.tan(1)),
+      },
+      {
+        width: 100,
+        height: 200,
+        dfov: 2,
+        hfov: 2 * Math.atan((1 / Math.sqrt(5)) * Math.tan(1)),
+      },
     ];
 
     for (var i = 0; i < testMatrix.length; i++) {
       var t = testMatrix[i];
       assert.closeTo(dtoh(t.dfov, t.width, t.height), t.hfov, 0.00000001);
     }
-
   });
 
-  test('dtov', function() {
-
+  test('dtov', function () {
     var dtov = convertFov.dtov;
 
     var testMatrix = [
-      { width: 100, height: 100, dfov: 1, vfov: 2 * Math.atan(1/Math.sqrt(2) * Math.tan(0.5)) },
-      { width: 200, height: 100, dfov: 1, vfov: 2 * Math.atan(1/Math.sqrt(5) * Math.tan(0.5)) },
-      { width: 100, height: 200, dfov: 1, vfov: 2 * Math.atan(2/Math.sqrt(5) * Math.tan(0.5)) },
-      { width: 100, height: 100, dfov: 2, vfov: 2 * Math.atan(1/Math.sqrt(2) * Math.tan(1)) },
-      { width: 200, height: 100, dfov: 2, vfov: 2 * Math.atan(1/Math.sqrt(5) * Math.tan(1)) },
-      { width: 100, height: 200, dfov: 2, vfov: 2 * Math.atan(2/Math.sqrt(5) * Math.tan(1)) }
+      {
+        width: 100,
+        height: 100,
+        dfov: 1,
+        vfov: 2 * Math.atan((1 / Math.sqrt(2)) * Math.tan(0.5)),
+      },
+      {
+        width: 200,
+        height: 100,
+        dfov: 1,
+        vfov: 2 * Math.atan((1 / Math.sqrt(5)) * Math.tan(0.5)),
+      },
+      {
+        width: 100,
+        height: 200,
+        dfov: 1,
+        vfov: 2 * Math.atan((2 / Math.sqrt(5)) * Math.tan(0.5)),
+      },
+      {
+        width: 100,
+        height: 100,
+        dfov: 2,
+        vfov: 2 * Math.atan((1 / Math.sqrt(2)) * Math.tan(1)),
+      },
+      {
+        width: 200,
+        height: 100,
+        dfov: 2,
+        vfov: 2 * Math.atan((1 / Math.sqrt(5)) * Math.tan(1)),
+      },
+      {
+        width: 100,
+        height: 200,
+        dfov: 2,
+        vfov: 2 * Math.atan((2 / Math.sqrt(5)) * Math.tan(1)),
+      },
     ];
 
     for (var i = 0; i < testMatrix.length; i++) {
       var t = testMatrix[i];
       assert.closeTo(dtov(t.dfov, t.width, t.height), t.vfov, 0.00000001);
     }
-
   });
-
 });

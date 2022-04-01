@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-function defer(fn: { (): void; apply: (arg0: null, arg1: any) => void; }, args: string | any[]) {
+function defer(
+  fn: { (): void; apply: (arg0: null, arg1: any) => void },
+  args: string | any[]
+) {
   function deferred() {
     if (args && args.length > 0) {
       fn.apply(null, args);

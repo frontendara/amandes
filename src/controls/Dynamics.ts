@@ -44,7 +44,7 @@ class Dynamics {
       this.offset += other.offset;
     }
 
-    var offsetFromVelocity = this.offsetFromVelocity(elapsed);
+    const offsetFromVelocity = this.offsetFromVelocity(elapsed);
     if (offsetFromVelocity) {
       // If there is an offset to add from the velocity, make this offset a number instead of null
       this.offset = this.offset || 0;
@@ -71,8 +71,8 @@ class Dynamics {
   offsetFromVelocity(elapsed) {
     elapsed = Math.min(elapsed, this.nullVelocityTime());
 
-    var velocityEnd = this.velocityAfter(elapsed);
-    var averageVelocity = (Number(this.velocity) + Number(velocityEnd)) / 2;
+    const velocityEnd = this.velocityAfter(elapsed);
+    const averageVelocity = (Number(this.velocity) + Number(velocityEnd)) / 2;
 
     return averageVelocity * elapsed;
   }
@@ -86,7 +86,11 @@ class Dynamics {
     return Math.abs(this.velocity / Number(this.friction));
   }
   static equals(d1, d2) {
-    return d1.velocity === d2.velocity && d1.friction === d2.friction && d1.offset === d2.offset;
+    return (
+      d1.velocity === d2.velocity &&
+      d1.friction === d2.friction &&
+      d1.offset === d2.offset
+    );
   }
 }
 

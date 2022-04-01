@@ -20,7 +20,9 @@ var video = multiResVideo.element;
 
 var progressFillElement = document.getElementById('progress-fill');
 var progressBackgroundElement = document.getElementById('progress-background');
-var currentTimeIndicatorElement = document.getElementById('current-time-indicator');
+var currentTimeIndicatorElement = document.getElementById(
+  'current-time-indicator'
+);
 var durationIndicatorElement = document.getElementById('duration-indicator');
 var playPauseElement = document.getElementById('play-pause');
 var muteElement = document.getElementById('mute');
@@ -51,7 +53,7 @@ updateCurrentTimeIndicator();
 updateDurationIndicator();
 updateMute();
 
-playPauseElement.addEventListener('click', function() {
+playPauseElement.addEventListener('click', function () {
   if (!video()) {
     return;
   }
@@ -62,7 +64,7 @@ playPauseElement.addEventListener('click', function() {
   }
 });
 
-muteElement.addEventListener('click', function() {
+muteElement.addEventListener('click', function () {
   if (!video()) {
     return;
   }
@@ -70,7 +72,7 @@ muteElement.addEventListener('click', function() {
   video().volume = newVolume;
 });
 
-progressBackgroundElement.addEventListener('click', function(evt) {
+progressBackgroundElement.addEventListener('click', function (evt) {
   if (!video()) {
     return;
   }
@@ -82,15 +84,19 @@ function updateProgressBar() {
     return;
   }
   var progress = video().currentTime / video().duration;
-  progressFillElement.style.width = (progress * 100) + '%';
+  progressFillElement.style.width = progress * 100 + '%';
 }
 
 function updateCurrentTimeIndicator() {
-  currentTimeIndicatorElement.innerHTML = video() ? formatTime(video().currentTime) : '-';
+  currentTimeIndicatorElement.innerHTML = video()
+    ? formatTime(video().currentTime)
+    : '-';
 }
 
 function updateDurationIndicator() {
-  durationIndicatorElement.innerHTML = video() ? formatTime(video().duration) : '-';
+  durationIndicatorElement.innerHTML = video()
+    ? formatTime(video().duration)
+    : '-';
 }
 
 function updatePlayPause() {
@@ -126,16 +132,24 @@ function percentFromClick(evt) {
 
 function formatTime(d) {
   var h = Math.floor(d / 3600);
-  var m = Math.floor(d % 3600 / 60);
-  var s = Math.floor(d % 3600 % 60);
-  return ((h > 0 ? h + ":" + (m < 10 ? "0" : "") : "") + m + ":" + (s < 10 ? "0" : "") + s);
+  var m = Math.floor((d % 3600) / 60);
+  var s = Math.floor((d % 3600) % 60);
+  return (
+    (h > 0 ? h + ':' + (m < 10 ? '0' : '') : '') +
+    m +
+    ':' +
+    (s < 10 ? '0' : '') +
+    s
+  );
 }
 
 /* Resolution modal */
 
-var toggleResolutionSelectElement = document.getElementById('toggle-resolution-select');
+var toggleResolutionSelectElement = document.getElementById(
+  'toggle-resolution-select'
+);
 
-toggleResolutionSelectElement.addEventListener('click', function() {
+toggleResolutionSelectElement.addEventListener('click', function () {
   updateResolutionSelectOpen();
 });
 
@@ -153,7 +167,7 @@ function updateResolutionSelectOpen() {
 
 var toggleOptionsElement = document.getElementById('toggle-options');
 
-toggleOptionsElement.addEventListener('click', function() {
+toggleOptionsElement.addEventListener('click', function () {
   updateOptionsOpen();
 });
 
@@ -170,15 +184,17 @@ function updateOptionsOpen() {
 /* Resolution selection */
 
 var resolutionSelectElement = document.getElementById('resolution-select');
-var resolutionIndicatorElement = document.getElementById('resolution-indicator');
+var resolutionIndicatorElement = document.getElementById(
+  'resolution-indicator'
+);
 
 function setResolutions() {
-  multiResVideo.resolutions().forEach(function(level, i) {
+  multiResVideo.resolutions().forEach(function (level, i) {
     var levelElement = document.createElement('li');
     levelElement.value = i;
-    levelElement.innerHTML = level.width + 'x' + level.width/2;
+    levelElement.innerHTML = level.width + 'x' + level.width / 2;
 
-    levelElement.addEventListener('click', function() {
+    levelElement.addEventListener('click', function () {
       multiResVideo.setResolutionIndex(i);
     });
 
@@ -188,7 +204,9 @@ function setResolutions() {
 
 function updateResolutionIndicator() {
   var level = multiResVideo.resolution();
-  resolutionIndicatorElement.innerHTML = level ? level.width + 'x' + level.width/2 : '-';
+  resolutionIndicatorElement.innerHTML = level
+    ? level.width + 'x' + level.width / 2
+    : '-';
 }
 
 function updateSelectedResolution() {
@@ -223,22 +241,24 @@ updateResolutionChanging();
 
 var effectElement = document.getElementById('effect');
 
-effectElement.addEventListener('change', function() {
+effectElement.addEventListener('change', function () {
   var layer = multiResVideo.layer();
 
-  if(!layer) { return; }
+  if (!layer) {
+    return;
+  }
 
   var effect = effectElement.value;
   var effectsObj = { colorMatrix: null, colorOffset: null };
   if (effect === 'desaturate') {
     effectsObj = colorEffects.saturation(0);
-  } else if(effect === 'sepia') {
+  } else if (effect === 'sepia') {
     effectsObj = colorEffects.sepia(1);
-  } else if(effect === 'saturate') {
+  } else if (effect === 'saturate') {
     effectsObj = colorEffects.saturation(1.25);
-  } else if(effect === 'lighten') {
+  } else if (effect === 'lighten') {
     effectsObj = colorEffects.brightness(0.1);
-  } else if(effect === 'darken') {
+  } else if (effect === 'darken') {
     effectsObj = colorEffects.brightness(-0.1);
   }
 

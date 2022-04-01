@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import eventEmitter from "minimal-event-emitter";
-import defaults from "./util/defaults";
-import now from "./util/now";
+import eventEmitter from 'minimal-event-emitter';
+import defaults from './util/defaults';
+import now from './util/now';
 
 interface TimerOptions {
   duration: number;
 }
 
-var defaultOptions: TimerOptions = {
+const defaultOptions: TimerOptions = {
   duration: Infinity,
 };
 
@@ -50,7 +50,7 @@ class Timer {
   _handle: any;
 
   emit(_arg0: string) {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
   constructor(opts?: TimerOptions) {
     opts = defaults<TimerOptions>(opts || {}, defaultOptions);
@@ -117,14 +117,14 @@ class Timer {
     }
   }
   _check() {
-    var currentTime = now();
-    var elapsed = currentTime - Number(this._startTime);
-    var remaining = this._duration - elapsed;
+    const currentTime = now();
+    const elapsed = currentTime - Number(this._startTime);
+    const remaining = this._duration - elapsed;
 
     this._teardown();
 
     if (remaining <= 0) {
-      this.emit("timeout");
+      this.emit('timeout');
       this._startTime = null;
     } else if (remaining < Infinity) {
       this._setup(remaining);

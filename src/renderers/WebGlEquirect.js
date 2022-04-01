@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { mat4 as mat4 } from "gl-matrix";
-import clearOwnProperties from "../util/clearOwnProperties";
+import { mat4 as mat4 } from 'gl-matrix';
+import clearOwnProperties from '../util/clearOwnProperties';
 
-import WebGlCommon from "./WebGlCommon";
+import WebGlCommon from './WebGlCommon';
 var createConstantBuffers = WebGlCommon.createConstantBuffers;
 var destroyConstantBuffers = WebGlCommon.destroyConstantBuffers;
 var createShaderProgram = WebGlCommon.createShaderProgram;
@@ -29,20 +29,29 @@ var setupPixelEffectUniforms = WebGlCommon.setupPixelEffectUniforms;
 var setDepth = WebGlCommon.setDepth;
 var setTexture = WebGlCommon.setTexture;
 
-import vertexSrc from "../shaders/vertexEquirect";
-import fragmentSrc from "../shaders/fragmentEquirect";
+import vertexSrc from '../shaders/vertexEquirect';
+import fragmentSrc from '../shaders/fragmentEquirect';
 
 var vertexIndices = [0, 1, 2, 0, 2, 3];
-var vertexPositions = [-1.0, -1.0, 0.0, 1.0, -1.0, 0.0, 1.0, 1.0, 0.0, -1.0, 1.0, 0.0];
+var vertexPositions = [
+  -1.0, -1.0, 0.0, 1.0, -1.0, 0.0, 1.0, 1.0, 0.0, -1.0, 1.0, 0.0,
+];
 var textureCoords = [0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0];
 
 var attribList = ['aVertexPosition'];
 var uniformList = [
-  'uDepth', 'uOpacity', 'uSampler', 'uInvProjMatrix', 'uViewportMatrix',
-  'uColorOffset', 'uColorMatrix', 'uTextureX', 'uTextureY', 'uTextureWidth',
-  'uTextureHeight'
+  'uDepth',
+  'uOpacity',
+  'uSampler',
+  'uInvProjMatrix',
+  'uViewportMatrix',
+  'uColorOffset',
+  'uColorMatrix',
+  'uTextureX',
+  'uTextureY',
+  'uTextureWidth',
+  'uTextureHeight',
 ];
-
 
 /**
  * @class WebGlEquirectRenderer
@@ -66,9 +75,20 @@ class WebGlEquirectRenderer {
     // See setViewport() for an explanation of how it works.
     this.viewportMatrix = mat4.create();
 
-    this.constantBuffers = createConstantBuffers(gl, vertexIndices, vertexPositions, textureCoords);
+    this.constantBuffers = createConstantBuffers(
+      gl,
+      vertexIndices,
+      vertexPositions,
+      textureCoords
+    );
 
-    this.shaderProgram = createShaderProgram(gl, vertexSrc, fragmentSrc, attribList, uniformList);
+    this.shaderProgram = createShaderProgram(
+      gl,
+      vertexSrc,
+      fragmentSrc,
+      attribList,
+      uniformList
+    );
   }
   destroy() {
     destroyConstantBuffers(this.gl, this.constantBuffers);
@@ -90,7 +110,14 @@ class WebGlEquirectRenderer {
     gl.uniformMatrix4fv(shaderProgram.uViewportMatrix, false, viewportMatrix);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, constantBuffers.vertexPositions);
-    gl.vertexAttribPointer(shaderProgram.aVertexPosition, 3, gl.FLOAT, gl.FALSE, 0, 0);
+    gl.vertexAttribPointer(
+      shaderProgram.aVertexPosition,
+      3,
+      gl.FLOAT,
+      gl.FALSE,
+      0,
+      0
+    );
     gl.bindBuffer(gl.ARRAY_BUFFER, constantBuffers.textureCoords);
 
     // Compute and set the inverse projection matrix.
@@ -114,7 +141,7 @@ class WebGlEquirectRenderer {
     setupPixelEffectUniforms(gl, layer.effects(), {
       opacity: shaderProgram.uOpacity,
       colorOffset: shaderProgram.uColorOffset,
-      colorMatrix: shaderProgram.uColorMatrix
+      colorMatrix: shaderProgram.uColorMatrix,
     });
   }
   endLayer(layer, rect) {

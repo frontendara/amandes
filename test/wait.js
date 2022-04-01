@@ -22,7 +22,7 @@
 // until(fn, done) repeatedly calls cond until it returns a truthy value,
 // and then calls done.
 function until(cond, done) {
-  var timer = setInterval(function() {
+  var timer = setInterval(function () {
     if (cond()) {
       clearInterval(timer);
       done();
@@ -33,8 +33,8 @@ function until(cond, done) {
 // untilSpyCalled(spy1, ..., spyN, done) repeatedly polls the spies until every
 // one has been called at least once, and then calls done.
 function untilSpyCalled() {
-  var spies = Array.prototype.slice.call(arguments, 0, arguments.length-1);
-  var done = arguments[arguments.length-1];
+  var spies = Array.prototype.slice.call(arguments, 0, arguments.length - 1);
+  var done = arguments[arguments.length - 1];
   function cond() {
     for (var i = 0; i < spies.length; i++) {
       if (!spies[i].called) {
@@ -48,5 +48,5 @@ function untilSpyCalled() {
 
 export default {
   until: until,
-  untilSpyCalled: untilSpyCalled
+  untilSpyCalled: untilSpyCalled,
 };

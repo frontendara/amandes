@@ -21,39 +21,44 @@ var viewer = new Marzipano.Viewer(document.getElementById('pano'));
 
 // Create a geometry to be shared by the two scenes.
 var geometry = new Marzipano.CubeGeometry([
-    { tileSize: 256, size: 256, fallbackOnly: true },
-    { size: 512, tileSize: 512 },
-    { size: 1024, tileSize: 512 },
-    { size: 2048, tileSize: 512 }
+  { tileSize: 256, size: 256, fallbackOnly: true },
+  { size: 512, tileSize: 512 },
+  { size: 1024, tileSize: 512 },
+  { size: 2048, tileSize: 512 },
 ]);
 
 // Create a view limiter to be shared by the two scenes.
-var limiter = Marzipano.RectilinearView.limit.traditional(2048, 120*Math.PI/180);
+var limiter = Marzipano.RectilinearView.limit.traditional(
+  2048,
+  (120 * Math.PI) / 180
+);
 
-var urlPrefix = "//www.marzipano.net/media";
+var urlPrefix = '//www.marzipano.net/media';
 
 // Set up the first scene.
 var view1 = new Marzipano.RectilinearView(null, limiter);
 var source1 = Marzipano.ImageUrlSource.fromString(
-  urlPrefix + "/electricity-museum/{z}/{f}/{y}/{x}.jpg",
-  { cubeMapPreviewUrl: urlPrefix + "/electricity-museum/preview.jpg" });
+  urlPrefix + '/electricity-museum/{z}/{f}/{y}/{x}.jpg',
+  { cubeMapPreviewUrl: urlPrefix + '/electricity-museum/preview.jpg' }
+);
 var scene1 = viewer.createScene({
   source: source1,
   geometry: geometry,
   view: view1,
-  pinFirstLevel: true
+  pinFirstLevel: true,
 });
 
 // Set up the second scene.
 var view2 = new Marzipano.RectilinearView(null, limiter);
 var source2 = Marzipano.ImageUrlSource.fromString(
-  urlPrefix + "/jeronimos/{z}/{f}/{y}/{x}.jpg",
-  { cubeMapPreviewUrl: urlPrefix + "/jeronimos/preview.jpg" });
+  urlPrefix + '/jeronimos/{z}/{f}/{y}/{x}.jpg',
+  { cubeMapPreviewUrl: urlPrefix + '/jeronimos/preview.jpg' }
+);
 var scene2 = viewer.createScene({
   source: source2,
   geometry: geometry,
   view: view2,
-  pinFirstLevel: true
+  pinFirstLevel: true,
 });
 
 // Store the currently displayed scene.
@@ -65,9 +70,12 @@ nextScene().switchTo({ transitionDuration: 0 });
 // Return the next scene to be displayed.
 function nextScene() {
   switch (currentScene) {
-    case scene1: return (currentScene = scene2);
-    case scene2: return (currentScene = scene1);
-    default: return (currentScene = scene1);
+    case scene1:
+      return (currentScene = scene2);
+    case scene2:
+      return (currentScene = scene1);
+    default:
+      return (currentScene = scene1);
   }
 }
 
@@ -75,26 +83,26 @@ function nextScene() {
 function changeScene(transitionDuration, transitionUpdate) {
   nextScene().switchTo({
     transitionDuration: transitionDuration,
-    transitionUpdate: transitionUpdate
+    transitionUpdate: transitionUpdate,
   });
 }
 
 // Get elements from DOM.
-var menuItems = document.querySelectorAll("[data-easing]");
-var easingSelect = document.getElementById("easing");
-var funSelect = document.getElementById("fun");
-var timeInput = document.getElementById("time");
+var menuItems = document.querySelectorAll('[data-easing]');
+var easingSelect = document.getElementById('easing');
+var funSelect = document.getElementById('fun');
+var timeInput = document.getElementById('time');
 
 // Set up the predefined transitions menu.
 for (var i = 0; i < menuItems.length; i++) {
-  (function(i) {
+  (function (i) {
     var item = menuItems[i];
     var fun = transitionFunctions[item.getAttribute('data-fun')];
     var time = parseInt(item.getAttribute('data-time'));
     var ease = easing[item.getAttribute('data-easing')];
-    item.onclick = function() {
+    item.onclick = function () {
       changeScene(time, fun(ease));
-    }
+    };
   })(i);
 }
 
@@ -115,10 +123,10 @@ for (var key in transitionFunctions) {
 }
 
 // Kick off custom transition on form submission.
-document.getElementById('customForm').onsubmit = function(e) {
+document.getElementById('customForm').onsubmit = function (e) {
   var time = timeInput.value;
   var fun = transitionFunctions[funSelect.value];
   var ease = easing[easingSelect.value];
   changeScene(time, fun(ease));
   e.preventDefault();
-}
+};

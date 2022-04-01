@@ -15,40 +15,41 @@
  */
 import { suite, test, assert } from 'vitest';
 
-import type from "./type";
+import type from './type';
 
-suite('type', function() {
-
-  test('undefined', function() {
+suite('type', function () {
+  test('undefined', function () {
     assert.strictEqual(type(undefined), 'undefined');
   });
 
-  test('null', function() {
+  test('null', function () {
     assert.strictEqual(type(null), 'null');
   });
 
-  test('number', function() {
+  test('number', function () {
     assert.strictEqual(type(0), 'number');
   });
 
-  test('boolean', function() {
+  test('boolean', function () {
     assert.strictEqual(type(false), 'boolean');
   });
 
-  test('array', function() {
+  test('array', function () {
     assert.strictEqual(type([]), 'array');
   });
 
-  test('object', function() {
+  test('object', function () {
     assert.strictEqual(type({}), 'object');
   });
 
-  test('function', function() {
-    assert.strictEqual(type(function(){}), 'function');
+  test('function', function () {
+    assert.strictEqual(
+      type(function () {}),
+      'function'
+    );
   });
 
-  test('regexp', function() {
+  test('regexp', function () {
     assert.strictEqual(type(/.*/), 'regexp');
   });
-
 });

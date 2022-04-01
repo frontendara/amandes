@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import Set from "./collections/Set";
-import { Tile } from "./jsdoc-extras";
+import Set from './collections/Set';
+import { Tile } from './jsdoc-extras';
 
 /**
  * A TileSearcher performs searches for visible tiles.
@@ -46,11 +46,11 @@ class TileSearcher {
    * @return The number of visible tiles found.
    */
   search(view: any, startingTile: Tile, result: Tile[]): number {
-    var stack = this.#stack;
-    var visited = this.#visited;
-    var vertices = this.#vertices;
+    const stack = this.#stack;
+    const visited = this.#visited;
+    const vertices = this.#vertices;
 
-    var count = 0;
+    let count = 0;
 
     // Clear internal state.
     this.#clear();
@@ -58,7 +58,7 @@ class TileSearcher {
     stack.push(startingTile);
 
     while (stack.length > 0) {
-      var tile = stack.pop();
+      const tile = stack.pop();
 
       if (visited.has(tile)) {
         // Skip already visited tile.
@@ -74,8 +74,8 @@ class TileSearcher {
       visited.add(tile);
 
       // Add neighbors to the stack of tiles to explore.
-      var neighbors = tile.neighbors();
-      for (var i = 0; i < neighbors.length; i++) {
+      const neighbors = tile.neighbors();
+      for (let i = 0; i < neighbors.length; i++) {
         stack.push(neighbors[i]);
       }
 

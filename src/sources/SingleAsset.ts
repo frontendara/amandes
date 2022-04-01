@@ -21,7 +21,7 @@
  * A {@link Source} that always provides the same {@link Asset}.
  *
  * @param {Asset} asset The asset.
-*/
+ */
 class SingleAssetSource {
   #asset: any;
   constructor(asset) {
@@ -32,9 +32,9 @@ class SingleAssetSource {
   }
   // TODO: _stage doesn't seem to be uesd here. Remove?
   loadAsset(_stage, tile, done) {
-    var self = this;
+    const self = this;
 
-    var timeout = setTimeout(function () {
+    const timeout = setTimeout(function () {
       done(null, tile, self.#asset);
     }, 0);
 
