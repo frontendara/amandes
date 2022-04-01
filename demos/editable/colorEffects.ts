@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 import * as Marzipano from '../../src/index';
+import { Effects } from '../../src/jsdoc-extras';
 
 export var colorEffects = {
   brightness: function (amount, result) {
@@ -56,7 +57,7 @@ export var colorEffects = {
     return result;
   },
 
-  saturation: function (amount, result) {
+  saturation: function (amount: number, result?: Effects) {
     result = Marzipano.colorEffects.identity(result);
 
     var lumR = 0.3086;

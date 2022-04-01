@@ -103,7 +103,7 @@ type ViewType = 'rectilinear' | 'flat';
  * This is an abstract interface; the concrete implementations are
  * {@link RectilinearView} and {@link FlatView}.
  */
-interface View {
+export interface View {
   /**
    * The view type, used by the {@link Stage} to determine the appropriate
    * renderer for a given geometry and view.
@@ -296,7 +296,7 @@ type GeometryType = 'cube' | 'equirect' | 'flat';
 
 export interface Geometry {
   type: GeometryType;
-  visibleTitles(view: View, level: Level): Tile[];
+  visibleTiles(view: View, level: Level, result?: Tile[]): Tile[];
 }
 
 /**

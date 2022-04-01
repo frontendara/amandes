@@ -23,8 +23,7 @@ import Stage from './Stage';
 
 import CubeGeometry from '../geometries/Cube';
 var CubeTile = CubeGeometry.Tile;
-import EquirectGeometry from '../geometries/Equirect';
-var EquirectTile = EquirectGeometry.Tile;
+import EquirectGeometry, { EquirectTile } from '../geometries/Equirect';
 
 // Stage is an abstract class and cannot be instantiated directly.
 // We must stub methods and properties expected to be implemented by subclasses.

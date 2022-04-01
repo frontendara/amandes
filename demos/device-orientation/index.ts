@@ -19,7 +19,7 @@ import {
   RectilinearView,
   Viewer,
 } from '../../src/index';
-import DeviceOrientationControlMethod from './DeviceOrientationControlMethod';
+import DeviceOrientationControlMethod from './DeviceOrientationControlMethod.js';
 
 // Create viewer.
 var viewer = new Viewer(document.getElementById('pano'));

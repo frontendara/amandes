@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { editMode } from './editMode';
+import { editMode } from './editMode.js';
 
-var viewerElement = document.querySelector('#pano');
+var viewerElement = document.querySelector<HTMLElement>('#pano');
 
 var brush = {
   radius: 30,
