@@ -17,6 +17,12 @@ import { Dynamics, util, dependencies } from '../../src/index';
 
 // Custom control method to alter the view according to the device orientation.
 class DeviceOrientationControlMethod {
+  _dynamics: { yaw: Dynamics; pitch: Dynamics; };
+  _deviceOrientationHandler: any;
+  _previous: {};
+  _current: {};
+  _tmp: {};
+  _getPitchCallbacks: any[];
   constructor() {
     this._dynamics = {
       yaw: new Dynamics(),
@@ -88,6 +94,9 @@ class DeviceOrientationControlMethod {
     previous.yaw = current.yaw;
     previous.pitch = current.pitch;
     previous.roll = current.roll;
+  }
+  emit(arg0: string, arg1: string, yaw: any) {
+    throw new Error('Method not implemented.');
   }
 }
 
