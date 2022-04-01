@@ -13,8 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
-
 import { mat4 as mat4 } from "gl-matrix";
 import { vec3 as vec3 } from "gl-matrix";
 import clearOwnProperties from "../util/clearOwnProperties";

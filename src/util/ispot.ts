@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 
 // Returns whether n is a power of two.
 function ispot(n: number): boolean {

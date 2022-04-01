@@ -13,8 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
-
 import once from './once';
 
 // A cancelable function is an asynchronous function (i.e., one whose last
