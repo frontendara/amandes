@@ -205,6 +205,8 @@ class Scene {
     const geometry = opts.geometry;
     const view = this.#view;
     const stage = this.#viewer.stage();
+    // TODO: fix this when webgl is migrated to typescript
+    // @ts-ignore
     const textureStore = new TextureStore(source, stage, textureStoreOpts);
     const layer = new Layer(source, geometry, view, textureStore, layerOpts);
 

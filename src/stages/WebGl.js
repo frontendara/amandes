@@ -261,6 +261,9 @@ class WebGlStage extends Stage {
 
 WebGlStage.type = WebGlStage.prototype.type = 'webgl';
 
+/**
+ * @implements {Texture}
+ */
 class WebGlTexture {
   constructor(stage, tile, asset) {
     this._stage = stage;

@@ -623,6 +623,7 @@ class Stage {
       if (self.TextureClass) {
         return new self.TextureClass(self, tile, asset);
       }
+      return null
     }
 
     var fn = cancelize(async(makeTexture));
