@@ -305,7 +305,11 @@ class TextureStore {
   #noLongerVisible: any[];
   #visibleAgain: any[];
   #evicted: any[];
-  constructor(source: Source, stage: Stage, opts?: { previouslyVisibleCacheSize?: number }) {
+  constructor(
+    source: Source,
+    stage: Stage,
+    opts?: { previouslyVisibleCacheSize?: number }
+  ) {
     opts = defaults(opts || {}, defaultOptions);
 
     this.#source = source;

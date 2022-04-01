@@ -193,13 +193,13 @@ class RectilinearView {
   };
   static type: string;
   constructor(
-    params: RectilinearViewParams & {
+    params?: RectilinearViewParams & {
       width?: number;
       height?: number;
       projectionCenterX?: number;
       projectionCenterY?: number;
     },
-    limiter: Function | null
+    limiter?: Function | null
   ) {
     // The initial values for the view parameters.
     this.#yaw = params && params.yaw != null ? params.yaw : defaultYaw;
@@ -557,6 +557,9 @@ class RectilinearView {
     }
   }
   emit(_arg0: string) {
+    throw new Error('Method not implemented.');
+  }
+  addEventListener(_arg0: string, _arg1: any) {
     throw new Error('Method not implemented.');
   }
   #normalize(params: {

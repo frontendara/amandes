@@ -231,7 +231,7 @@ export interface Asset {
 
 /*
  * Effects to be applied on the rendering
-*/
+ */
 export interface Effects {
   /**
    * Between 1 (fully opaque) and 0 (fully transparent)

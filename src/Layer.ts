@@ -174,7 +174,7 @@ class Layer {
    * Returns the fixed level index.
    * @return {(number|null)}
    */
-  fixedLevel(): (number | null) {
+  fixedLevel(): number | null {
     return this.#fixedLevelIndex;
   }
   /**
@@ -184,7 +184,7 @@ class Layer {
    * @param {(number|null)} levelIndex
    * @throws An error if the level index is out of range.
    */
-  setFixedLevel(levelIndex: (number | null)) {
+  setFixedLevel(levelIndex: number | null) {
     if (levelIndex !== this.#fixedLevelIndex) {
       if (
         levelIndex != null &&

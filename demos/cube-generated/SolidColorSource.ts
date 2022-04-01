@@ -17,11 +17,13 @@ import { StaticAsset } from '../../src/index';
 
 // Custom tile source for procedurally generated solid color tiles.
 class SolidColorSource {
-  constructor(width, height) {
-    this._width = width;
-    this._height = height;
+  #width: number;
+  #height: number;
+  constructor(width: number, height: number) {
+    this.#width = width;
+    this.#height = height;
   }
-  _tileText(tile) {
+  _tileText(tile: { face: string; x: string; y: string; z: string }) {
     var components = [];
     if (tile.face) {
       components.push('face:' + tile.face);
@@ -31,7 +33,7 @@ class SolidColorSource {
     components.push('zoom:' + tile.z);
     return components.join(' ');
   }
-  _tileColor(tile) {
+  _tileColor(tile: { face: any }) {
     switch (tile.face) {
       case 'u':
         return '#999';
@@ -49,9 +51,17 @@ class SolidColorSource {
         return '#ddd';
     }
   }
-  loadAsset(stage, tile, done) {
-    var width = this._width;
-    var height = this._height;
+  loadAsset(
+    stage: any,
+    tile: any,
+    done: {
+      (arg0: any, arg1: any, arg2: StaticAsset): void;
+      (arg0: any, arg1: any, arg2: StaticAsset): void;
+      apply: any;
+    }
+  ) {
+    var width = this.#width;
+    var height = this.#height;
     var text = this._tileText(tile);
     var color = this._tileColor(tile);
 
