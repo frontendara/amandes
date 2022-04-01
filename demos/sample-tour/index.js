@@ -14,49 +14,48 @@
  * limitations under the License.
  */
 import * as Marzipano from '../../src/index';
-import { data } from "./data.js";
-
+import { data } from './data.js';
 (function () {
   var bowser = window.bowser;
   var screenfull = window.screenfull;
 
   // Grab elements from DOM.
-  var panoElement = document.querySelector("#pano");
-  var sceneNameElement = document.querySelector("#titleBar .sceneName");
-  var sceneListElement = document.querySelector("#sceneList");
-  var sceneElements = document.querySelectorAll("#sceneList .scene");
-  var sceneListToggleElement = document.querySelector("#sceneListToggle");
-  var autorotateToggleElement = document.querySelector("#autorotateToggle");
-  var fullscreenToggleElement = document.querySelector("#fullscreenToggle");
+  var panoElement = document.querySelector('#pano');
+  var sceneNameElement = document.querySelector('#titleBar .sceneName');
+  var sceneListElement = document.querySelector('#sceneList');
+  var sceneElements = document.querySelectorAll('#sceneList .scene');
+  var sceneListToggleElement = document.querySelector('#sceneListToggle');
+  var autorotateToggleElement = document.querySelector('#autorotateToggle');
+  var fullscreenToggleElement = document.querySelector('#fullscreenToggle');
 
   // Detect desktop or mobile mode.
   if (window.matchMedia) {
     var setMode = function () {
       if (mql.matches) {
-        document.body.classList.remove("desktop");
-        document.body.classList.add("mobile");
+        document.body.classList.remove('desktop');
+        document.body.classList.add('mobile');
       } else {
-        document.body.classList.remove("mobile");
-        document.body.classList.add("desktop");
+        document.body.classList.remove('mobile');
+        document.body.classList.add('desktop');
       }
     };
-    var mql = matchMedia("(max-width: 500px), (max-height: 500px)");
+    var mql = matchMedia('(max-width: 500px), (max-height: 500px)');
     setMode();
     mql.addListener(setMode);
   } else {
-    document.body.classList.add("desktop");
+    document.body.classList.add('desktop');
   }
 
   // Detect whether we are on a touch device.
-  document.body.classList.add("no-touch");
-  window.addEventListener("touchstart", function () {
-    document.body.classList.remove("no-touch");
-    document.body.classList.add("touch");
+  document.body.classList.add('no-touch');
+  window.addEventListener('touchstart', function () {
+    document.body.classList.remove('no-touch');
+    document.body.classList.add('touch');
   });
 
   // Use tooltip fallback mode on IE < 11.
   if (bowser.msie && parseFloat(bowser.version) < 11) {
-    document.body.classList.add("tooltip-fallback");
+    document.body.classList.add('tooltip-fallback');
   }
 
   // Viewer options.
@@ -71,10 +70,10 @@ import { data } from "./data.js";
 
   // Create scenes.
   var scenes = data.scenes.map((data) => {
-    var urlPrefix = "//www.marzipano.net/media";
+    var urlPrefix = '//www.marzipano.net/media';
     var source = Marzipano.ImageUrlSource.fromString(
-      urlPrefix + "/" + data.id + "/{z}/{f}/{y}/{x}.jpg",
-      { cubeMapPreviewUrl: urlPrefix + "/" + data.id + "/preview.jpg" }
+      urlPrefix + '/' + data.id + '/{z}/{f}/{y}/{x}.jpg',
+      { cubeMapPreviewUrl: urlPrefix + '/' + data.id + '/preview.jpg' }
     );
     var geometry = new Marzipano.CubeGeometry(data.levels);
 
@@ -125,34 +124,34 @@ import { data } from "./data.js";
     targetFov: Math.PI / 2,
   });
   if (data.settings.autorotateEnabled) {
-    autorotateToggleElement.classList.add("enabled");
+    autorotateToggleElement.classList.add('enabled');
   }
 
   // Set handler for autorotate toggle.
-  autorotateToggleElement.addEventListener("click", toggleAutorotate);
+  autorotateToggleElement.addEventListener('click', toggleAutorotate);
 
   // Set up fullscreen mode, if supported.
   if (screenfull.enabled && data.settings.fullscreenButton) {
-    document.body.classList.add("fullscreen-enabled");
-    fullscreenToggleElement.addEventListener("click", function () {
+    document.body.classList.add('fullscreen-enabled');
+    fullscreenToggleElement.addEventListener('click', function () {
       screenfull.toggle();
     });
-    screenfull.on("change", function () {
+    screenfull.on('change', function () {
       if (screenfull.isFullscreen) {
-        fullscreenToggleElement.classList.add("enabled");
+        fullscreenToggleElement.classList.add('enabled');
       } else {
-        fullscreenToggleElement.classList.remove("enabled");
+        fullscreenToggleElement.classList.remove('enabled');
       }
     });
   } else {
-    document.body.classList.add("fullscreen-disabled");
+    document.body.classList.add('fullscreen-disabled');
   }
 
   // Set handler for scene list toggle.
-  sceneListToggleElement.addEventListener("click", toggleSceneList);
+  sceneListToggleElement.addEventListener('click', toggleSceneList);
 
   // Start with the scene list open on desktop.
-  if (!document.body.classList.contains("mobile")) {
+  if (!document.body.classList.contains('mobile')) {
     showSceneList();
   }
 
@@ -161,22 +160,22 @@ import { data } from "./data.js";
     var el = document.querySelector(
       '#sceneList .scene[data-id="' + scene.data.id + '"]'
     );
-    el.addEventListener("click", function () {
+    el.addEventListener('click', function () {
       switchScene(scene);
       // On mobile, hide scene list after selecting a scene.
-      if (document.body.classList.contains("mobile")) {
+      if (document.body.classList.contains('mobile')) {
         hideSceneList();
       }
     });
   });
 
   // DOM elements for view controls.
-  var viewUpElement = document.querySelector("#viewUp");
-  var viewDownElement = document.querySelector("#viewDown");
-  var viewLeftElement = document.querySelector("#viewLeft");
-  var viewRightElement = document.querySelector("#viewRight");
-  var viewInElement = document.querySelector("#viewIn");
-  var viewOutElement = document.querySelector("#viewOut");
+  var viewUpElement = document.querySelector('#viewUp');
+  var viewDownElement = document.querySelector('#viewDown');
+  var viewLeftElement = document.querySelector('#viewLeft');
+  var viewRightElement = document.querySelector('#viewRight');
+  var viewInElement = document.querySelector('#viewIn');
+  var viewOutElement = document.querySelector('#viewOut');
 
   // Dynamic parameters for controls.
   var velocity = 0.7;
@@ -185,60 +184,60 @@ import { data } from "./data.js";
   // Associate view controls with elements.
   var controls = viewer.controls();
   controls.registerMethod(
-    "upElement",
+    'upElement',
     new Marzipano.ElementPressControlMethod(
       viewUpElement,
-      "y",
+      'y',
       -velocity,
       friction
     ),
     true
   );
   controls.registerMethod(
-    "downElement",
+    'downElement',
     new Marzipano.ElementPressControlMethod(
       viewDownElement,
-      "y",
+      'y',
       velocity,
       friction
     ),
     true
   );
   controls.registerMethod(
-    "leftElement",
+    'leftElement',
     new Marzipano.ElementPressControlMethod(
       viewLeftElement,
-      "x",
+      'x',
       -velocity,
       friction
     ),
     true
   );
   controls.registerMethod(
-    "rightElement",
+    'rightElement',
     new Marzipano.ElementPressControlMethod(
       viewRightElement,
-      "x",
+      'x',
       velocity,
       friction
     ),
     true
   );
   controls.registerMethod(
-    "inElement",
+    'inElement',
     new Marzipano.ElementPressControlMethod(
       viewInElement,
-      "zoom",
+      'zoom',
       -velocity,
       friction
     ),
     true
   );
   controls.registerMethod(
-    "outElement",
+    'outElement',
     new Marzipano.ElementPressControlMethod(
       viewOutElement,
-      "zoom",
+      'zoom',
       velocity,
       friction
     ),
@@ -246,7 +245,7 @@ import { data } from "./data.js";
   );
 
   function sanitize(s) {
-    return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
+    return s.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;');
   }
 
   function switchScene(scene) {
@@ -265,31 +264,31 @@ import { data } from "./data.js";
   function updateSceneList(scene) {
     for (var i = 0; i < sceneElements.length; i++) {
       var el = sceneElements[i];
-      if (el.getAttribute("data-id") === scene.data.id) {
-        el.classList.add("current");
+      if (el.getAttribute('data-id') === scene.data.id) {
+        el.classList.add('current');
       } else {
-        el.classList.remove("current");
+        el.classList.remove('current');
       }
     }
   }
 
   function showSceneList() {
-    sceneListElement.classList.add("enabled");
-    sceneListToggleElement.classList.add("enabled");
+    sceneListElement.classList.add('enabled');
+    sceneListToggleElement.classList.add('enabled');
   }
 
   function hideSceneList() {
-    sceneListElement.classList.remove("enabled");
-    sceneListToggleElement.classList.remove("enabled");
+    sceneListElement.classList.remove('enabled');
+    sceneListToggleElement.classList.remove('enabled');
   }
 
   function toggleSceneList() {
-    sceneListElement.classList.toggle("enabled");
-    sceneListToggleElement.classList.toggle("enabled");
+    sceneListElement.classList.toggle('enabled');
+    sceneListToggleElement.classList.toggle('enabled');
   }
 
   function startAutorotate() {
-    if (!autorotateToggleElement.classList.contains("enabled")) {
+    if (!autorotateToggleElement.classList.contains('enabled')) {
       return;
     }
     viewer.startMovement(autorotate);
@@ -302,39 +301,39 @@ import { data } from "./data.js";
   }
 
   function toggleAutorotate() {
-    if (autorotateToggleElement.classList.contains("enabled")) {
-      autorotateToggleElement.classList.remove("enabled");
+    if (autorotateToggleElement.classList.contains('enabled')) {
+      autorotateToggleElement.classList.remove('enabled');
       stopAutorotate();
     } else {
-      autorotateToggleElement.classList.add("enabled");
+      autorotateToggleElement.classList.add('enabled');
       startAutorotate();
     }
   }
 
   function createLinkHotspotElement(hotspot) {
     // Create wrapper element to hold icon and tooltip.
-    var wrapper = document.createElement("div");
-    wrapper.classList.add("hotspot");
-    wrapper.classList.add("link-hotspot");
+    var wrapper = document.createElement('div');
+    wrapper.classList.add('hotspot');
+    wrapper.classList.add('link-hotspot');
 
     // Create image element.
-    var icon = document.createElement("img");
-    icon.src = "img/link.png";
-    icon.classList.add("link-hotspot-icon");
+    var icon = document.createElement('img');
+    icon.src = 'img/link.png';
+    icon.classList.add('link-hotspot-icon');
 
     // Set rotation transform.
     var transformProperties = [
-      "-ms-transform",
-      "-webkit-transform",
-      "transform",
+      '-ms-transform',
+      '-webkit-transform',
+      'transform',
     ];
     for (var i = 0; i < transformProperties.length; i++) {
       var property = transformProperties[i];
-      icon.style[property] = "rotate(" + hotspot.rotation + "rad)";
+      icon.style[property] = 'rotate(' + hotspot.rotation + 'rad)';
     }
 
     // Add click event handler.
-    wrapper.addEventListener("click", function () {
+    wrapper.addEventListener('click', function () {
       switchScene(findSceneById(hotspot.target));
     });
 
@@ -343,9 +342,9 @@ import { data } from "./data.js";
     stopTouchAndScrollEventPropagation(wrapper);
 
     // Create tooltip element.
-    var tooltip = document.createElement("div");
-    tooltip.classList.add("hotspot-tooltip");
-    tooltip.classList.add("link-hotspot-tooltip");
+    var tooltip = document.createElement('div');
+    tooltip.classList.add('hotspot-tooltip');
+    tooltip.classList.add('link-hotspot-tooltip');
     tooltip.innerHTML = findSceneDataById(hotspot.target).name;
 
     wrapper.appendChild(icon);
@@ -356,36 +355,36 @@ import { data } from "./data.js";
 
   function createInfoHotspotElement(hotspot) {
     // Create wrapper element to hold icon and tooltip.
-    var wrapper = document.createElement("div");
-    wrapper.classList.add("hotspot");
-    wrapper.classList.add("info-hotspot");
+    var wrapper = document.createElement('div');
+    wrapper.classList.add('hotspot');
+    wrapper.classList.add('info-hotspot');
 
     // Create hotspot/tooltip header.
-    var header = document.createElement("div");
-    header.classList.add("info-hotspot-header");
+    var header = document.createElement('div');
+    header.classList.add('info-hotspot-header');
 
     // Create image element.
-    var iconWrapper = document.createElement("div");
-    iconWrapper.classList.add("info-hotspot-icon-wrapper");
-    var icon = document.createElement("img");
-    icon.src = "img/info.png";
-    icon.classList.add("info-hotspot-icon");
+    var iconWrapper = document.createElement('div');
+    iconWrapper.classList.add('info-hotspot-icon-wrapper');
+    var icon = document.createElement('img');
+    icon.src = 'img/info.png';
+    icon.classList.add('info-hotspot-icon');
     iconWrapper.appendChild(icon);
 
     // Create title element.
-    var titleWrapper = document.createElement("div");
-    titleWrapper.classList.add("info-hotspot-title-wrapper");
-    var title = document.createElement("div");
-    title.classList.add("info-hotspot-title");
+    var titleWrapper = document.createElement('div');
+    titleWrapper.classList.add('info-hotspot-title-wrapper');
+    var title = document.createElement('div');
+    title.classList.add('info-hotspot-title');
     title.innerHTML = hotspot.title;
     titleWrapper.appendChild(title);
 
     // Create close element.
-    var closeWrapper = document.createElement("div");
-    closeWrapper.classList.add("info-hotspot-close-wrapper");
-    var closeIcon = document.createElement("img");
-    closeIcon.src = "img/close.png";
-    closeIcon.classList.add("info-hotspot-close-icon");
+    var closeWrapper = document.createElement('div');
+    closeWrapper.classList.add('info-hotspot-close-wrapper');
+    var closeIcon = document.createElement('img');
+    closeIcon.src = 'img/close.png';
+    closeIcon.classList.add('info-hotspot-close-icon');
     closeWrapper.appendChild(closeIcon);
 
     // Construct header element.
@@ -394,8 +393,8 @@ import { data } from "./data.js";
     header.appendChild(closeWrapper);
 
     // Create text element.
-    var text = document.createElement("div");
-    text.classList.add("info-hotspot-text");
+    var text = document.createElement('div');
+    text.classList.add('info-hotspot-text');
     text.innerHTML = hotspot.text;
 
     // Place header and text into wrapper element.
@@ -403,25 +402,25 @@ import { data } from "./data.js";
     wrapper.appendChild(text);
 
     // Create a modal for the hotspot content to appear on mobile mode.
-    var modal = document.createElement("div");
+    var modal = document.createElement('div');
     modal.innerHTML = wrapper.innerHTML;
-    modal.classList.add("info-hotspot-modal");
+    modal.classList.add('info-hotspot-modal');
     document.body.appendChild(modal);
 
     var toggle = function () {
-      wrapper.classList.toggle("visible");
-      modal.classList.toggle("visible");
+      wrapper.classList.toggle('visible');
+      modal.classList.toggle('visible');
     };
 
     // Show content when hotspot is clicked.
     wrapper
-      .querySelector(".info-hotspot-header")
-      .addEventListener("click", toggle);
+      .querySelector('.info-hotspot-header')
+      .addEventListener('click', toggle);
 
     // Hide content when close icon is clicked.
     modal
-      .querySelector(".info-hotspot-close-wrapper")
-      .addEventListener("click", toggle);
+      .querySelector('.info-hotspot-close-wrapper')
+      .addEventListener('click', toggle);
 
     // Prevent touch and scroll events from reaching the parent element.
     // This prevents the view control logic from interfering with the hotspot.
@@ -433,15 +432,15 @@ import { data } from "./data.js";
   // Prevent touch and scroll events from reaching the parent element.
   function stopTouchAndScrollEventPropagation(element, eventList) {
     var eventList = [
-      "touchstart",
-      "touchmove",
-      "touchend",
-      "touchcancel",
-      "pointerdown",
-      "pointermove",
-      "pointerup",
-      "pointercancel",
-      "wheel",
+      'touchstart',
+      'touchmove',
+      'touchend',
+      'touchcancel',
+      'pointerdown',
+      'pointermove',
+      'pointerup',
+      'pointercancel',
+      'wheel',
     ];
     for (var i = 0; i < eventList.length; i++) {
       element.addEventListener(eventList[i], function (event) {

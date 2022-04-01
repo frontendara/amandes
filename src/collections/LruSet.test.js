@@ -15,7 +15,7 @@
  */
 import { suite, test, assert } from 'vitest';
 
-import LruSet from "./LruSet";
+import LruSet from './LruSet';
 
 class Item {
   constructor(element) {
@@ -30,12 +30,9 @@ class Item {
   }
 }
 
-
-suite('LruSet', function() {
-
-  suite('add', function() {
-
-    test('nonexisting element', function() {
+suite('LruSet', function () {
+  suite('add', function () {
+    test('nonexisting element', function () {
       var set = new LruSet(4);
       var element1 = new Item(1);
       var element2 = new Item(1);
@@ -44,7 +41,7 @@ suite('LruSet', function() {
       assert.strictEqual(set.size(), 1);
     });
 
-    test('nonexisting element with same hash as existing element', function() {
+    test('nonexisting element with same hash as existing element', function () {
       var set = new LruSet(4);
       var element1 = new Item(1);
       var element2 = new Item(-1);
@@ -55,7 +52,7 @@ suite('LruSet', function() {
       assert.strictEqual(set.size(), 2);
     });
 
-    test('nonexisting element with different hash than existing element', function() {
+    test('nonexisting element with different hash than existing element', function () {
       var set = new LruSet(4);
       var element1 = new Item(1);
       var element2 = new Item(2);
@@ -66,7 +63,7 @@ suite('LruSet', function() {
       assert.strictEqual(set.size(), 2);
     });
 
-    test('existing element', function() {
+    test('existing element', function () {
       var set = new LruSet(4);
       var element1 = new Item(1);
       var element2 = new Item(1);
@@ -77,7 +74,7 @@ suite('LruSet', function() {
       assert.strictEqual(set.size(), 1);
     });
 
-    test('existing element on a full set', function() {
+    test('existing element on a full set', function () {
       var set = new LruSet(4);
       var elements = [];
       for (var i = 0; i < 8; i++) {
@@ -102,7 +99,7 @@ suite('LruSet', function() {
       assert.strictEqual(set.size(), 4);
     });
 
-    test('nonexisting element on a full set', function() {
+    test('nonexisting element on a full set', function () {
       var set = new LruSet(4);
       var elements = [];
       for (var i = 0; i < 8; i++) {
@@ -126,19 +123,17 @@ suite('LruSet', function() {
       assert.strictEqual(set.size(), 4);
     });
 
-    test('on a set with zero capacity', function() {
+    test('on a set with zero capacity', function () {
       var set = new LruSet(0);
       var element = new Item(1);
       assert.strictEqual(set.add(element), element);
       assert.isFalse(set.has(element));
       assert.strictEqual(set.size(), 0);
     });
-
   });
 
-  suite('remove', function() {
-
-    test('existing element', function() {
+  suite('remove', function () {
+    test('existing element', function () {
       var set = new LruSet(4);
       var element1 = new Item(1);
       var element2 = new Item(1);
@@ -148,7 +143,7 @@ suite('LruSet', function() {
       assert.strictEqual(set.size(), 0);
     });
 
-    test('nonexisting element', function() {
+    test('nonexisting element', function () {
       var set = new LruSet(4);
       var element1 = new Item(1);
       var element2 = new Item(2);
@@ -158,7 +153,7 @@ suite('LruSet', function() {
       assert.strictEqual(set.size(), 1);
     });
 
-    test('existing element with same hash as existing element', function() {
+    test('existing element with same hash as existing element', function () {
       var set = new LruSet(4);
       var element1 = new Item(1);
       var element2 = new Item(-1);
@@ -170,7 +165,7 @@ suite('LruSet', function() {
       assert.strictEqual(set.size(), 1);
     });
 
-    test('before reaching capacity', function() {
+    test('before reaching capacity', function () {
       var set = new LruSet(4);
       var elements = [];
       for (var i = 0; i < 9; i++) {
@@ -196,7 +191,7 @@ suite('LruSet', function() {
       assert.strictEqual(set.size(), 4);
     });
 
-    test('after reaching capacity', function() {
+    test('after reaching capacity', function () {
       var set = new LruSet(4);
       var elements = [];
       for (var i = 0; i < 9; i++) {
@@ -221,47 +216,41 @@ suite('LruSet', function() {
       }
       assert.strictEqual(set.size(), 4);
     });
-
   });
 
-  suite('has', function() {
-
-    test('nonexisting element', function() {
+  suite('has', function () {
+    test('nonexisting element', function () {
       var set = new LruSet(4);
       var element = new Item(1);
       assert.isFalse(set.has(element));
     });
 
-    test('nonexisting element with same hash as existing element', function() {
+    test('nonexisting element with same hash as existing element', function () {
       var set = new LruSet(4);
       var element1 = new Item(1);
       var element2 = new Item(-1);
       assert.isNull(set.add(element1));
       assert.isFalse(set.has(element2));
     });
-
   });
 
-  suite('size', function() {
-
-    test('empty', function() {
+  suite('size', function () {
+    test('empty', function () {
       var set = new LruSet(4);
       assert.strictEqual(set.size(), 0);
     });
 
-    test('full', function() {
+    test('full', function () {
       var set = new LruSet(4);
       for (var i = 0; i < 4; i++) {
         set.add(new Item(i));
       }
       assert.strictEqual(set.size(), 4);
     });
-
   });
 
-  suite('clear', function() {
-
-    test('clear', function() {
+  suite('clear', function () {
+    test('clear', function () {
       var set = new LruSet(4);
       for (var i = 0; i < 4; i++) {
         set.add(new Item(i));
@@ -272,19 +261,20 @@ suite('LruSet', function() {
       }
       assert.strictEqual(set.size(), 0);
     });
-
   });
 
-  suite('forEach', function() {
-
-    test('empty', function() {
+  suite('forEach', function () {
+    test('empty', function () {
       var set = new LruSet(16);
-      assert.strictEqual(set.forEach(function() {
-        assert.fail('unexpected call');
-      }), 0);
+      assert.strictEqual(
+        set.forEach(function () {
+          assert.fail('unexpected call');
+        }),
+        0
+      );
     });
 
-    test('nonempty', function() {
+    test('nonempty', function () {
       var set = new LruSet(16);
       var elements = [];
       for (var i = 0; i < 10; i++) {
@@ -294,14 +284,12 @@ suite('LruSet', function() {
       }
 
       var seenElements = [];
-      var count = set.forEach(function(element) {
+      var count = set.forEach(function (element) {
         seenElements.push(element);
       });
 
       assert.strictEqual(count, 10);
       assert.sameMembers(elements, seenElements);
     });
-
   });
-
 });

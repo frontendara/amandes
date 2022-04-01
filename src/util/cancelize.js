@@ -36,7 +36,7 @@ function cancelize(fn) {
       throw new Error('cancelized: expected at least one argument');
     }
     var args = Array.prototype.slice.call(arguments, 0);
-    var done = args[args.length - 1] = once(args[args.length - 1]);
+    var done = (args[args.length - 1] = once(args[args.length - 1]));
 
     function cancel() {
       done.apply(null, arguments);

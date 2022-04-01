@@ -15,31 +15,29 @@
  */
 import { suite, test, assert } from 'vitest';
 
-import compose from "./compose";
+import compose from './compose';
 
 function twice(x) {
-  return 2*x;
+  return 2 * x;
 }
 
 function square(x) {
-  return x*x;
+  return x * x;
 }
 
-suite('compose', function() {
-
-  test('zero', function() {
+suite('compose', function () {
+  test('zero', function () {
     var fn = compose();
     assert.strictEqual(fn(42), 42);
   });
 
-  test('one', function() {
+  test('one', function () {
     var fn = compose(twice);
     assert.strictEqual(fn(42), 84);
   });
 
-  test('two', function() {
+  test('two', function () {
     var fn = compose(twice, square);
     assert.strictEqual(fn(4), 64);
   });
-
 });

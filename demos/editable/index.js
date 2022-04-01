@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { editMode } from "./editMode.js";
-import { brush } from "./brush.js";
-import * as Marzipano from "../../src/index";
-import { createEditableLayers } from "./createEditableLayer.js";
+import { editMode } from './editMode.js';
+import { brush } from './brush.js';
+import * as Marzipano from '../../src/index';
+import { createEditableLayers } from './createEditableLayer.js';
 
-var viewerElement = document.getElementById("pano");
+var viewerElement = document.getElementById('pano');
 
 // Create viewer.
 var viewer = new Marzipano.Viewer(viewerElement);
@@ -27,7 +27,7 @@ var viewer = new Marzipano.Viewer(viewerElement);
 var stage = viewer.stage();
 
 // Create layers and add them into stage.
-var imageUrl = "//www.marzipano.net/media/equirect/angra.jpg";
+var imageUrl = '//www.marzipano.net/media/equirect/angra.jpg';
 createEditableLayers(stage, imageUrl, function (err, layers) {
   if (err) {
     throw err;
@@ -41,17 +41,17 @@ createEditableLayers(stage, imageUrl, function (err, layers) {
   var view = layers.bwLayer.view();
   var canvasAsset = layers.bwLayer.source().asset();
   var canvas = bwCanvas;
-  var ctx = canvas.getContext("2d");
+  var ctx = canvas.getContext('2d');
 
-  document.querySelector("#bw-canvas-container").appendChild(bwCanvas);
-  document.querySelector("#color-canvas-container").appendChild(colorCanvas);
+  document.querySelector('#bw-canvas-container').appendChild(bwCanvas);
+  document.querySelector('#color-canvas-container').appendChild(colorCanvas);
 
-  document.querySelector("#export").addEventListener("click", exportImage);
+  document.querySelector('#export').addEventListener('click', exportImage);
 
   var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
   var previousPressPosition = null;
 
-  editMode.addEventListener("changed", function () {
+  editMode.addEventListener('changed', function () {
     if (editMode.get()) {
       viewer.controls().disable();
     } else {
@@ -60,7 +60,7 @@ createEditableLayers(stage, imageUrl, function (err, layers) {
     brush.updateCursor();
   });
 
-  viewerElement.addEventListener("mousedown", function (e) {
+  viewerElement.addEventListener('mousedown', function (e) {
     var pressPosition = { x: e.clientX, y: e.clientY };
     if (editMode.get()) {
       paintOnScreenXY(pressPosition);
@@ -71,11 +71,11 @@ createEditableLayers(stage, imageUrl, function (err, layers) {
     }
   });
 
-  viewerElement.addEventListener("mouseup", function () {
+  viewerElement.addEventListener('mouseup', function () {
     previousPressPosition = null;
   });
 
-  viewerElement.addEventListener("mousemove", function (e) {
+  viewerElement.addEventListener('mousemove', function (e) {
     if (editMode.get() && previousPressPosition) {
       var pressPosition = { x: e.clientX, y: e.clientY };
       paintBetween(previousPressPosition, pressPosition);
@@ -160,7 +160,7 @@ createEditableLayers(stage, imageUrl, function (err, layers) {
 
     var intensity = calculateIntensity(screenXY, pixelScreenPosition);
     if (intensity > 0) {
-      var alphaToSet = editMode.get() === "hide" ? 0 : 255;
+      var alphaToSet = editMode.get() === 'hide' ? 0 : 255;
       var index = (pixelXY.y * imageData.width + pixelXY.x) * 4;
       imageData.data[index + 3] =
         imageData.data[index + 3] * (1 - intensity) + alphaToSet * intensity;
@@ -174,16 +174,16 @@ createEditableLayers(stage, imageUrl, function (err, layers) {
     var width = colorCanvas.width;
     var height = colorCanvas.height;
 
-    var merged = document.createElement("canvas");
+    var merged = document.createElement('canvas');
     merged.width = width;
     merged.height = height;
-    var ctx = merged.getContext("2d");
+    var ctx = merged.getContext('2d');
 
     ctx.drawImage(colorCanvas, 0, 0);
     ctx.drawImage(bwCanvas, 0, 0);
 
-    var dataUrl = merged.toDataURL("image/jpeg", 85);
-    saveAs(dataUrl, "image.jpg"); // FileSaver.js
+    var dataUrl = merged.toDataURL('image/jpeg', 85);
+    saveAs(dataUrl, 'image.jpg'); // FileSaver.js
   }
 
   function calculateIntensity(originXY, testXY) {

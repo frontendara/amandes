@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 import { suite, test, assert } from 'vitest';
-import sinon from "sinon";
-sinon.assert.expose(assert, {prefix: ''});
+import sinon from 'sinon';
+sinon.assert.expose(assert, { prefix: '' });
 
-import DynamicAsset from "./Dynamic";
+import DynamicAsset from './Dynamic';
 
 function createTestCanvas(width, height) {
   var canvas = document.createElement('canvas');
@@ -27,17 +27,16 @@ function createTestCanvas(width, height) {
 }
 
 // TODO: this needs browser environment to test
-suite.skip('DynamicAsset', function() {
-
-  test('element', function() {
+suite.skip('DynamicAsset', function () {
+  test('element', function () {
     var img = new Image();
     var asset = new DynamicAsset(img);
     assert.strictEqual(asset.element(), img);
   });
 
-  test('image width and height', function(done) {
+  test('image width and height', function (done) {
     var img = new Image(10, 20);
-    img.onload = function() {
+    img.onload = function () {
       var asset = new DynamicAsset(img);
       assert.strictEqual(asset.width(), 12);
       assert.strictEqual(asset.height(), 34);
@@ -46,21 +45,21 @@ suite.skip('DynamicAsset', function() {
     img.src = createTestCanvas(12, 34).toDataURL();
   });
 
-  test('canvas width and height', function() {
+  test('canvas width and height', function () {
     var asset = new DynamicAsset(createTestCanvas(12, 34));
     assert.strictEqual(asset.width(), 12);
     assert.strictEqual(asset.height(), 34);
   });
 
-  test('isDynamic', function() {
+  test('isDynamic', function () {
     var img = new Image();
     var asset = new DynamicAsset(img);
     assert.isTrue(asset.isDynamic());
   });
 
-  test('mark dirty', function() {
+  test('mark dirty', function () {
     var img = new Image();
-    var asset = new DynamicAsset(img, {dynamic: true});
+    var asset = new DynamicAsset(img, { dynamic: true });
 
     var spy = sinon.spy();
     asset.addEventListener('change', spy);
@@ -70,5 +69,4 @@ suite.skip('DynamicAsset', function() {
     assert.strictEqual(asset.timestamp(), 1);
     assert.calledOnce(spy);
   });
-
 });

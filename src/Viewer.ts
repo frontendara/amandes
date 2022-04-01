@@ -14,31 +14,31 @@
  * limitations under the License.
  */
 
-import eventEmitter from "minimal-event-emitter";
+import eventEmitter from 'minimal-event-emitter';
 
-import RenderLoop from "./RenderLoop";
-import Controls from "./controls/Controls";
-import Scene from "./Scene";
-import Timer from "./Timer";
+import RenderLoop from './RenderLoop';
+import Controls from './controls/Controls';
+import Scene from './Scene';
+import Timer from './Timer';
 
-import WebGlStage from "./stages/WebGl";
+import WebGlStage from './stages/WebGl';
 
-import ControlCursor from "./controls/ControlCursor";
+import ControlCursor from './controls/ControlCursor';
 import HammerGestures, {
   HammerGesturesHandle,
-} from "./controls/HammerGestures";
+} from './controls/HammerGestures';
 
-import registerDefaultControls from "./controls/registerDefaultControls";
-import registerDefaultRenderers from "./renderers/registerDefaultRenderers";
+import registerDefaultControls from './controls/registerDefaultControls';
+import registerDefaultRenderers from './renderers/registerDefaultRenderers';
 
-import { setOverflowHidden as setOverflowHidden } from "./util/dom";
-import { setAbsolute as setAbsolute } from "./util/dom";
-import { setFullSize as setFullSize } from "./util/dom";
+import { setOverflowHidden as setOverflowHidden } from './util/dom';
+import { setAbsolute as setAbsolute } from './util/dom';
+import { setFullSize as setFullSize } from './util/dom';
 
-import tween from "./util/tween";
-import noop from "./util/noop";
-import clearOwnProperties from "./util/clearOwnProperties";
-import Layer from "./Layer";
+import tween from './util/tween';
+import noop from './util/noop';
+import clearOwnProperties from './util/clearOwnProperties';
+import Layer from './Layer';
 
 /**
  * Transition options.
@@ -151,7 +151,7 @@ class Viewer {
     // Controls cannot be placed directly on the root DOM element because
     // Hammer.js will prevent click events from reaching the elements beneath.
     // The hotspot containers will be added inside the controls container.
-    this._controlContainer = document.createElement("div");
+    this._controlContainer = document.createElement('div');
     setAbsolute(this._controlContainer);
     setFullSize(this._controlContainer);
     domElement.appendChild(this._controlContainer);
@@ -160,7 +160,7 @@ class Viewer {
     this.#size = {};
     this.updateSize();
     this.#updateSizeListener = this.updateSize.bind(this);
-    window.addEventListener("resize", this.#updateSizeListener);
+    window.addEventListener('resize', this.#updateSizeListener);
 
     // Create render loop.
     this.#renderLoop = new RenderLoop(this.#stage);
@@ -179,17 +179,17 @@ class Viewer {
     // Expose HammerJS.
     this._hammerManagerTouch = HammerGestures.get(
       this._controlContainer,
-      "touch"
+      'touch'
     );
     this._hammerManagerMouse = HammerGestures.get(
       this._controlContainer,
-      "mouse"
+      'mouse'
     );
 
     // Initialize drag cursor.
     this.#dragCursor = new ControlCursor(
       this.#controls,
-      "mouseViewDrag",
+      'mouseViewDrag',
       domElement,
       (opts.cursors && opts.cursors.drag) || {}
     );
@@ -218,7 +218,7 @@ class Viewer {
 
     // The event listener fired when the current scene view changes.
     // This is attached to the correct scene whenever the current scene changes.
-    this.#viewChangeHandler = this.emit.bind(this, "viewChange");
+    this.#viewChangeHandler = this.emit.bind(this, 'viewChange');
 
     // Setup the idle timer.
     // By default, the timer has an infinite duration so it does nothing.
@@ -227,33 +227,33 @@ class Viewer {
 
     // Reset the timer whenever the view changes.
     this.#resetIdleTimerHandler = this.#resetIdleTimer.bind(this);
-    this.addEventListener("viewChange", this.#resetIdleTimerHandler);
+    this.addEventListener('viewChange', this.#resetIdleTimerHandler);
 
     // Start the idle movement when the idle timer fires.
     this.#triggerIdleTimerHandler = this.#triggerIdleTimer.bind(this);
     // TODO: better type definitions for event emitters
     // @ts-ignore
-    this.#idleTimer.addEventListener("timeout", this.#triggerIdleTimerHandler);
+    this.#idleTimer.addEventListener('timeout', this.#triggerIdleTimerHandler);
 
     // Stop an ongoing movement when the controls are activated or when the
     // scene changes.
     this.#stopMovementHandler = this.stopMovement.bind(this);
     // TODO: better type definitions for event emitters
     // @ts-ignore
-    this.#controls.addEventListener("active", this.#stopMovementHandler);
-    this.addEventListener("sceneChange", this.#stopMovementHandler);
+    this.#controls.addEventListener('active', this.#stopMovementHandler);
+    this.addEventListener('sceneChange', this.#stopMovementHandler);
 
     // The currently programmed idle movement.
     this.#idleMovement = null;
   }
   addEventListener(_arg0: string, _resetIdleTimerHandler: any) {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
   /**
    * Destructor.
    */
   destroy() {
-    window.removeEventListener("resize", this.#updateSizeListener);
+    window.removeEventListener('resize', this.#updateSizeListener);
 
     if (this.#currentScene) {
       this.#removeSceneEventListeners(this.#currentScene);
@@ -404,7 +404,7 @@ class Viewer {
 
     // A single layer can be added or removed from the scene at a time.
     if (Math.abs(oldLayers.length - newLayers.length) !== 1) {
-      throw new Error("Stage and scene out of sync");
+      throw new Error('Stage and scene out of sync');
     }
 
     if (newLayers.length < oldLayers.length) {
@@ -444,12 +444,12 @@ class Viewer {
     layer.textureStore().clearNotPinned();
   }
   #addSceneEventListeners(scene) {
-    scene.addEventListener("layerChange", this.#layerChangeHandler);
-    scene.addEventListener("viewChange", this.#viewChangeHandler);
+    scene.addEventListener('layerChange', this.#layerChangeHandler);
+    scene.addEventListener('viewChange', this.#viewChangeHandler);
   }
   #removeSceneEventListeners(scene) {
-    scene.removeEventListener("layerChange", this.#layerChangeHandler);
-    scene.removeEventListener("viewChange", this.#viewChangeHandler);
+    scene.removeEventListener('layerChange', this.#layerChangeHandler);
+    scene.removeEventListener('viewChange', this.#viewChangeHandler);
   }
   /**
    * Destroys a {@link Scene scene} and removes it from the viewer.
@@ -458,7 +458,7 @@ class Viewer {
   destroyScene(scene) {
     const i = this.#scenes.indexOf(scene);
     if (i < 0) {
-      throw new Error("No such scene in viewer");
+      throw new Error('No such scene in viewer');
     }
 
     let j;
@@ -477,7 +477,7 @@ class Viewer {
         this.#cancelCurrentTween = null;
       }
       this.#currentScene = null;
-      this.emit("sceneChange");
+      this.emit('sceneChange');
     }
 
     if (this.#replacedScene === scene) {
@@ -664,7 +664,7 @@ class Viewer {
     }
 
     if (this.#scenes.indexOf(newScene) < 0) {
-      throw new Error("No such scene in viewer");
+      throw new Error('No such scene in viewer');
     }
 
     // Cancel an already ongoing transition. This ensures that the stage contains
@@ -686,7 +686,7 @@ class Viewer {
       (stageLayers.length !== oldSceneLayers.length ||
         (stageLayers.length > 1 && stageLayers[0] != oldSceneLayers[0]))
     ) {
-      throw new Error("Stage not in sync with viewer");
+      throw new Error('Stage not in sync with viewer');
     }
 
     // Get the transition parameters.
@@ -736,8 +736,8 @@ class Viewer {
     this.#replacedScene = oldScene;
 
     // Emit scene and view change events.
-    this.emit("sceneChange");
-    this.emit("viewChange");
+    this.emit('sceneChange');
+    this.emit('viewChange');
 
     // Add event listeners to the new scene.
     // Note that event listeners can only be removed from the old scene once the
@@ -747,7 +747,7 @@ class Viewer {
   }
 
   emit(_arg0: string) {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
 }
 

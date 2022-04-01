@@ -15,18 +15,17 @@
  */
 
 import { suite, test, assert } from 'vitest';
-import sinon from "sinon";
+import sinon from 'sinon';
 
-import Timer from "./Timer";
-import now from "./util/now";
-import defer from "./util/defer";
-import wait from "../test/wait";
+import Timer from './Timer';
+import now from './util/now';
+import defer from './util/defer';
+import wait from '../test/wait';
 
-suite('Timer', function() {
-
-  test('start', function(done) {
+suite('Timer', function () {
+  test('start', function (done) {
     var spy = sinon.spy();
-    var timer = new Timer({duration: 50});
+    var timer = new Timer({ duration: 50 });
     timer.addEventListener('timeout', spy);
 
     var timeBefore = now();
@@ -34,7 +33,7 @@ suite('Timer', function() {
     timer.start();
     assert.isTrue(timer.started());
 
-    wait.untilSpyCalled(spy, function() {
+    wait.untilSpyCalled(spy, function () {
       var timeAfter = now();
       assert.isFalse(timer.started());
       assert.isAtLeast(timeAfter - timeBefore, 50);
@@ -42,9 +41,9 @@ suite('Timer', function() {
     });
   });
 
-  test('stop', function(done) {
+  test('stop', function (done) {
     var spy = sinon.spy();
-    var timer = new Timer({duration: 10});
+    var timer = new Timer({ duration: 10 });
     timer.addEventListener('timeout', spy);
 
     assert.isFalse(timer.started());
@@ -53,26 +52,26 @@ suite('Timer', function() {
     timer.stop();
     assert.isFalse(timer.started());
 
-    setTimeout(function() {
+    setTimeout(function () {
       assert.isTrue(spy.notCalled);
       done();
     }, 50);
   });
 
-  test('reset', function(done) {
+  test('reset', function (done) {
     var spy = sinon.spy();
-    var timer = new Timer({duration: 100});
+    var timer = new Timer({ duration: 100 });
     timer.addEventListener('timeout', spy);
 
     var timeBefore = now();
     timer.start();
 
-    setTimeout(function() {
+    setTimeout(function () {
       assert.isTrue(spy.notCalled);
       timer.start();
     }, 50);
 
-    wait.untilSpyCalled(spy, function() {
+    wait.untilSpyCalled(spy, function () {
       var timeAfter = now();
       assert.isFalse(timer.started());
       assert.isAtLeast(timeAfter - timeBefore, 150);
@@ -80,7 +79,7 @@ suite('Timer', function() {
     });
   });
 
-  test('set duration after start with infinity', function(done) {
+  test('set duration after start with infinity', function (done) {
     var spy = sinon.spy();
     var timer = new Timer();
     timer.addEventListener('timeout', spy);
@@ -88,20 +87,20 @@ suite('Timer', function() {
     var timeBefore = now();
     timer.start();
 
-    defer(function() {
+    defer(function () {
       timer.setDuration(50);
     });
 
-    wait.untilSpyCalled(spy, function() {
+    wait.untilSpyCalled(spy, function () {
       var timeAfter = now();
       assert.isAtLeast(timeAfter - timeBefore, 50);
       done();
     });
   });
 
-  test('set duration when stopped', function(done) {
+  test('set duration when stopped', function (done) {
     var spy = sinon.spy();
-    var timer = new Timer({duration: 50});
+    var timer = new Timer({ duration: 50 });
     timer.addEventListener('timeout', spy);
 
     assert.strictEqual(timer.duration(), 50);
@@ -111,45 +110,44 @@ suite('Timer', function() {
     var timeBefore = now();
     timer.start();
 
-    wait.untilSpyCalled(spy, function() {
+    wait.untilSpyCalled(spy, function () {
       var timeAfter = now();
       assert.isAtLeast(timeAfter - timeBefore, 100);
       done();
     });
   });
 
-  test('increase duration when started', function(done) {
+  test('increase duration when started', function (done) {
     var spy = sinon.spy();
-    var timer = new Timer({duration: 50});
+    var timer = new Timer({ duration: 50 });
     timer.addEventListener('timeout', spy);
 
     var timeBefore = now();
     timer.start();
 
-    defer(function() {
+    defer(function () {
       timer.setDuration(100);
     });
 
-    wait.untilSpyCalled(spy, function() {
+    wait.untilSpyCalled(spy, function () {
       var timeAfter = now();
       assert.isAtLeast(timeAfter - timeBefore, 100);
       done();
     });
   });
 
-  test('decrease duration when started', function(done) {
+  test('decrease duration when started', function (done) {
     var spy = sinon.spy();
-    var timer = new Timer({duration: 100});
+    var timer = new Timer({ duration: 100 });
     timer.addEventListener('timeout', spy);
 
     timer.start();
 
-    setTimeout(function() {
+    setTimeout(function () {
       assert.isTrue(spy.notCalled);
       timer.setDuration(10);
       assert.isTrue(spy.calledOnce);
       done();
     }, 50);
   });
-
 });

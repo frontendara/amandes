@@ -15,7 +15,7 @@
  */
 import { editMode } from './editMode';
 
-var viewerElement = document.querySelector("#pano");
+var viewerElement = document.querySelector('#pano');
 
 var brush = {
   radius: 30,
@@ -23,29 +23,29 @@ var brush = {
 };
 
 // Brush DOM element
-var element = document.createElement("div");
-element.style.width = brush.radius * 2 + "px";
-element.style.height = brush.radius * 2 + "px";
-element.style.marginTop = -brush.radius + "px";
-element.style.marginLeft = -brush.radius + "px";
-element.style.position = "absolute";
-element.style.pointerEvents = "none";
-element.style.borderStyle = "solid";
-element.style.borderWidth = "1px";
-element.style.borderColor = "#333333";
-element.style.borderRadius = "50%";
-element.style.display = "none";
+var element = document.createElement('div');
+element.style.width = brush.radius * 2 + 'px';
+element.style.height = brush.radius * 2 + 'px';
+element.style.marginTop = -brush.radius + 'px';
+element.style.marginLeft = -brush.radius + 'px';
+element.style.position = 'absolute';
+element.style.pointerEvents = 'none';
+element.style.borderStyle = 'solid';
+element.style.borderWidth = '1px';
+element.style.borderColor = '#333333';
+element.style.borderRadius = '50%';
+element.style.display = 'none';
 document.body.appendChild(element);
 
 var mousePosition = null;
 var displayingBrush = false;
 
 // Update mousePosition variable for fake cursor
-viewerElement.addEventListener("mousemove", function (e) {
+viewerElement.addEventListener('mousemove', function (e) {
   mousePosition = { x: e.clientX, y: e.clientY };
   updateCursor();
 });
-window.addEventListener("blur", function () {
+window.addEventListener('blur', function () {
   mousePosition = null;
   updateCursor();
 });
@@ -53,21 +53,21 @@ window.addEventListener("blur", function () {
 function updateCursor() {
   if (mousePosition && editMode.get()) {
     element.style.transform =
-      "translateX(" +
+      'translateX(' +
       mousePosition.x +
-      "px) " +
-      "translateY(" +
+      'px) ' +
+      'translateY(' +
       mousePosition.y +
-      "px) " +
-      "translateZ(0)";
+      'px) ' +
+      'translateZ(0)';
     if (!displayingBrush) {
-      viewerElement.style.cursor = "none";
-      element.style.display = "block";
+      viewerElement.style.cursor = 'none';
+      element.style.display = 'block';
       displayingBrush = true;
     }
   } else {
     if (displayingBrush) {
-      element.style.display = "none";
+      element.style.display = 'none';
       viewerElement.style.cursor = null;
       displayingBrush = false;
     }

@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import eventEmitter from "minimal-event-emitter";
-import { mat4 as mat4 } from "gl-matrix";
-import { vec4 as vec4 } from "gl-matrix";
-import pixelRatio from "../util/pixelRatio";
-import real from "../util/real";
-import clamp from "../util/clamp";
-import clearOwnProperties from "../util/clearOwnProperties";
+import eventEmitter from 'minimal-event-emitter';
+import { mat4 as mat4 } from 'gl-matrix';
+import { vec4 as vec4 } from 'gl-matrix';
+import pixelRatio from '../util/pixelRatio';
+import real from '../util/real';
+import clamp from '../util/clamp';
+import clearOwnProperties from '../util/clearOwnProperties';
 
 // Default viewport dimensions.
 // Start with zero to ensure that those values are handled correctly.
@@ -209,7 +209,7 @@ class FlatView {
   constructor(params: FlatViewConstructorParams, limiter: FlatViewLimiter) {
     // Require an aspect ratio to be specified.
     if (!(params && params.mediaAspectRatio != null)) {
-      throw new Error("mediaAspectRatio must be defined");
+      throw new Error('mediaAspectRatio must be defined');
     }
 
     // The initial values for the view parameters.
@@ -453,7 +453,7 @@ class FlatView {
     if (this.#limiter) {
       params = this.#limiter(params);
       if (!params) {
-        throw new Error("Bad view limiter");
+        throw new Error('Bad view limiter');
       }
     }
 
@@ -474,7 +474,7 @@ class FlatView {
       !real(newWidth) ||
       !real(newHeight)
     ) {
-      throw new Error("Bad view - suspect a broken limiter");
+      throw new Error('Bad view - suspect a broken limiter');
     }
 
     // Constrain zoom.
@@ -498,14 +498,14 @@ class FlatView {
       newHeight !== oldHeight
     ) {
       this.#projectionChanged = true;
-      this.emit("change");
+      this.emit('change');
     }
     if (newWidth !== oldWidth || newHeight !== oldHeight) {
-      this.emit("resize");
+      this.emit('resize');
     }
   }
   emit(_arg0: string) {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
   #zoomX() {
     return this.#zoom;
@@ -902,6 +902,6 @@ FlatView.limit = {
 
 // TODO: figure out how to fix this `type` thing
 // @ts-ignore
-FlatView.type = FlatView.prototype.type = "flat";
+FlatView.type = FlatView.prototype.type = 'flat';
 
 export default FlatView;

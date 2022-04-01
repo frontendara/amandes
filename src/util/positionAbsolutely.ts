@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { setTransform as setTransform } from "./dom";
-import decimal from "./decimal";
+import { setTransform as setTransform } from './dom';
+import decimal from './decimal';
 
 function positionAbsolutely(
   element: { style: { [x: string]: any } },
@@ -23,15 +23,15 @@ function positionAbsolutely(
   y: number,
   extraTransforms?: string
 ) {
-  extraTransforms = extraTransforms || "";
+  extraTransforms = extraTransforms || '';
   // A translateZ(0) transform improves performance on Chrome by creating a
   // new layer for the element, which prevents unnecessary repaints.
   const transform =
-    "translateX(" +
+    'translateX(' +
     decimal(x) +
-    "px) translateY(" +
+    'px) translateY(' +
     decimal(y) +
-    "px) translateZ(0) " +
+    'px) translateZ(0) ' +
     extraTransforms;
   setTransform(element, transform);
 }

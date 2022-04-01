@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import mod from "../util/mod";
+import mod from '../util/mod';
 
 const defaultCapacity = 64;
 
@@ -26,8 +26,10 @@ class Map {
   #valBuckets: any[];
   #size: number;
   constructor(capacity?: number) {
-    if (capacity != null &&
-      (!isFinite(capacity) || Math.floor(capacity) !== capacity || capacity < 1)) {
+    if (
+      capacity != null &&
+      (!isFinite(capacity) || Math.floor(capacity) !== capacity || capacity < 1)
+    ) {
       throw new Error('Map: invalid capacity');
     }
     this.#capacity = capacity || defaultCapacity;

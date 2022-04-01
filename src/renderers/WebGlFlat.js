@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import WebGlBaseRenderer from "./WebGlBase";
+import WebGlBaseRenderer from './WebGlBase';
 
 /**
  * @class WebGlFlatRenderer
@@ -28,7 +28,7 @@ import WebGlBaseRenderer from "./WebGlBase";
  */
 class WebGlFlatRenderer extends WebGlBaseRenderer {
   constructor(...args) {
-    super(...args)
+    super(...args);
   }
 }
 

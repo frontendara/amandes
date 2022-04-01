@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import Hammer from "hammerjs";
+import Hammer from 'hammerjs';
 
 let nextId = 1;
 const idProperty = 'MarzipanoHammerElementId';
@@ -23,7 +23,6 @@ function getKeyForElementAndType(element, type) {
   }
   return type + element[idProperty];
 }
-
 
 /**
  * Manages Hammer.js instances. One instance is created for each combination of
@@ -51,12 +50,19 @@ class HammerGestures {
     // Managers are created with different parameters for different pointer
     // types.
     if (type === 'mouse') {
-      manager.add(new Hammer.Pan({ direction: Hammer.DIRECTION_ALL, threshold: 0 }));
-    }
-    else if (type === 'touch' || type === 'pen' || type === 'kinect') {
+      manager.add(
+        new Hammer.Pan({ direction: Hammer.DIRECTION_ALL, threshold: 0 })
+      );
+    } else if (type === 'touch' || type === 'pen' || type === 'kinect') {
       // On touch one wants to have both panning and pinching. The panning
       // recognizer needs a threshold to allow the pinch to be recognized.
-      manager.add(new Hammer.Pan({ direction: Hammer.DIRECTION_ALL, threshold: 20, pointers: 1 }));
+      manager.add(
+        new Hammer.Pan({
+          direction: Hammer.DIRECTION_ALL,
+          threshold: 20,
+          pointers: 1,
+        })
+      );
       manager.add(new Hammer.Pinch());
     }
 
@@ -97,7 +103,10 @@ export class HammerGesturesHandle {
       }
     };
 
-    this.#eventHandlers.push({ events: events, handler: handlerFilteredEvents });
+    this.#eventHandlers.push({
+      events: events,
+      handler: handlerFilteredEvents,
+    });
     this.#manager.on(events, handlerFilteredEvents);
   }
   release() {

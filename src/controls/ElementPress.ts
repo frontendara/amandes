@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import eventEmitter from "minimal-event-emitter";
-import Dynamics from "./Dynamics";
-import clearOwnProperties from "../util/clearOwnProperties";
+import eventEmitter from 'minimal-event-emitter';
+import Dynamics from './Dynamics';
+import clearOwnProperties from '../util/clearOwnProperties';
 
 /**
  * @class ElementPressControlMethod
@@ -30,7 +30,7 @@ import clearOwnProperties from "../util/clearOwnProperties";
  * @param {number} velocity Velocity at which the parameter changes. Use a
  * negative number for opposite direction
  * @param {number} friction Friction at which the parameter stops
-*/
+ */
 class ElementPressControlMethod {
   #element: any;
   #pressHandler: () => void;
@@ -42,16 +42,16 @@ class ElementPressControlMethod {
   #pressing: boolean;
   constructor(element, parameter, velocity, friction) {
     if (!element) {
-      throw new Error("ElementPressControlMethod: element must be defined");
+      throw new Error('ElementPressControlMethod: element must be defined');
     }
     if (!parameter) {
-      throw new Error("ElementPressControlMethod: parameter must be defined");
+      throw new Error('ElementPressControlMethod: parameter must be defined');
     }
     if (!velocity) {
-      throw new Error("ElementPressControlMethod: velocity must be defined");
+      throw new Error('ElementPressControlMethod: velocity must be defined');
     }
     if (!friction) {
-      throw new Error("ElementPressControlMethod: friction must be defined");
+      throw new Error('ElementPressControlMethod: friction must be defined');
     }
 
     this.#element = element;
@@ -94,7 +94,7 @@ class ElementPressControlMethod {
     this.emit('active');
   }
   emit(_arg0: string, _parameter?: any, _dynamics?: any) {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
   #handleRelease() {
     if (this.#pressing) {

@@ -15,14 +15,14 @@
  */
 
 /**
-  * Compose multiple functions
-  *
-  * `compose(f, g)` returns `function(x) { return f(g(x)); }`
-  *
-  * @memberof util
-  * @param {Function[]} functions The functions to compose
-  * @return {Function}
-  */
+ * Compose multiple functions
+ *
+ * `compose(f, g)` returns `function(x) { return f(g(x)); }`
+ *
+ * @memberof util
+ * @param {Function[]} functions The functions to compose
+ * @return {Function}
+ */
 function compose() {
   var fnList = arguments;
   return function composed(initialArg) {

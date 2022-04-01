@@ -33,12 +33,20 @@ var viewer = new Marzipano.Viewer(document.querySelector('#pano'));
 // Create layer.
 var asset = new VideoAsset();
 var source = new Marzipano.SingleAssetSource(asset);
-var geometry = new Marzipano.EquirectGeometry([ { width: 1 } ]);
+var geometry = new Marzipano.EquirectGeometry([{ width: 1 }]);
 
-var limiter = Marzipano.RectilinearView.limit.traditional(2560, 100*Math.PI/180);
+var limiter = Marzipano.RectilinearView.limit.traditional(
+  2560,
+  (100 * Math.PI) / 180
+);
 var view = new Marzipano.RectilinearView(null, limiter);
 
-var scene = viewer.createScene({ source: source, geometry: geometry, view: view, pinFirstLevel: false });
+var scene = viewer.createScene({
+  source: source,
+  geometry: geometry,
+  view: view,
+  pinFirstLevel: false,
+});
 
 scene.switchTo({ transitionDuration: 0 });
 
@@ -49,16 +57,16 @@ var resolutions = [
   { width: 720 },
   { width: 1280 },
   { width: 1920 },
-  { width: 2880 }
+  { width: 2880 },
 ];
 
 var currentState = {
   resolutionIndex: null,
-  resolutionChanging: false
+  resolutionChanging: false,
 };
 
 function setResolutionIndex(index, cb) {
-  cb = cb || function() {};
+  cb = cb || function () {};
 
   currentState.resolutionChanging = true;
 
@@ -68,11 +76,16 @@ function setResolutionIndex(index, cb) {
   emitter.emit('resolutionSet');
 
   var level = resolutions[index];
-  var videoSrc = '//www.marzipano.net/media/video/mercedes-f1-' + level.width + 'x' + level.width/2 + '.mp4';
+  var videoSrc =
+    '//www.marzipano.net/media/video/mercedes-f1-' +
+    level.width +
+    'x' +
+    level.width / 2 +
+    '.mp4';
 
   var previousVideo = asset.video() && asset.video().videoElement();
 
-  loadVideoInSync(videoSrc, previousVideo, function(err, element) {
+  loadVideoInSync(videoSrc, previousVideo, function (err, element) {
     if (err) {
       cb(err);
       return;
@@ -84,7 +97,9 @@ function setResolutionIndex(index, cb) {
       previousVideo.removeAttribute('src');
     }
 
-    var VideoElementWrapper = useCanvasHack ? CanvasHackVideoElementWrapper : NullVideoElementWrapper;
+    var VideoElementWrapper = useCanvasHack
+      ? CanvasHackVideoElementWrapper
+      : NullVideoElementWrapper;
     var wrappedVideo = new VideoElementWrapper(element);
     asset.setVideo(wrappedVideo);
 
@@ -101,29 +116,29 @@ function setResolutionIndex(index, cb) {
 }
 
 export var multiResVideo = {
-  layer: function() {
+  layer: function () {
     return scene.layer();
   },
-  element: function() {
+  element: function () {
     return asset.video() && asset.video().videoElement();
   },
-  resolutions: function() {
+  resolutions: function () {
     return resolutions;
   },
-  resolutionIndex: function() {
+  resolutionIndex: function () {
     return currentState.resolutionIndex;
   },
-  resolution: function() {
-    return currentState.resolutionIndex != null ?
-              resolutions[currentState.resolutionIndex] :
-              null;
+  resolution: function () {
+    return currentState.resolutionIndex != null
+      ? resolutions[currentState.resolutionIndex]
+      : null;
   },
   setResolutionIndex: setResolutionIndex,
-  resolutionChanging: function() {
+  resolutionChanging: function () {
     return currentState.resolutionChanging;
   },
   addEventListener: emitter.addEventListener.bind(emitter),
 
   // events from proxy to videoElement
-  addEventListenerVideo: videoEmitter.addEventListener.bind(videoEmitter)
+  addEventListenerVideo: videoEmitter.addEventListener.bind(videoEmitter),
 };

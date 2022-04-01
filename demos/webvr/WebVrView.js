@@ -42,7 +42,7 @@ class WebVrView {
       vec4.create(),
       vec4.create(),
       vec4.create(),
-      vec4.create() // camera
+      vec4.create(), // camera
     ];
 
     this._tmpVec = vec4.create();

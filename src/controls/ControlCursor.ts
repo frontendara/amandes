@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import defaults from "../util/defaults";
-import clearOwnProperties from "../util/clearOwnProperties";
+import defaults from '../util/defaults';
+import clearOwnProperties from '../util/clearOwnProperties';
 
 const defaultOpts = {
   active: 'move',
   inactive: 'default',
-  disabled: 'default'
+  disabled: 'default',
 };
 
 /**
@@ -65,7 +65,10 @@ class ControlCursor {
     this.#setActiveCursor = this.#setCursor.bind(this, opts.active);
     this.#setInactiveCursor = this.#setCursor.bind(this, opts.inactive);
     this.#setDisabledCursor = this.#setCursor.bind(this, opts.disabled);
-    this.#setOriginalCursor = this.#setCursor.bind(this, this.#element.style.cursor);
+    this.#setOriginalCursor = this.#setCursor.bind(
+      this,
+      this.#element.style.cursor
+    );
 
     this.#updateAttachmentHandler = this.#updateAttachment.bind(this);
 
@@ -83,14 +86,22 @@ class ControlCursor {
     this.#detachFromControlMethod(this.#controls.method(this.#id));
     this.#setOriginalCursor();
 
-    this.#controls.removeEventListener('methodEnabled',
-      this.#updateAttachmentHandler);
-    this.#controls.removeEventListener('methodDisabled',
-      this.#updateAttachmentHandler);
-    this.#controls.removeEventListener('enabled',
-      this.#updateAttachmentHandler);
-    this.#controls.removeEventListener('disabled',
-      this.#updateAttachmentHandler);
+    this.#controls.removeEventListener(
+      'methodEnabled',
+      this.#updateAttachmentHandler
+    );
+    this.#controls.removeEventListener(
+      'methodDisabled',
+      this.#updateAttachmentHandler
+    );
+    this.#controls.removeEventListener(
+      'enabled',
+      this.#updateAttachmentHandler
+    );
+    this.#controls.removeEventListener(
+      'disabled',
+      this.#updateAttachmentHandler
+    );
 
     clearOwnProperties(this);
   }
@@ -106,7 +117,10 @@ class ControlCursor {
   #attachToControlMethod(controlMethod) {
     if (!this.#attached) {
       controlMethod.instance.addEventListener('active', this.#setActiveCursor);
-      controlMethod.instance.addEventListener('inactive', this.#setInactiveCursor);
+      controlMethod.instance.addEventListener(
+        'inactive',
+        this.#setInactiveCursor
+      );
 
       if (controlMethod.active) {
         this.#setActiveCursor();
@@ -119,8 +133,14 @@ class ControlCursor {
   }
   #detachFromControlMethod(controlMethod) {
     if (this.#attached) {
-      controlMethod.instance.removeEventListener('active', this.#setActiveCursor);
-      controlMethod.instance.removeEventListener('inactive', this.#setInactiveCursor);
+      controlMethod.instance.removeEventListener(
+        'active',
+        this.#setActiveCursor
+      );
+      controlMethod.instance.removeEventListener(
+        'inactive',
+        this.#setInactiveCursor
+      );
 
       this.#setDisabledCursor();
 

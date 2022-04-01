@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Rect, RectSpec } from "../jsdoc-extras";
+import { Rect, RectSpec } from '../jsdoc-extras';
 
 /**
  * Converts a {@link RectSpec} into an equivalent {@link Rect}.
@@ -32,8 +32,12 @@ import { Rect, RectSpec } from "../jsdoc-extras";
  * @param {Rect} result The output spec. If the argument is present, it is
  *     filled in and returned; otherwise, a fresh object is returned.
  */
-function calcRect(totalWidth: number, totalHeight: number, spec: RectSpec, result: Rect) {
-
+function calcRect(
+  totalWidth: number,
+  totalHeight: number,
+  spec: RectSpec,
+  result: Rect
+) {
   result = result || {};
 
   let width;

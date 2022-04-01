@@ -24,11 +24,14 @@ var geometry = new Marzipano.CubeGeometry([
   { tileSize: 512, size: 512 },
   { tileSize: 512, size: 1024 },
   { tileSize: 512, size: 2048 },
-  { tileSize: 512, size: 4096 }
+  { tileSize: 512, size: 4096 },
 ]);
 
 // Create views.
-var viewLimiter = Marzipano.RectilinearView.limit.traditional(3100, 100*Math.PI/180);
+var viewLimiter = Marzipano.RectilinearView.limit.traditional(
+  3100,
+  (100 * Math.PI) / 180
+);
 var viewLeft = new Marzipano.RectilinearView(null, viewLimiter);
 var viewRight = new Marzipano.RectilinearView(null, viewLimiter);
 
@@ -36,24 +39,30 @@ var viewRight = new Marzipano.RectilinearView(null, viewLimiter);
 var stage = viewer.stage();
 
 // Create layers.
-var leftLayer = createLayer(stage, viewLeft, geometry, 'left',
-  { relativeWidth: 0.5, relativeX: 0 });
-var rightLayer = createLayer(stage, viewRight, geometry, 'right',
-  { relativeWidth: 0.5, relativeX: 0.5 });
+var leftLayer = createLayer(stage, viewLeft, geometry, 'left', {
+  relativeWidth: 0.5,
+  relativeX: 0,
+});
+var rightLayer = createLayer(stage, viewRight, geometry, 'right', {
+  relativeWidth: 0.5,
+  relativeX: 0.5,
+});
 
 // Add layers to stage.
 stage.addLayer(leftLayer);
 stage.addLayer(rightLayer);
 
 function createLayer(stage, view, geometry, eye, rect) {
-  var urlPrefix = "//www.marzipano.net/media/music-room";
+  var urlPrefix = '//www.marzipano.net/media/music-room';
   var source = Marzipano.ImageUrlSource.fromString(
-    urlPrefix + "/" + eye + "/{z}/{f}/{y}/{x}.jpg",
-    { cubeMapPreviewUrl: urlPrefix + "/" + eye + "/preview.jpg" });
+    urlPrefix + '/' + eye + '/{z}/{f}/{y}/{x}.jpg',
+    { cubeMapPreviewUrl: urlPrefix + '/' + eye + '/preview.jpg' }
+  );
 
   var textureStore = new Marzipano.TextureStore(source, stage);
-  var layer = new Marzipano.Layer(source, geometry, view, textureStore,
-                                  { effects: { rect: rect }});
+  var layer = new Marzipano.Layer(source, geometry, view, textureStore, {
+    effects: { rect: rect },
+  });
 
   layer.pinFirstLevel();
 
@@ -64,16 +73,16 @@ function createLayer(stage, view, geometry, eye, rect) {
 // Note that setProjectionCenterX() and setProjectionCenterY() are
 // experimental APIs and may change in the future.
 
-var projectionCenterXElement = document.querySelector("#projection-center-x");
-var projectionCenterYElement = document.querySelector("#projection-center-y");
+var projectionCenterXElement = document.querySelector('#projection-center-x');
+var projectionCenterYElement = document.querySelector('#projection-center-y');
 
-projectionCenterXElement.addEventListener('input', function() {
+projectionCenterXElement.addEventListener('input', function () {
   var projectionCenterX = projectionCenterXElement.value;
   viewLeft.setProjectionCenterX(parseFloat(projectionCenterX));
   viewRight.setProjectionCenterX(parseFloat(-projectionCenterX));
 });
 
-projectionCenterYElement.addEventListener('input', function() {
+projectionCenterYElement.addEventListener('input', function () {
   var projectionCenterY = projectionCenterYElement.value;
   viewLeft.setProjectionCenterY(parseFloat(projectionCenterY));
   viewRight.setProjectionCenterY(parseFloat(projectionCenterY));

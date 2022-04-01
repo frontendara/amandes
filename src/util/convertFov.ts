@@ -17,7 +17,7 @@
 /**
  * Convert fov
  *
- * For example, to convert from hfov to vfov one would call 
+ * For example, to convert from hfov to vfov one would call
  * `convert(hfov, width, height)`
  *
  * @param {number} fov
@@ -27,7 +27,7 @@
  * @memberof util.convertFov
  */
 function convert(fov: number, fromDimension: number, toDimension: number) {
-  return 2 * Math.atan(toDimension * Math.tan(fov / 2) / fromDimension);
+  return 2 * Math.atan((toDimension * Math.tan(fov / 2)) / fromDimension);
 }
 
 /**
@@ -96,15 +96,7 @@ function dtov(fov: number, width: number, height: number) {
   return convert(fov, Math.sqrt(width * width + height * height), height);
 }
 
-export {
-  convert,
-  htov,
-  htod,
-  vtoh,
-  vtod,
-  dtoh,
-  dtov
-};
+export { convert, htov, htod, vtoh, vtod, dtoh, dtov };
 
 // TODO: rethink these exports
 /**
@@ -117,5 +109,5 @@ export default {
   vtoh: vtoh,
   vtod: vtod,
   dtoh: dtoh,
-  dtov: dtov
+  dtov: dtov,
 };

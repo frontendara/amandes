@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import eventEmitter from "minimal-event-emitter";
-import Dynamics from "./Dynamics";
-import defaults from "../util/defaults";
-import clearOwnProperties from "../util/clearOwnProperties";
+import eventEmitter from 'minimal-event-emitter';
+import Dynamics from './Dynamics';
+import defaults from '../util/defaults';
+import clearOwnProperties from '../util/clearOwnProperties';
 
 const defaultOptions = {
   frictionTime: 0.2,
-  zoomDelta: 0.001
+  zoomDelta: 0.001,
 };
 
 /**
@@ -37,7 +37,7 @@ const defaultOptions = {
  */
 class ScrollZoomControlMethod {
   #element: any;
-  #opts: { [x: string]: any; };
+  #opts: { [x: string]: any };
   #dynamics: Dynamics;
   #eventList: any[];
   #wheelListener: (e: any) => void;
@@ -48,7 +48,9 @@ class ScrollZoomControlMethod {
     this.#dynamics = new Dynamics();
     this.#eventList = [];
 
-    const fn = this.#opts.frictionTime ? this.withSmoothing : this.withoutSmoothing;
+    const fn = this.#opts.frictionTime
+      ? this.withSmoothing
+      : this.withoutSmoothing;
     this.#wheelListener = fn.bind(this);
 
     element.addEventListener('wheel', this.#wheelListener);
@@ -70,7 +72,7 @@ class ScrollZoomControlMethod {
     this.emit('inactive');
   }
   emit(_arg0: string, _arg1?: string, _dynamics?: any) {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
   withSmoothing(e) {
     const currentTime = e.timeStamp;
@@ -79,7 +81,10 @@ class ScrollZoomControlMethod {
     this.#eventList.push(e);
 
     // Remove events whose smoothing has already expired.
-    while (this.#eventList[0].timeStamp < currentTime - this.#opts.frictionTime * 1000) {
+    while (
+      this.#eventList[0].timeStamp <
+      currentTime - this.#opts.frictionTime * 1000
+    ) {
       // TODO: figure out what's up with 0
       // @ts-ignore
       this.#eventList.shift(0);
@@ -89,7 +94,8 @@ class ScrollZoomControlMethod {
     // Each wheel movement causes a velocity of change/frictionTime during frictionTime.
     let velocity = 0;
     for (let i = 0; i < this.#eventList.length; i++) {
-      const zoomChangeFromEvent = wheelEventDelta(this.#eventList[i]) * this.#opts.zoomDelta;
+      const zoomChangeFromEvent =
+        wheelEventDelta(this.#eventList[i]) * this.#opts.zoomDelta;
       velocity += zoomChangeFromEvent / this.#opts.frictionTime;
     }
 
@@ -111,6 +117,5 @@ function wheelEventDelta(e) {
   const multiplier = e.deltaMode == 1 ? 20 : 1;
   return e.deltaY * multiplier;
 }
-
 
 export default ScrollZoomControlMethod;

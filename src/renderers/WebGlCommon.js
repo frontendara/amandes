@@ -17,11 +17,10 @@
 var MAX_LAYERS = 256; // Max number of layers per stage.
 var MAX_LEVELS = 256; // Max number of levels per layer.
 
-import clamp from "../util/clamp";
-import { vec4 as vec4 } from "gl-matrix";
-import { vec3 as vec3 } from "gl-matrix";
-import { mat4 as mat4 } from "gl-matrix";
-
+import clamp from '../util/clamp';
+import { vec4 as vec4 } from 'gl-matrix';
+import { vec3 as vec3 } from 'gl-matrix';
+import { mat4 as mat4 } from 'gl-matrix';
 
 function createShader(gl, type, src) {
   var shader = gl.createShader(type);
@@ -33,9 +32,13 @@ function createShader(gl, type, src) {
   return shader;
 }
 
-
-function createShaderProgram(gl, vertexSrc, fragmentSrc, attribList, uniformList) {
-
+function createShaderProgram(
+  gl,
+  vertexSrc,
+  fragmentSrc,
+  attribList,
+  uniformList
+) {
   var vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexSrc);
   var fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentSrc);
 
@@ -68,7 +71,6 @@ function createShaderProgram(gl, vertexSrc, fragmentSrc, attribList, uniformList
   return shaderProgram;
 }
 
-
 function destroyShaderProgram(gl, shaderProgram) {
   var shaderList = gl.getAttachedShaders(shaderProgram);
   for (var i = 0; i < shaderList.length; i++) {
@@ -79,7 +81,6 @@ function destroyShaderProgram(gl, shaderProgram) {
   gl.deleteProgram(shaderProgram);
 }
 
-
 function createConstantBuffer(gl, target, usage, value) {
   var buffer = gl.createBuffer();
   gl.bindBuffer(target, buffer);
@@ -87,22 +88,39 @@ function createConstantBuffer(gl, target, usage, value) {
   return buffer;
 }
 
-
-function createConstantBuffers(gl, vertexIndices, vertexPositions, textureCoords) {
+function createConstantBuffers(
+  gl,
+  vertexIndices,
+  vertexPositions,
+  textureCoords
+) {
   return {
-    vertexIndices: createConstantBuffer(gl, gl.ELEMENT_ARRAY_BUFFER, gl.STATIC_DRAW, new Uint16Array(vertexIndices)),
-    vertexPositions: createConstantBuffer(gl, gl.ARRAY_BUFFER, gl.STATIC_DRAW, new Float32Array(vertexPositions)),
-    textureCoords: createConstantBuffer(gl, gl.ARRAY_BUFFER, gl.STATIC_DRAW, new Float32Array(textureCoords))
+    vertexIndices: createConstantBuffer(
+      gl,
+      gl.ELEMENT_ARRAY_BUFFER,
+      gl.STATIC_DRAW,
+      new Uint16Array(vertexIndices)
+    ),
+    vertexPositions: createConstantBuffer(
+      gl,
+      gl.ARRAY_BUFFER,
+      gl.STATIC_DRAW,
+      new Float32Array(vertexPositions)
+    ),
+    textureCoords: createConstantBuffer(
+      gl,
+      gl.ARRAY_BUFFER,
+      gl.STATIC_DRAW,
+      new Float32Array(textureCoords)
+    ),
   };
 }
-
 
 function destroyConstantBuffers(gl, constantBuffers) {
   gl.deleteBuffer(constantBuffers.vertexIndices);
   gl.deleteBuffer(constantBuffers.vertexPositions);
   gl.deleteBuffer(constantBuffers.textureCoords);
 }
-
 
 function enableAttributes(gl, shaderProgram) {
   var numAttrs = gl.getProgramParameter(shaderProgram, gl.ACTIVE_ATTRIBUTES);
@@ -111,7 +129,6 @@ function enableAttributes(gl, shaderProgram) {
   }
 }
 
-
 function disableAttributes(gl, shaderProgram) {
   var numAttrs = gl.getProgramParameter(shaderProgram, gl.ACTIVE_ATTRIBUTES);
   for (var i = 0; i < numAttrs; i++) {
@@ -119,19 +136,16 @@ function disableAttributes(gl, shaderProgram) {
   }
 }
 
-
 function setTexture(gl, shaderProgram, texture) {
   gl.activeTexture(gl.TEXTURE0);
   gl.bindTexture(gl.TEXTURE_2D, texture._texture);
   gl.uniform1i(shaderProgram.uSampler, 0);
 }
 
-
 function setDepth(gl, shaderProgram, layerZ, tileZ) {
-  var depth = (((layerZ + 1) * MAX_LEVELS) - tileZ) / (MAX_LEVELS * MAX_LAYERS);
+  var depth = ((layerZ + 1) * MAX_LEVELS - tileZ) / (MAX_LEVELS * MAX_LAYERS);
   gl.uniform1f(shaderProgram.uDepth, depth);
 }
-
 
 var defaultOpacity = 1.0;
 var defaultColorOffset = vec4.create();
@@ -158,11 +172,9 @@ function setupPixelEffectUniforms(gl, effects, uniforms) {
   gl.uniformMatrix4fv(uniforms.colorMatrix, false, colorMatrix);
 }
 
-
 // Temporary vectors for setViewport.
 var translateVector = vec3.create();
 var scaleVector = vec3.create();
-
 
 // Sets the WebGL viewport and returns a viewport clamping compensation matrix.
 //
@@ -198,22 +210,26 @@ function setViewport(gl, layer, rect, viewportMatrix) {
     scaleVector,
     rect.width / clampedWidth,
     rect.height / clampedHeight,
-    1);
+    1
+  );
 
   vec3.set(
     translateVector,
     (rightExcess - leftExcess) / clampedWidth,
     (topExcess - bottomExcess) / clampedHeight,
-    0);
+    0
+  );
 
   mat4.identity(viewportMatrix);
   mat4.translate(viewportMatrix, viewportMatrix, translateVector);
   mat4.scale(viewportMatrix, viewportMatrix, scaleVector);
 
-  gl.viewport(gl.drawingBufferWidth * clampedOffsetX,
-              gl.drawingBufferHeight * clampedOffsetY,
-              gl.drawingBufferWidth * clampedWidth,
-              gl.drawingBufferHeight * clampedHeight);
+  gl.viewport(
+    gl.drawingBufferWidth * clampedOffsetX,
+    gl.drawingBufferHeight * clampedOffsetY,
+    gl.drawingBufferWidth * clampedWidth,
+    gl.drawingBufferHeight * clampedHeight
+  );
 }
 
 export default {
@@ -226,5 +242,5 @@ export default {
   setTexture: setTexture,
   setDepth: setDepth,
   setViewport: setViewport,
-  setupPixelEffectUniforms: setupPixelEffectUniforms
+  setupPixelEffectUniforms: setupPixelEffectUniforms,
 };

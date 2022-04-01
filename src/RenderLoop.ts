@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import eventEmitter from "minimal-event-emitter";
-import clearOwnProperties from "./util/clearOwnProperties";
+import eventEmitter from 'minimal-event-emitter';
+import clearOwnProperties from './util/clearOwnProperties';
 
 /**
  * Signals that {@link Stage#render} is about to be called.
@@ -48,7 +48,6 @@ class RenderLoop {
   #boundLoop: () => void;
   #renderInvalidHandler: () => void;
   constructor(stage) {
-
     const self = this;
 
     // The stage wrapped by the loop.
@@ -77,14 +76,16 @@ class RenderLoop {
 
     // Handle renderInvalid events emitted by the stage.
     this.#stage.addEventListener('renderInvalid', this.#renderInvalidHandler);
-
   }
   /**
    * Destructor.
    */
   destroy() {
     this.stop();
-    this.#stage.removeEventListener('renderInvalid', this.#renderInvalidHandler);
+    this.#stage.removeEventListener(
+      'renderInvalid',
+      this.#renderInvalidHandler
+    );
     clearOwnProperties(this);
   }
   /**
@@ -132,7 +133,7 @@ class RenderLoop {
     this.emit('afterRender');
   }
   emit(_arg0: string) {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
 }
 

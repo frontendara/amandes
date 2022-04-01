@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import eventEmitter from "minimal-event-emitter";
-import Dynamics from "./Dynamics";
-import now from "../util/now";
-import clearOwnProperties from "../util/clearOwnProperties";
+import eventEmitter from 'minimal-event-emitter';
+import Dynamics from './Dynamics';
+import now from '../util/now';
+import clearOwnProperties from '../util/clearOwnProperties';
 
 /**
  * @class ControlComposer
@@ -43,14 +43,14 @@ class ControlComposer {
     this.#methods = [];
 
     this.#parameters = [
-      "x",
-      "y",
-      "axisScaledX",
-      "axisScaledY",
-      "zoom",
-      "yaw",
-      "pitch",
-      "roll",
+      'x',
+      'y',
+      'axisScaledX',
+      'axisScaledY',
+      'zoom',
+      'yaw',
+      'pitch',
+      'roll',
     ];
 
     this.#now = opts.nowForTesting || now;
@@ -80,7 +80,7 @@ class ControlComposer {
       parameterDynamicsHandler: parameterDynamicsHandler,
     };
 
-    instance.addEventListener("parameterDynamics", parameterDynamicsHandler);
+    instance.addEventListener('parameterDynamics', parameterDynamicsHandler);
 
     this.#methods.push(method);
   }
@@ -89,7 +89,7 @@ class ControlComposer {
     if (index >= 0) {
       const method = this.#methods.splice(index, 1)[0];
       method.instance.removeEventListener(
-        "parameterDynamics",
+        'parameterDynamics',
         method.parameterDynamicsHandler
       );
     }
@@ -116,7 +116,7 @@ class ControlComposer {
     const parameterDynamics = storedDynamics[parameter];
 
     if (!parameterDynamics) {
-      throw new Error("Unknown control parameter " + parameter);
+      throw new Error('Unknown control parameter ' + parameter);
     }
 
     const newTime = this.#now();
@@ -126,10 +126,10 @@ class ControlComposer {
     );
     parameterDynamics.time = newTime;
 
-    this.emit("change");
+    this.emit('change');
   }
   emit(_arg0: string) {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
   #resetComposedOffsets() {
     for (let i = 0; i < this.#parameters.length; i++) {

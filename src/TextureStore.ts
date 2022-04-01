@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-import Map from "./collections/Map";
-import Set from "./collections/Set";
-import LruSet from "./collections/LruSet";
-import eventEmitter from "minimal-event-emitter";
-import defaults from "./util/defaults";
-import retry from "./util/retry";
-import chain from "./util/chain";
-import clearOwnProperties from "./util/clearOwnProperties";
+import Map from './collections/Map';
+import Set from './collections/Set';
+import LruSet from './collections/LruSet';
+import eventEmitter from 'minimal-event-emitter';
+import defaults from './util/defaults';
+import retry from './util/retry';
+import chain from './util/chain';
+import clearOwnProperties from './util/clearOwnProperties';
 
 const debug =
   // @ts-ignore
-  typeof MARZIPANODEBUG !== "undefined" && MARZIPANODEBUG.textureStore;
+  typeof MARZIPANODEBUG !== 'undefined' && MARZIPANODEBUG.textureStore;
 
 // A Stage informs the TextureStore about the set of visible tiles during a
 // frame by calling startFrame, markTile and endFrame. In a particular frame,
@@ -97,7 +97,7 @@ class TextureStoreItem {
     this.#texture = null;
 
     this.#changeHandler = () => {
-      store.emit("textureInvalid", tile);
+      store.emit('textureInvalid', tile);
     };
 
     const source = store.source();
@@ -110,9 +110,9 @@ class TextureStoreItem {
     // This process may be canceled at any point by calling the destroy() method.
     const fn = chain(retry(loadAsset), createTexture);
 
-    store.emit("textureStartLoad", tile);
+    store.emit('textureStartLoad', tile);
     if (debug) {
-      console.log("loading", id, tile);
+      console.log('loading', id, tile);
     }
 
     this.#cancel = fn(stage, tile, (err, _tile, asset, texture) => {
@@ -133,14 +133,14 @@ class TextureStoreItem {
 
         // Emit events.
         if (err instanceof CancelError) {
-          store.emit("textureCancel", tile);
+          store.emit('textureCancel', tile);
           if (debug) {
-            console.log("cancel", id, tile);
+            console.log('cancel', id, tile);
           }
         } else {
-          store.emit("textureError", tile, err);
+          store.emit('textureError', tile, err);
           if (debug) {
-            console.log("error", id, tile);
+            console.log('error', id, tile);
           }
         }
 
@@ -155,15 +155,15 @@ class TextureStoreItem {
       // as we won't be needing it any longer.
       if (asset.isDynamic()) {
         this.#asset = asset;
-        asset.addEventListener("change", this.#changeHandler);
+        asset.addEventListener('change', this.#changeHandler);
       } else {
         asset.destroy();
       }
 
       // Emit event.
-      store.emit("textureLoad", tile);
+      store.emit('textureLoad', tile);
       if (debug) {
-        console.log("load", id, tile);
+        console.log('load', id, tile);
       }
     });
   }
@@ -183,13 +183,13 @@ class TextureStoreItem {
 
     if (cancel) {
       // The texture is still loading, so cancel it.
-      cancel(new CancelError("Texture load cancelled"));
+      cancel(new CancelError('Texture load cancelled'));
       return;
     }
 
     // Destroy asset.
     if (asset) {
-      asset.removeEventListener("change", this.#changeHandler);
+      asset.removeEventListener('change', this.#changeHandler);
       asset.destroy();
     }
 
@@ -199,9 +199,9 @@ class TextureStoreItem {
     }
 
     // Emit event.
-    store.emit("textureUnload", tile);
+    store.emit('textureUnload', tile);
     if (debug) {
-      console.log("unload", id, tile);
+      console.log('unload', id, tile);
     }
 
     clearOwnProperties(this);
@@ -414,7 +414,7 @@ class TextureStore {
   startFrame() {
     // Check that we are in an appropriate state.
     if (this.#state !== State.IDLE && this.#state !== State.START) {
-      throw new Error("TextureStore: startFrame called out of sequence");
+      throw new Error('TextureStore: startFrame called out of sequence');
     }
 
     // Enter the START state, if not already there.
@@ -430,7 +430,7 @@ class TextureStore {
   markTile(tile) {
     // Check that we are in an appropriate state.
     if (this.#state !== State.START && this.#state !== State.MARK) {
-      throw new Error("TextureStore: markTile called out of sequence");
+      throw new Error('TextureStore: markTile called out of sequence');
     }
 
     // Enter the MARK state, if not already there.
@@ -457,7 +457,7 @@ class TextureStore {
       this.#state !== State.MARK &&
       this.#state !== State.END
     ) {
-      throw new Error("TextureStore: endFrame called out of sequence");
+      throw new Error('TextureStore: endFrame called out of sequence');
     }
 
     // Enter the END state, if not already there.
@@ -546,7 +546,7 @@ class TextureStore {
   }
   #loadTile(tile) {
     if (this.#itemMap.has(tile)) {
-      throw new Error("TextureStore: loading texture already in cache");
+      throw new Error('TextureStore: loading texture already in cache');
     }
     const item = new TextureStoreItem(this, tile);
     this.#itemMap.set(tile, item);
@@ -554,7 +554,7 @@ class TextureStore {
   #unloadTile(tile) {
     const item = this.#itemMap.del(tile);
     if (!item) {
-      throw new Error("TextureStore: unloading texture not in cache");
+      throw new Error('TextureStore: unloading texture not in cache');
     }
     item.destroy();
   }
@@ -602,7 +602,7 @@ class TextureStore {
     let count = this.#pinMap.get(tile);
     // Consistency check.
     if (!count) {
-      throw new Error("TextureStore: unpin when not pinned");
+      throw new Error('TextureStore: unpin when not pinned');
     } else {
       // Decrement reference count.
       count--;

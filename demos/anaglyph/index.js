@@ -13,7 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Viewer, CubeGeometry, ImageUrlSource, TextureStore, Layer, RectilinearView } from '../../src/index'
+import {
+  Viewer,
+  CubeGeometry,
+  ImageUrlSource,
+  TextureStore,
+  Layer,
+  RectilinearView,
+} from '../../src/index';
 import { colorTransformEffects } from './colorTransformEffects.js';
 
 // Create viewer.
@@ -25,12 +32,15 @@ var geometry = new CubeGeometry([
   { tileSize: 512, size: 512 },
   { tileSize: 512, size: 1024 },
   { tileSize: 512, size: 2048 },
-  { tileSize: 512, size: 4096 }
+  { tileSize: 512, size: 4096 },
 ]);
 
 // Create view.
 // The view is shared by the two layers.
-var viewLimiter = RectilinearView.limit.traditional(3100, 100*Math.PI/180);
+var viewLimiter = RectilinearView.limit.traditional(
+  3100,
+  (100 * Math.PI) / 180
+);
 var view = new RectilinearView(null, viewLimiter);
 
 // Get the stage.
@@ -48,10 +58,11 @@ stage.addLayer(left);
 
 function createLayer(stage, view, geometry, eye) {
   // Create the source.
-  var urlPrefix = "//www.net/media/music-room";
+  var urlPrefix = '//www.net/media/music-room';
   var source = ImageUrlSource.fromString(
-    urlPrefix + "/" + eye + "/{z}/{f}/{y}/{x}.jpg",
-    { cubeMapPreviewUrl: urlPrefix + "/" + eye + "/preview.jpg" });
+    urlPrefix + '/' + eye + '/{z}/{f}/{y}/{x}.jpg',
+    { cubeMapPreviewUrl: urlPrefix + '/' + eye + '/preview.jpg' }
+  );
 
   // Create the texture store.
   var textureStore = new TextureStore(source, stage);

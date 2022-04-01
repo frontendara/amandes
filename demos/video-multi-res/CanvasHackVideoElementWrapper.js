@@ -30,7 +30,7 @@ class CanvasHackVideoElementWrapper {
   drawElement() {
     this._drawElement.width = this._videoElement.videoWidth;
     this._drawElement.height = this._videoElement.videoHeight;
-    this._drawElement.getContext("2d").drawImage(this._videoElement, 0, 0);
+    this._drawElement.getContext('2d').drawImage(this._videoElement, 0, 0);
     return this._drawElement;
   }
   destroy() {

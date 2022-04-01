@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import mod from "../util/mod";
+import mod from '../util/mod';
 
 // An LruMap holds up to a maximum number of key-value pairs, ordered by their
 // time of insertion. When the addition of a key-value pair would cause the
@@ -31,7 +31,11 @@ class LruMap {
   #size: number;
 
   constructor(capacity) {
-    if (!isFinite(capacity) || Math.floor(capacity) !== capacity || capacity < 0) {
+    if (
+      !isFinite(capacity) ||
+      Math.floor(capacity) !== capacity ||
+      capacity < 0
+    ) {
       throw new Error('LruMap: invalid capacity');
     }
     this.#capacity = capacity;
@@ -67,7 +71,8 @@ class LruMap {
       return key;
     }
     this.del(key);
-    const evictedKey = this.#size === this.#capacity ? this.#keys[this._index(0)] : null;
+    const evictedKey =
+      this.#size === this.#capacity ? this.#keys[this._index(0)] : null;
     this.#keys[this._index(this.#size)] = key;
     this.#values[this._index(this.#size)] = value;
     if (this.#size < this.#capacity) {

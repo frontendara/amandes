@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import global from "../util/global";
-import eventEmitter from "minimal-event-emitter";
-import clearOwnProperties from "../util/clearOwnProperties";
+import global from '../util/global';
+import eventEmitter from 'minimal-event-emitter';
+import clearOwnProperties from '../util/clearOwnProperties';
 
 const propertyMap = {
   HTMLImageElement: ['naturalWidth', 'naturalHeight'],
   HTMLCanvasElement: ['width', 'height'],
-  ImageBitmap: ['width', 'height']
+  ImageBitmap: ['width', 'height'],
 };
 
 /**

@@ -1,20 +1,21 @@
-import StaticAsset from "../assets/Static";
-import NetworkError from "../NetworkError";
-import browser from "bowser";
-import global from "../util/global";
-import once from "../util/once";
+import StaticAsset from '../assets/Static';
+import NetworkError from '../NetworkError';
+import browser from 'bowser';
+import global from '../util/global';
+import once from '../util/once';
 
 // TODO: Move the load queue into the loader.
 
 // Whether to use createImageBitmap instead of a canvas for cropping.
 // See https://caniuse.com/?search=createimagebitmap
 // @ts-ignore
-const useCreateImageBitmap = !!global?.createImageBitmap && !browser.firefox && !browser.safari;
+const useCreateImageBitmap =
+  !!global?.createImageBitmap && !browser.firefox && !browser.safari;
 
 // Options for createImageBitmap.
 const createImageBitmapOpts = {
   imageOrientation: 'flipY',
-  premultiplyAlpha: 'premultiply'
+  premultiplyAlpha: 'premultiply',
 };
 
 /**
@@ -58,10 +59,10 @@ class HtmlImageLoader {
     // https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
     img.crossOrigin = 'anonymous';
 
-    const x = rect && rect.x || 0;
-    const y = rect && rect.y || 0;
-    const width = rect && rect.width || 1;
-    const height = rect && rect.height || 1;
+    const x = (rect && rect.x) || 0;
+    const y = (rect && rect.y) || 0;
+    const width = (rect && rect.width) || 1;
+    const height = (rect && rect.height) || 1;
 
     done = once(done);
 
@@ -100,7 +101,8 @@ class HtmlImageLoader {
       // work to another thread and avoid blocking the user interface.
       // Assume that the promise is never rejected.
       // @ts-ignore
-      global?.createImageBitmap(img, x, y, width, height, createImageBitmapOpts)
+      global
+        ?.createImageBitmap(img, x, y, width, height, createImageBitmapOpts)
         .then(function (bitmap) {
           done(null, new StaticAsset(bitmap));
         });

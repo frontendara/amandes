@@ -14,23 +14,22 @@
  * limitations under the License.
  */
 import { suite, test, assert } from 'vitest';
-import sinon from "sinon";
+import sinon from 'sinon';
 
-import async from "./async";
+import async from './async';
 
 var error = new Error('err');
 
 function twice(x) {
-  return 2*x;
+  return 2 * x;
 }
 
 function fail() {
   throw error;
 }
 
-suite('async', function() {
-
-  test('success', function() {
+suite('async', function () {
+  test('success', function () {
     var fn = async(twice.bind(null, 2));
     var spy = sinon.spy();
     fn(spy);
@@ -38,12 +37,11 @@ suite('async', function() {
     assert.isTrue(spy.calledWithExactly(null, 4));
   });
 
-  test('failure', function() {
+  test('failure', function () {
     var fn = async(fail);
     var spy = sinon.spy();
     fn(spy);
     assert.isTrue(spy.calledOnce);
     assert.isTrue(spy.calledWithExactly(error));
   });
-
 });

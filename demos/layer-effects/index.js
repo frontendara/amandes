@@ -20,7 +20,10 @@ import { colorEffects } from './colorEffects.js';
 var viewer = new Marzipano.Viewer(document.getElementById('pano'));
 
 // Create view.
-var limiter = Marzipano.RectilinearView.limit.traditional(2048, 120*Math.PI/180);
+var limiter = Marzipano.RectilinearView.limit.traditional(
+  2048,
+  (120 * Math.PI) / 180
+);
 var view = new Marzipano.RectilinearView(null, limiter);
 
 // Create an empty scene into which layers will be added.
@@ -37,7 +40,7 @@ var layers = ko.observableArray([]);
 
 // Set up the user interface for importing layers.
 var selectFilesInput = document.getElementById('selectFilesInput');
-selectFilesInput.addEventListener('change', function() {
+selectFilesInput.addEventListener('change', function () {
   if (this.files && this.files.length > 0) {
     for (var i = 0; i < this.files.length; i++) {
       importLayer(this.files[i]);
@@ -46,7 +49,7 @@ selectFilesInput.addEventListener('change', function() {
   this.value = null;
 });
 var selectFilesButton = document.getElementById('selectFilesButton');
-selectFilesButton.addEventListener('click', function() {
+selectFilesButton.addEventListener('click', function () {
   selectFilesInput.click();
 });
 
@@ -55,13 +58,13 @@ function fileToCanvas(file, done) {
   var canvas = document.createElement('canvas');
   var ctx = canvas.getContext('2d');
   var img = document.createElement('img');
-  img.onload = function() {
+  img.onload = function () {
     canvas.width = img.naturalWidth;
     canvas.height = img.naturalHeight;
     ctx.drawImage(img, 0, 0);
     done(null, canvas);
   };
-  img.onerror = function(err) {
+  img.onerror = function (err) {
     done(err);
   };
   img.src = URL.createObjectURL(file);
@@ -69,14 +72,19 @@ function fileToCanvas(file, done) {
 
 // Import a canvas into a layer.
 function importLayer(file) {
-  fileToCanvas(file, function(err, canvas) {
+  fileToCanvas(file, function (err, canvas) {
     if (err) {
       alert('Unable to load image file.');
       return;
     }
     if (canvas.width > maxSize || canvas.height > maxSize) {
-      alert('Image is too large. The maximum supported size is ' +
-        maxSize + ' by ' + maxSize + ' pixels.');
+      alert(
+        'Image is too large. The maximum supported size is ' +
+          maxSize +
+          ' by ' +
+          maxSize +
+          ' pixels.'
+      );
       return;
     }
 
@@ -86,7 +94,7 @@ function importLayer(file) {
     var geometry = new Marzipano.EquirectGeometry([{ width: canvas.width }]);
     var layer = scene.createLayer({
       source: source,
-      geometry: geometry
+      geometry: geometry,
     });
 
     // Create a new effects object for the layer.
@@ -97,7 +105,7 @@ function importLayer(file) {
       name: file.name,
       layer: layer,
       effects: effects,
-      canvas: canvas
+      canvas: canvas,
     });
   });
 }
@@ -119,7 +127,7 @@ function layerEffects(layer) {
     width: ko.observable(1.0),
     height: ko.observable(1.0),
     x: ko.observable(0.0),
-    y: ko.observable(0.0)
+    y: ko.observable(0.0),
   };
 
   var colorOffset = [];
@@ -151,14 +159,14 @@ function layerEffects(layer) {
         relativeWidth: rect.width(),
         relativeHeight: rect.height(),
         relativeY: rect.y(),
-        relativeX: rect.x()
+        relativeX: rect.x(),
       },
       colorOffset: observableArrayFloatValues(colorOffset),
-      colorMatrix: observableArrayFloatValues(colorMatrix)
+      colorMatrix: observableArrayFloatValues(colorMatrix),
     });
   }
 
-  var presets = [ 'brightness', 'sepia', 'saturation', 'contrast' ];
+  var presets = ['brightness', 'sepia', 'saturation', 'contrast'];
   var selectedPreset = ko.observable();
 
   var brightnessAmount = ko.observable(0);
@@ -166,20 +174,20 @@ function layerEffects(layer) {
   var saturationAmount = ko.observable(0);
   var contrastAmount = ko.observable(1);
 
-  brightnessAmount.subscribe(function(amount) {
+  brightnessAmount.subscribe(function (amount) {
     colorEffectsToObservables(colorEffects.brightness(parseFloat(amount)));
   });
-  sepiaAmount.subscribe(function(amount) {
+  sepiaAmount.subscribe(function (amount) {
     colorEffectsToObservables(colorEffects.sepia(parseFloat(amount)));
   });
-  saturationAmount.subscribe(function(amount) {
+  saturationAmount.subscribe(function (amount) {
     colorEffectsToObservables(colorEffects.saturation(parseFloat(amount)));
   });
-  contrastAmount.subscribe(function(amount) {
+  contrastAmount.subscribe(function (amount) {
     colorEffectsToObservables(colorEffects.contrast(parseFloat(amount)));
   });
 
-  selectedPreset.subscribe(function(preset) {
+  selectedPreset.subscribe(function (preset) {
     switch (preset) {
       case 'brightness':
         brightnessAmount.notifySubscribers(parseFloat(brightnessAmount()));
@@ -207,7 +215,7 @@ function layerEffects(layer) {
   }
 
   function observableArrayFloatValues(arr) {
-    return arr.map(function(o) {
+    return arr.map(function (o) {
       return parseFloat(o());
     });
   }
@@ -222,9 +230,8 @@ function layerEffects(layer) {
     brightnessAmount: brightnessAmount,
     sepiaAmount: sepiaAmount,
     saturationAmount: saturationAmount,
-    contrastAmount: contrastAmount
+    contrastAmount: contrastAmount,
   };
-
 }
 
 // Display the initially empty scene.
@@ -233,16 +240,16 @@ scene.switchTo({ transitionDuration: 0 });
 var viewModel = {
   layers: layers,
   discardLayer: discardLayer,
-  maxDimensions: maxDimensions
+  maxDimensions: maxDimensions,
 };
 
 ko.bindingHandlers.element = {
-    init: function(element, valueAccessor) {
-      while (element.firstChild) {
-        element.removeChild(element.firstChild);
-      }
-      element.appendChild(valueAccessor());
+  init: function (element, valueAccessor) {
+    while (element.firstChild) {
+      element.removeChild(element.firstChild);
     }
+    element.appendChild(valueAccessor());
+  },
 };
 
 ko.applyBindings(viewModel);

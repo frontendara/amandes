@@ -86,7 +86,11 @@ class Dynamics {
     return Math.abs(this.velocity / Number(this.friction));
   }
   static equals(d1, d2) {
-    return d1.velocity === d2.velocity && d1.friction === d2.friction && d1.offset === d2.offset;
+    return (
+      d1.velocity === d2.velocity &&
+      d1.friction === d2.friction &&
+      d1.offset === d2.offset
+    );
   }
 }
 

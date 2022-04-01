@@ -1,13 +1,13 @@
-import eventEmitter from "minimal-event-emitter";
-import positionAbsolutely from "./util/positionAbsolutely";
-import { setTransform as setTransform } from "./util/dom";
-import clearOwnProperties from "./util/clearOwnProperties";
-import { RectilinearViewCoords } from "./views/Rectilinear";
-import { FlatViewCoords } from "./views/Flat";
+import eventEmitter from 'minimal-event-emitter';
+import positionAbsolutely from './util/positionAbsolutely';
+import { setTransform as setTransform } from './util/dom';
+import clearOwnProperties from './util/clearOwnProperties';
+import { RectilinearViewCoords } from './views/Rectilinear';
+import { FlatViewCoords } from './views/Flat';
 
 export interface Perspective {
-    radius: number | null;
-    extraTransforms?: string;
+  radius: number | null;
+  extraTransforms?: string;
 }
 export interface HotspotOptions {
   perspective?: Perspective;
@@ -68,16 +68,16 @@ class Hotspot {
     coords: HotspotCoords,
     opts?: HotspotOptions
   ) {
-    opts = opts || {} as HotspotOptions;
-    opts.perspective = opts.perspective || {} as Perspective;
+    opts = opts || ({} as HotspotOptions);
+    opts.perspective = opts.perspective || ({} as Perspective);
     // TODO: fix this ignore madness
     // @ts-ignore
     opts.perspective.extraTransforms =
-    // @ts-ignore
+      // @ts-ignore
       opts.perspective.extraTransforms != null
-    // @ts-ignore
-        ? opts.perspective.extraTransforms
-        : "";
+        ? // @ts-ignore
+          opts.perspective.extraTransforms
+        : '';
 
     this.#domElement = domElement;
     this.#parentDomElement = parentDomElement;
@@ -183,14 +183,23 @@ class Hotspot {
 
     // Show if visible, hide if not.
     if (isVisible) {
-      element.style.display = "block";
-      element.style.position = "absolute";
+      element.style.display = 'block';
+      element.style.position = 'absolute';
     } else {
-      element.style.display = "none";
-      element.style.position = "";
+      element.style.display = 'none';
+      element.style.position = '';
     }
   }
-  #setEmbeddedPosition(view: { coordinatesToPerspectiveTransform: (arg0: any, arg1: number | null, arg2: string | undefined) => any; }, params: HotspotCoords) {
+  #setEmbeddedPosition(
+    view: {
+      coordinatesToPerspectiveTransform: (
+        arg0: any,
+        arg1: number | null,
+        arg2: string | undefined
+      ) => any;
+    },
+    params: HotspotCoords
+  ) {
     const transform = view.coordinatesToPerspectiveTransform(
       params,
       this.#perspective.radius,

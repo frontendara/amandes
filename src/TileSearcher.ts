@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import Set from "./collections/Set";
-import { Tile } from "./jsdoc-extras";
+import Set from './collections/Set';
+import { Tile } from './jsdoc-extras';
 
 /**
  * A TileSearcher performs searches for visible tiles.

@@ -20,8 +20,7 @@ function pixelRatio() {
   if (typeof window !== 'undefined') {
     if (window.devicePixelRatio) {
       return window.devicePixelRatio;
-    }
-    else {
+    } else {
       var screen = window.screen;
       if (screen && screen.deviceXDPI && screen.logicalXDPI) {
         return screen.deviceXDPI / screen.logicalXDPI;

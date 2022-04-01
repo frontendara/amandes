@@ -15,24 +15,23 @@
  */
 import { suite, test, assert } from 'vitest';
 
-import real from "./real";
+import real from './real';
 
 var tab = [
-  [ 0, true ],
-  [ 1, true ],
-  [ -1, true ],
-  [ NaN, false ],
-  [ Infinity, false ],
-  [ -Infinity, false ]
+  [0, true],
+  [1, true],
+  [-1, true],
+  [NaN, false],
+  [Infinity, false],
+  [-Infinity, false],
 ];
 
-suite('real', function() {
-
-  test('real', function() {
+suite('real', function () {
+  test('real', function () {
     for (var i = 0; i < tab.length; i++) {
-      var val = tab[i][0], ret = tab[i][1];
+      var val = tab[i][0],
+        ret = tab[i][1];
       assert.strictEqual(real(val), ret);
     }
   });
-
 });

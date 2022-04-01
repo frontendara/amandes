@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-function extend(obj: { [x: string]: any; }, sourceObj: { [x: string]: any; }) {
+function extend(obj: { [x: string]: any }, sourceObj: { [x: string]: any }) {
   for (const key in sourceObj) {
     obj[key] = sourceObj[key];
   }

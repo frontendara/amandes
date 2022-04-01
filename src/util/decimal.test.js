@@ -15,22 +15,21 @@
  */
 import { suite, test, assert } from 'vitest';
 
-import decimal from "./decimal";
+import decimal from './decimal';
 
 var tab = [
-  [ 0, '0.00000000000000' ],
-  [ 1, '1.00000000000000' ],
-  [ -1, '-1.00000000000000' ],
-  [ 0.123456789012345, '0.123456789012345' ]
+  [0, '0.00000000000000'],
+  [1, '1.00000000000000'],
+  [-1, '-1.00000000000000'],
+  [0.123456789012345, '0.123456789012345'],
 ];
 
-suite('decimal', function() {
-
-  test('decimal', function() {
+suite('decimal', function () {
+  test('decimal', function () {
     for (var i = 0; i < tab.length; i++) {
-      var a = tab[i][0], b = tab[i][1];
+      var a = tab[i][0],
+        b = tab[i][1];
       assert.strictEqual(decimal(a), b);
     }
   });
-
 });

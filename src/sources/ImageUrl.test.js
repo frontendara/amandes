@@ -14,136 +14,188 @@
  * limitations under the License.
  */
 import { suite, test, assert } from 'vitest';
-import sinon from "sinon";
+import sinon from 'sinon';
 
-import wait from "../../test/wait";
+import wait from '../../test/wait';
 
-import ImageUrlSource from "./ImageUrl";
+import ImageUrlSource from './ImageUrl';
 
 class MockStage {
-  constructor() { }
+  constructor() {}
   loadImage(url, rect, done) {
-    if (url === "url" && rect == null) {
-      done(null, "asset");
-    } else if (url === "url-rect" && rect === "rect") {
-      done(null, "asset-rect");
-    } else if (url === "url-error") {
-      done(new Error("error"));
+    if (url === 'url' && rect == null) {
+      done(null, 'asset');
+    } else if (url === 'url-rect' && rect === 'rect') {
+      done(null, 'asset-rect');
+    } else if (url === 'url-error') {
+      done(new Error('error'));
     }
-    return function () { };
+    return function () {};
   }
 }
 
-suite('ImageUrlSource', function() {
-
-  test('template url', function(done) {
+suite('ImageUrlSource', function () {
+  test('template url', function (done) {
     var source = ImageUrlSource.fromString(
-        "http://localhost/img?f={f}&z={z}&x={x}&y={y}");
+      'http://localhost/img?f={f}&z={z}&x={x}&y={y}'
+    );
 
-    var spy = sinon.stub().returns(function() {});
+    var spy = sinon.stub().returns(function () {});
     var stage = { loadImage: spy };
 
-    source.loadAsset(stage, { face: "l", z: 0, x: 1, y: 2});
-    source.loadAsset(stage, { face: "r", z: 3, x: 4, y: 5});
+    source.loadAsset(stage, { face: 'l', z: 0, x: 1, y: 2 });
+    source.loadAsset(stage, { face: 'r', z: 3, x: 4, y: 5 });
 
-    wait.until(function() { return spy.callCount === 2; }, function() {
-      assert.strictEqual(spy.getCall(0).args[0], "http://localhost/img?f=l&z=0&x=1&y=2");
-      assert.strictEqual(spy.getCall(0).args[1], undefined);
-      assert.strictEqual(spy.getCall(1).args[0], "http://localhost/img?f=r&z=3&x=4&y=5");
-      assert.strictEqual(spy.getCall(1).args[1], undefined);
-      done();
-    });
+    wait.until(
+      function () {
+        return spy.callCount === 2;
+      },
+      function () {
+        assert.strictEqual(
+          spy.getCall(0).args[0],
+          'http://localhost/img?f=l&z=0&x=1&y=2'
+        );
+        assert.strictEqual(spy.getCall(0).args[1], undefined);
+        assert.strictEqual(
+          spy.getCall(1).args[0],
+          'http://localhost/img?f=r&z=3&x=4&y=5'
+        );
+        assert.strictEqual(spy.getCall(1).args[1], undefined);
+        done();
+      }
+    );
   });
 
-  test('template url with preview', function(done) {
-    var defaultOrder = "bdflru";
+  test('template url with preview', function (done) {
+    var defaultOrder = 'bdflru';
 
     var source = ImageUrlSource.fromString(
-        "http://localhost/img?f={f}&z={z}&x={x}&y={y}",
-        {cubeMapPreviewUrl: "http://localhost/preview", concurrency: 10});
+      'http://localhost/img?f={f}&z={z}&x={x}&y={y}',
+      { cubeMapPreviewUrl: 'http://localhost/preview', concurrency: 10 }
+    );
 
-    var spy = sinon.stub().returns(function() {});
+    var spy = sinon.stub().returns(function () {});
     var stage = { loadImage: spy };
 
     for (var i = 0; i < 6; i++) {
-      source.loadAsset(stage, { face: defaultOrder[i], z: 0, x: 0, y: 0});
+      source.loadAsset(stage, { face: defaultOrder[i], z: 0, x: 0, y: 0 });
     }
-    source.loadAsset(stage, { face: "l", z: 1, x: 2, y: 3});
+    source.loadAsset(stage, { face: 'l', z: 1, x: 2, y: 3 });
 
-    wait.until(function() { return stage.loadImage.callCount === 7; }, function() {
-      for (var i = 0; i < 6; i++) {
-        assert.strictEqual(spy.getCall(i).args[0], "http://localhost/preview");
-        assert.deepEqual(spy.getCall(i).args[1], {x: 0, y: i/6, width: 1, height: 1/6});
+    wait.until(
+      function () {
+        return stage.loadImage.callCount === 7;
+      },
+      function () {
+        for (var i = 0; i < 6; i++) {
+          assert.strictEqual(
+            spy.getCall(i).args[0],
+            'http://localhost/preview'
+          );
+          assert.deepEqual(spy.getCall(i).args[1], {
+            x: 0,
+            y: i / 6,
+            width: 1,
+            height: 1 / 6,
+          });
+        }
+        assert.strictEqual(
+          spy.getCall(6).args[0],
+          'http://localhost/img?f=l&z=1&x=2&y=3'
+        );
+        assert.strictEqual(spy.getCall(6).args[1], undefined);
+        done();
       }
-      assert.strictEqual(spy.getCall(6).args[0], "http://localhost/img?f=l&z=1&x=2&y=3");
-      assert.strictEqual(spy.getCall(6).args[1], undefined);
-      done();
-    });
+    );
   });
 
-  test('template url with preview in custom order', function(done) {
-    var customOrder = "udtblr";
+  test('template url with preview in custom order', function (done) {
+    var customOrder = 'udtblr';
 
     var source = ImageUrlSource.fromString(
-        "http://localhost/img?f={f}&z={z}&x={x}&y={y}",
-        {cubeMapPreviewUrl: "http://localhost/preview", cubeMapPreviewFaceOrder: customOrder, concurrency: 10});
+      'http://localhost/img?f={f}&z={z}&x={x}&y={y}',
+      {
+        cubeMapPreviewUrl: 'http://localhost/preview',
+        cubeMapPreviewFaceOrder: customOrder,
+        concurrency: 10,
+      }
+    );
 
-    var spy = sinon.stub().returns(function() {});
+    var spy = sinon.stub().returns(function () {});
     var stage = { loadImage: spy };
 
     for (var i = 0; i < 6; i++) {
-      source.loadAsset(stage, { face: customOrder[i], z: 0, x: 0, y: 0});
+      source.loadAsset(stage, { face: customOrder[i], z: 0, x: 0, y: 0 });
     }
-    source.loadAsset(stage, { face: "l", z: 1, x: 2, y: 3});
+    source.loadAsset(stage, { face: 'l', z: 1, x: 2, y: 3 });
 
-    wait.until(function() { return stage.loadImage.callCount === 7; }, function() {
-      for (var i = 0; i < 6; i++) {
-        assert.strictEqual(spy.getCall(i).args[0], "http://localhost/preview");
-        assert.deepEqual(spy.getCall(i).args[1], {x: 0, y: i/6, width: 1, height: 1/6});
+    wait.until(
+      function () {
+        return stage.loadImage.callCount === 7;
+      },
+      function () {
+        for (var i = 0; i < 6; i++) {
+          assert.strictEqual(
+            spy.getCall(i).args[0],
+            'http://localhost/preview'
+          );
+          assert.deepEqual(spy.getCall(i).args[1], {
+            x: 0,
+            y: i / 6,
+            width: 1,
+            height: 1 / 6,
+          });
+        }
+        assert.strictEqual(
+          spy.getCall(6).args[0],
+          'http://localhost/img?f=l&z=1&x=2&y=3'
+        );
+        assert.strictEqual(spy.getCall(6).args[1], undefined);
+        done();
       }
-      assert.strictEqual(spy.getCall(6).args[0], "http://localhost/img?f=l&z=1&x=2&y=3");
-      assert.strictEqual(spy.getCall(6).args[1], undefined);
-      done();
-    });
+    );
   });
 
-  test('full rect', function(done) {
+  test('full rect', function (done) {
     var stage = new MockStage();
 
-    var tileToUrl = sinon.stub().withArgs("tile").returns({ url: "url" });
+    var tileToUrl = sinon.stub().withArgs('tile').returns({ url: 'url' });
 
     var source = new ImageUrlSource(tileToUrl);
-    source.loadAsset(stage, "tile", function(err, tile, asset) {
+    source.loadAsset(stage, 'tile', function (err, tile, asset) {
       assert.isNull(err);
-      assert.strictEqual("tile", tile);
-      assert.strictEqual("asset", asset);
+      assert.strictEqual('tile', tile);
+      assert.strictEqual('asset', asset);
       done();
     });
   });
 
-  test('partial rect', function(done) {
+  test('partial rect', function (done) {
     var stage = new MockStage();
 
-    var tileToUrl = sinon.stub().withArgs("tile").returns({ url: "url-rect", rect: "rect" });
+    var tileToUrl = sinon
+      .stub()
+      .withArgs('tile')
+      .returns({ url: 'url-rect', rect: 'rect' });
 
     var source = new ImageUrlSource(tileToUrl);
-    source.loadAsset(stage, "tile", function(err, tile, asset) {
+    source.loadAsset(stage, 'tile', function (err, tile, asset) {
       assert.isNull(err);
-      assert.strictEqual(tile, "tile");
-      assert.strictEqual(asset, "asset-rect");
+      assert.strictEqual(tile, 'tile');
+      assert.strictEqual(asset, 'asset-rect');
       done();
     });
   });
 
-  test('error', function(done) {
+  test('error', function (done) {
     var stage = new MockStage();
 
-    var tileToUrl = sinon.stub().withArgs("tile").returns({ url: "url-error" });
+    var tileToUrl = sinon.stub().withArgs('tile').returns({ url: 'url-error' });
 
     var source = new ImageUrlSource(tileToUrl);
-    source.loadAsset(stage, "tile", function(err, tile, asset) {
+    source.loadAsset(stage, 'tile', function (err, tile, asset) {
       assert.instanceOf(err, Error);
-      assert.strictEqual(tile, "tile");
+      assert.strictEqual(tile, 'tile');
       assert.isNotOk(asset);
       done();
     });

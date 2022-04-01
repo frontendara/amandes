@@ -261,8 +261,15 @@ class Stage {
     var viewType = layer.view().type;
     var rendererClass = this._rendererRegistry.get(geometryType, viewType);
     if (!rendererClass) {
-      throw new Error('No ' + this.type + ' renderer avaiable for ' +
-        geometryType + ' geometry and ' + viewType + ' view');
+      throw new Error(
+        'No ' +
+          this.type +
+          ' renderer avaiable for ' +
+          geometryType +
+          ' geometry and ' +
+          viewType +
+          ' view'
+      );
     }
     var renderer = this.createRenderer(rendererClass);
 
@@ -321,8 +328,14 @@ class Stage {
 
     removedLayer.removeEventListener('viewChange', this._emitRenderInvalid);
     removedLayer.removeEventListener('effectsChange', this._emitRenderInvalid);
-    removedLayer.removeEventListener('fixedLevelChange', this._emitRenderInvalid);
-    removedLayer.removeEventListener('textureStoreChange', this._emitRenderInvalid);
+    removedLayer.removeEventListener(
+      'fixedLevelChange',
+      this._emitRenderInvalid
+    );
+    removedLayer.removeEventListener(
+      'textureStoreChange',
+      this._emitRenderInvalid
+    );
 
     this._emitRenderInvalid();
   }
@@ -377,7 +390,6 @@ class Stage {
     }
 
     this.startFrame(); // defined by subclasses
-
 
     // Signal start of frame to the texture stores.
     for (i = 0; i < this._layers.length; i++) {
@@ -580,7 +592,6 @@ class Stage {
    * @param {Function} done
    */
   createTexture(tile, asset, done) {
-
     var self = this;
 
     function makeTexture() {
@@ -592,7 +603,6 @@ class Stage {
     return this._createTextureWorkQueue.push(fn, function (err, texture) {
       done(err, tile, asset, texture);
     });
-
   }
   _emitRenderInvalid() {
     this.emit('renderInvalid');
@@ -601,7 +611,7 @@ class Stage {
 
 eventEmitter(Stage);
 
-Stage.prototype._emitRenderInvalid = function() {
+Stage.prototype._emitRenderInvalid = function () {
   this.emit('renderInvalid');
 };
 

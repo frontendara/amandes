@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import WebGlCube from "./WebGlCube";
-import WebGlFlat from "./WebGlFlat";
-import WebGlEquirect from "./WebGlEquirect";
+import WebGlCube from './WebGlCube';
+import WebGlFlat from './WebGlFlat';
+import WebGlEquirect from './WebGlEquirect';
 
 /**
  * Registers all known renderers for the given stage type into that stage.

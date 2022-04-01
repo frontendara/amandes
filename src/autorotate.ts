@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import defaults from "./util/defaults";
+import defaults from './util/defaults';
 
 const defaultSpeed = 0.1;
 const defaultAccel = 0.01;
@@ -86,7 +86,8 @@ function autorotate(opts: {
       params.yaw = params.yaw + yawDelta;
 
       if (targetPitch != null && params.pitch !== targetPitch) {
-        const pitchThresh = (0.5 * lastPitchSpeed * lastPitchSpeed) / pitchAccel;
+        const pitchThresh =
+          (0.5 * lastPitchSpeed * lastPitchSpeed) / pitchAccel;
         if (Math.abs(targetPitch - params.pitch) > pitchThresh) {
           // Acceleration phase
           currentPitchSpeed = Math.min(

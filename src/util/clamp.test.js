@@ -15,16 +15,14 @@
  */
 import { suite, test, assert } from 'vitest';
 
-import clamp from "./clamp";
+import clamp from './clamp';
 
-suite('clamp', function() {
-
-  test('below', function() {
+suite('clamp', function () {
+  test('below', function () {
     assert.strictEqual(clamp(-0.5, 0, 1), 0);
   });
 
-  test('above', function() {
+  test('above', function () {
     assert.strictEqual(clamp(1.5, 0, 1), 1);
   });
-
 });

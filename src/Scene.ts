@@ -15,18 +15,18 @@
  */
 
 // TODO: issues in constructor awith event emitter emit when using typescript
-import Layer from "./Layer";
-import TextureStore from "./TextureStore";
-import HotspotContainer from "./HotspotContainer";
-import eventEmitter from "minimal-event-emitter";
-import now from "./util/now";
-import noop from "./util/noop";
-import type from "./util/type";
-import defaults from "./util/defaults";
-import clearOwnProperties from "./util/clearOwnProperties";
-import Viewer from "./Viewer";
-import RectilinearView, { RectilinearViewCoords } from "./views/Rectilinear";
-import FlatView from "./views/Flat";
+import Layer from './Layer';
+import TextureStore from './TextureStore';
+import HotspotContainer from './HotspotContainer';
+import eventEmitter from 'minimal-event-emitter';
+import now from './util/now';
+import noop from './util/noop';
+import type from './util/type';
+import defaults from './util/defaults';
+import clearOwnProperties from './util/clearOwnProperties';
+import Viewer from './Viewer';
+import RectilinearView, { RectilinearViewCoords } from './views/Rectilinear';
+import FlatView from './views/Flat';
 
 type View = RectilinearView | FlatView;
 
@@ -97,15 +97,15 @@ class Scene {
     this.#updateHotspotContainerHandler =
       this.#updateHotspotContainer.bind(this);
     this.#viewer.addEventListener(
-      "sceneChange",
+      'sceneChange',
       this.#updateHotspotContainerHandler
     );
 
     // Emit event when view changes.
-    this.#viewChangeHandler = this.emit.bind(this, "viewChange");
+    this.#viewChangeHandler = this.emit.bind(this, 'viewChange');
     // TODO: fix this event emitter issue
     // @ts-ignore
-    this.#view.addEventListener("change", this.#viewChangeHandler);
+    this.#view.addEventListener('change', this.#viewChangeHandler);
 
     // Update the hotspot container.
     this.#updateHotspotContainer();
@@ -117,11 +117,11 @@ class Scene {
     // TODO: fix this event emitter issue
     // @ts-ignore
 
-    this.#view.removeEventListener("change", this.#viewChangeHandler);
+    this.#view.removeEventListener('change', this.#viewChangeHandler);
     // TODO: fix this event emitter issue
     // @ts-ignore
     this.#viewer.removeEventListener(
-      "sceneChange",
+      'sceneChange',
       this.#updateHotspotContainerHandler
     );
 
@@ -215,7 +215,7 @@ class Scene {
     }
 
     // Signal that the layers have changed.
-    this.emit("layerChange");
+    this.emit('layerChange');
 
     return layer;
   }
@@ -227,13 +227,13 @@ class Scene {
   destroyLayer(layer) {
     const i = this.#layers.indexOf(layer);
     if (i < 0) {
-      throw new Error("No such layer in scene");
+      throw new Error('No such layer in scene');
     }
 
     this.#layers.splice(i, 1);
 
     // Signal that the layers have changed.
-    this.emit("layerChange");
+    this.emit('layerChange');
 
     layer.textureStore().destroy();
     layer.destroy();
@@ -280,8 +280,8 @@ class Scene {
     opts = opts || {};
     done = done || noop;
 
-    if (type(params) !== "object") {
-      throw new Error("Target view parameters must be an object");
+    if (type(params) !== 'object') {
+      throw new Error('Target view parameters must be an object');
     }
 
     // Quadratic in/out easing.
@@ -309,7 +309,7 @@ class Scene {
 
     // Tween through the shortest path if requested.
     // The view must implement the normalizeToClosest() method.
-    if (shortest && "normalizeToClosest" in view && view.normalizeToClosest) {
+    if (shortest && 'normalizeToClosest' in view && view.normalizeToClosest) {
       view.normalizeToClosest(finalParams, finalParams);
     }
 
@@ -363,8 +363,8 @@ class Scene {
     }
 
     const step = fn();
-    if (typeof step !== "function") {
-      throw new Error("Bad movement");
+    if (typeof step !== 'function') {
+      throw new Error('Bad movement');
     }
 
     this.#movement = fn;
@@ -375,7 +375,7 @@ class Scene {
 
     // TODO: fix this event-emitter issue
     // @ts-ignore
-    renderLoop.addEventListener("beforeRender", this.#updateMovementHandler);
+    renderLoop.addEventListener('beforeRender', this.#updateMovementHandler);
     renderLoop.renderOnNextFrame();
   }
   /**
@@ -399,7 +399,7 @@ class Scene {
 
     // TODO: fix this event-emitter issue
     // @ts-ignore
-    renderLoop.removeEventListener("beforeRender", this.#updateMovementHandler);
+    renderLoop.removeEventListener('beforeRender', this.#updateMovementHandler);
 
     if (done) {
       done();
@@ -414,7 +414,7 @@ class Scene {
   }
   #updateMovement() {
     if (!this.#movement) {
-      throw new Error("Should not call update");
+      throw new Error('Should not call update');
     }
 
     const renderLoop = this.#viewer.renderLoop();
@@ -441,7 +441,7 @@ class Scene {
     }
   }
   emit(_arg0: string) {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
 }
 

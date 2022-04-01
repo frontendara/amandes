@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import WorkQueue from "./WorkQueue";
-import mod from "../util/mod";
-
+import WorkQueue from './WorkQueue';
+import mod from '../util/mod';
 
 class WorkPool {
   #concurrency: any;
@@ -24,8 +23,8 @@ class WorkPool {
   #next: number;
 
   constructor(opts) {
-    this.#concurrency = opts && opts.concurrency || 1;
-    this.#paused = opts && !!opts.paused || false;
+    this.#concurrency = (opts && opts.concurrency) || 1;
+    this.#paused = (opts && !!opts.paused) || false;
 
     this.#pool = [];
     for (let i = 0; i < this.#concurrency; i++) {

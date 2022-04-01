@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import eventEmitter from "minimal-event-emitter";
-import defaults from "./util/defaults";
-import now from "./util/now";
+import eventEmitter from 'minimal-event-emitter';
+import defaults from './util/defaults';
+import now from './util/now';
 
 interface TimerOptions {
   duration: number;
@@ -50,7 +50,7 @@ class Timer {
   _handle: any;
 
   emit(_arg0: string) {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
   constructor(opts?: TimerOptions) {
     opts = defaults<TimerOptions>(opts || {}, defaultOptions);
@@ -124,7 +124,7 @@ class Timer {
     this._teardown();
 
     if (remaining <= 0) {
-      this.emit("timeout");
+      this.emit('timeout');
       this._startTime = null;
     } else if (remaining < Infinity) {
       this._setup(remaining);

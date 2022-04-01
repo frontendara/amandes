@@ -13,29 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import hash from "../util/hash";
-import TileSearcher from "../TileSearcher";
-import LruMap from "../collections/LruMap";
-import Level from "./Level";
-import { makeLevelList as makeLevelList } from "./common";
-import { makeSelectableLevelList as makeSelectableLevelList } from "./common";
-import clamp from "../util/clamp";
-import mod from "../util/mod";
-import cmp from "../util/cmp";
-import type from "../util/type";
-import { vec2 as vec2 } from "gl-matrix";
-import { vec4 as vec4 } from "gl-matrix";
+import hash from '../util/hash';
+import TileSearcher from '../TileSearcher';
+import LruMap from '../collections/LruMap';
+import Level from './Level';
+import { makeLevelList as makeLevelList } from './common';
+import { makeSelectableLevelList as makeSelectableLevelList } from './common';
+import clamp from '../util/clamp';
+import mod from '../util/mod';
+import cmp from '../util/cmp';
+import type from '../util/type';
+import { vec2 as vec2 } from 'gl-matrix';
+import { vec4 as vec4 } from 'gl-matrix';
 
 var neighborsCacheSize = 64;
 
 // Offsets to apply to the (x,y) coordinates of a tile to get its neighbors.
 var neighborOffsets = [
-  [  0,  1 ], // top
-  [  1,  0 ], // right
-  [  0, -1 ], // bottom
-  [ -1,  0 ]  // left
+  [0, 1], // top
+  [1, 0], // right
+  [0, -1], // bottom
+  [-1, 0], // left
 ];
-
 
 /**
  * @class FlatTile
@@ -120,8 +119,6 @@ class FlatTile {
     return result;
   }
   parent() {
-
-
     if (this.z === 0) {
       return null;
     }
@@ -135,7 +132,6 @@ class FlatTile {
     var y = Math.floor(this.y / 2);
 
     return new FlatTile(x, y, z, geometry);
-
   }
   children(result) {
     if (this.z === this._geometry.levelList.length - 1) {
@@ -155,10 +151,8 @@ class FlatTile {
     result.push(new FlatTile(2 * this.x + 1, 2 * this.y + 1, z, geometry));
 
     return result;
-
   }
   neighbors() {
-
     var geometry = this._geometry;
     var cache = geometry._neighborsCache;
 
@@ -195,17 +189,20 @@ class FlatTile {
     cache.set(this, result);
 
     return result;
-
   }
   hash() {
     return hash(this.z, this.y, this.x);
   }
   equals(that) {
-    return (this._geometry === that._geometry &&
-      this.z === that.z && this.y === that.y && this.x === that.x);
+    return (
+      this._geometry === that._geometry &&
+      this.z === that.z &&
+      this.y === that.y &&
+      this.x === that.x
+    );
   }
   cmp(that) {
-    return (cmp(this.z, that.z) || cmp(this.y, that.y) || cmp(this.x, that.x));
+    return cmp(this.z, that.z) || cmp(this.y, that.y) || cmp(this.x, that.x);
   }
   str() {
     return 'FlatTile(' + tile.x + ', ' + tile.y + ', ' + tile.z + ')';
@@ -213,7 +210,7 @@ class FlatTile {
 }
 class FlatLevel extends Level {
   constructor(levelProperties) {
-    super(levelProperties)
+    super(levelProperties);
 
     this._width = levelProperties.width;
     this._height = levelProperties.height;
@@ -233,7 +230,6 @@ class FlatLevel extends Level {
     return this._tileHeight;
   }
   _validateWithParentLevel(parentLevel) {
-
     var width = this.width();
     var height = this.height();
     var tileWidth = this.tileWidth();
@@ -245,28 +241,42 @@ class FlatLevel extends Level {
     var parentTileHeight = parentLevel.tileHeight();
 
     if (width % parentWidth !== 0) {
-      return new Error('Level width must be multiple of parent level: ' +
-        width + ' vs. ' + parentWidth);
+      return new Error(
+        'Level width must be multiple of parent level: ' +
+          width +
+          ' vs. ' +
+          parentWidth
+      );
     }
 
     if (height % parentHeight !== 0) {
-      return new Error('Level height must be multiple of parent level: ' +
-        height + ' vs. ' + parentHeight);
+      return new Error(
+        'Level height must be multiple of parent level: ' +
+          height +
+          ' vs. ' +
+          parentHeight
+      );
     }
 
     if (tileWidth % parentTileWidth !== 0) {
-      return new Error('Level tile width must be multiple of parent level: ' +
-        tileWidth + ' vs. ' + parentTileWidth);
+      return new Error(
+        'Level tile width must be multiple of parent level: ' +
+          tileWidth +
+          ' vs. ' +
+          parentTileWidth
+      );
     }
 
     if (tileHeight % parentTileHeight !== 0) {
-      return new Error('Level tile height must be multiple of parent level: ' +
-        tileHeight + ' vs. ' + parentTileHeight);
+      return new Error(
+        'Level tile height must be multiple of parent level: ' +
+          tileHeight +
+          ' vs. ' +
+          parentTileHeight
+      );
     }
-
   }
 }
-
 
 /**
  * @class FlatGeometry
@@ -320,7 +330,6 @@ class FlatGeometry {
     return maxTileSize;
   }
   levelTiles(level, result) {
-
     var levelIndex = this.levelList.indexOf(level);
     var maxX = level.numHorizontalTiles() - 1;
     var maxY = level.numVerticalTiles() - 1;
@@ -336,7 +345,6 @@ class FlatGeometry {
     }
 
     return result;
-
   }
   _closestTile(view, level) {
     var ray = this._vec;
@@ -359,8 +367,8 @@ class FlatGeometry {
     var numY = level.numVerticalTiles();
 
     // Find the coordinates of the tile that the view ray points into.
-    var tileX = clamp(Math.floor(x * levelWidth / tileWidth), 0, numX - 1);
-    var tileY = clamp(Math.floor(y * levelHeight / tileHeight), 0, numY - 1);
+    var tileX = clamp(Math.floor((x * levelWidth) / tileWidth), 0, numX - 1);
+    var tileY = clamp(Math.floor((y * levelHeight) / tileHeight), 0, numY - 1);
 
     return new FlatTile(tileX, tileY, tileZ, this);
   }
@@ -389,6 +397,5 @@ class FlatGeometry {
 FlatGeometry.Tile = FlatGeometry.prototype.Tile = FlatTile;
 FlatGeometry.type = FlatGeometry.prototype.type = 'flat';
 FlatTile.type = FlatTile.prototype.type = 'flat';
-
 
 export default FlatGeometry;

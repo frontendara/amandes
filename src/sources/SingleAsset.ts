@@ -21,7 +21,7 @@
  * A {@link Source} that always provides the same {@link Asset}.
  *
  * @param {Asset} asset The asset.
-*/
+ */
 class SingleAssetSource {
   #asset: any;
   constructor(asset) {

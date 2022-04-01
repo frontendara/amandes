@@ -16,8 +16,10 @@
 
 // Perform a cancelable delay.
 // See util/cancelize.js for an explanation of what cancelables are.
-function delay(ms: number | undefined, done: { (arg0: null): void; apply: (arg0: null, arg1: IArguments) => void; }) {
-
+function delay(
+  ms: number | undefined,
+  done: { (arg0: null): void; apply: (arg0: null, arg1: IArguments) => void }
+) {
   // Work around IE8 bug whereby a setTimeout callback may still be called
   // after the corresponding clearTimeout is invoked.
   let timer: any = null;
@@ -40,7 +42,6 @@ function delay(ms: number | undefined, done: { (arg0: null): void; apply: (arg0:
   timer = setTimeout(finish, ms);
 
   return cancel;
-
 }
 
 export default delay;

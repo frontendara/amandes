@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-import eventEmitter from "minimal-event-emitter";
-import { mat4 as mat4 } from "gl-matrix";
-import { vec4 as vec4 } from "gl-matrix";
-import pixelRatio from "../util/pixelRatio";
-import convertFov from "../util/convertFov";
-import mod from "../util/mod";
-import real from "../util/real";
-import clamp from "../util/clamp";
-import decimal from "../util/decimal";
-import compose from "../util/compose";
-import clearOwnProperties from "../util/clearOwnProperties";
-import { Coords } from "../jsdoc-extras";
-import Level from "../geometries/Level";
+import eventEmitter from 'minimal-event-emitter';
+import { mat4 as mat4 } from 'gl-matrix';
+import { vec4 as vec4 } from 'gl-matrix';
+import pixelRatio from '../util/pixelRatio';
+import convertFov from '../util/convertFov';
+import mod from '../util/mod';
+import real from '../util/real';
+import clamp from '../util/clamp';
+import decimal from '../util/decimal';
+import compose from '../util/compose';
+import clearOwnProperties from '../util/clearOwnProperties';
+import { Coords } from '../jsdoc-extras';
+import Level from '../geometries/Level';
 
 // Default viewport dimensions.
 // Start with zero to ensure that those values are handled correctly.
@@ -496,7 +496,7 @@ class RectilinearView {
     if (this.#limiter) {
       params = this.#limiter(params);
       if (!params) {
-        throw new Error("Bad view limiter");
+        throw new Error('Bad view limiter');
       }
     }
 
@@ -525,7 +525,7 @@ class RectilinearView {
       !real(newProjectionCenterX) ||
       !real(newProjectionCenterY)
     ) {
-      throw new Error("Bad view - suspect a broken limiter");
+      throw new Error('Bad view - suspect a broken limiter');
     }
 
     // Update parameters.
@@ -550,14 +550,14 @@ class RectilinearView {
       newProjectionCenterY !== oldProjectionCenterY
     ) {
       this.#projectionChanged = true;
-      this.emit("change");
+      this.emit('change');
     }
     if (newWidth !== oldWidth || newHeight !== oldHeight) {
-      this.emit("resize");
+      this.emit('resize');
     }
   }
   emit(_arg0: string) {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
   #normalize(params: {
     yaw?: any;
@@ -581,13 +581,13 @@ class RectilinearView {
   }
   #normalizeCoordinates(params) {
     // Constrain yaw, pitch and roll to the [-π, π] interval.
-    if ("yaw" in params) {
+    if ('yaw' in params) {
       params.yaw = mod(params.yaw - Math.PI, -2 * Math.PI) + Math.PI;
     }
-    if ("pitch" in params) {
+    if ('pitch' in params) {
       params.pitch = mod(params.pitch - Math.PI, -2 * Math.PI) + Math.PI;
     }
-    if ("roll" in params) {
+    if ('roll' in params) {
       params.roll = mod(params.roll - Math.PI, -2 * Math.PI) + Math.PI;
     }
     return params;
@@ -899,38 +899,38 @@ class RectilinearView {
     radius: number,
     extraTransforms: string
   ) {
-    extraTransforms = extraTransforms || "";
+    extraTransforms = extraTransforms || '';
 
     const height = this.#height;
     const width = this.#width;
     const fov = this.#fov;
     const perspective = (0.5 * height) / Math.tan(fov / 2);
 
-    let transform = "";
+    let transform = '';
 
     // Center hotspot in screen.
-    transform += "translateX(" + decimal(width / 2) + "px) ";
-    transform += "translateY(" + decimal(height / 2) + "px) ";
-    transform += "translateX(-50%) translateY(-50%) ";
+    transform += 'translateX(' + decimal(width / 2) + 'px) ';
+    transform += 'translateY(' + decimal(height / 2) + 'px) ';
+    transform += 'translateX(-50%) translateY(-50%) ';
 
     // Set the perspective depth.
-    transform += "perspective(" + decimal(perspective) + "px) ";
-    transform += "translateZ(" + decimal(perspective) + "px) ";
+    transform += 'perspective(' + decimal(perspective) + 'px) ';
+    transform += 'translateZ(' + decimal(perspective) + 'px) ';
 
     // Set the camera rotation.
-    transform += "rotateZ(" + decimal(-this.#roll) + "rad) ";
-    transform += "rotateX(" + decimal(-this.#pitch) + "rad) ";
-    transform += "rotateY(" + decimal(this.#yaw) + "rad) ";
+    transform += 'rotateZ(' + decimal(-this.#roll) + 'rad) ';
+    transform += 'rotateX(' + decimal(-this.#pitch) + 'rad) ';
+    transform += 'rotateY(' + decimal(this.#yaw) + 'rad) ';
 
     // Set the hotspot rotation.
-    transform += "rotateY(" + decimal(-coords.yaw) + "rad) ";
-    transform += "rotateX(" + decimal(coords.pitch) + "rad) ";
+    transform += 'rotateY(' + decimal(-coords.yaw) + 'rad) ';
+    transform += 'rotateX(' + decimal(coords.pitch) + 'rad) ';
 
     // Move back to sphere.
-    transform += "translateZ(" + decimal(-radius) + "px) ";
+    transform += 'translateZ(' + decimal(-radius) + 'px) ';
 
     // Apply the extra transformations
-    transform += extraTransforms + " ";
+    transform += extraTransforms + ' ';
 
     return transform;
   }
@@ -1058,6 +1058,6 @@ RectilinearView.limit = {
 
 // TODO: check if this is still needed and how this can be expressed in typescript
 // @ts-ignore
-RectilinearView.type = RectilinearView.prototype.type = "rectilinear";
+RectilinearView.type = RectilinearView.prototype.type = 'rectilinear';
 
 export default RectilinearView;

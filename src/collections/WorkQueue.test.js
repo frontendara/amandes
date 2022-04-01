@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import WorkQueue from "./WorkQueue";
+import WorkQueue from './WorkQueue';
 
-import runTests from "./WorkCommon.test";
+import runTests from './WorkCommon.test';
 
 runTests('WorkQueue', WorkQueue);

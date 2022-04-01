@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import hash from "../util/hash";
-import TileSearcher from "../TileSearcher";
-import LruMap from "../collections/LruMap";
-import Level from "./Level";
-import { makeLevelList as makeLevelList } from "./common";
-import { makeSelectableLevelList as makeSelectableLevelList } from "./common";
-import clamp from "../util/clamp";
-import cmp from "../util/cmp";
-import type from "../util/type";
-import { vec3 as vec3 } from "gl-matrix";
-import { vec4 as vec4 } from "gl-matrix";
+import hash from '../util/hash';
+import TileSearcher from '../TileSearcher';
+import LruMap from '../collections/LruMap';
+import Level from './Level';
+import { makeLevelList as makeLevelList } from './common';
+import { makeSelectableLevelList as makeSelectableLevelList } from './common';
+import clamp from '../util/clamp';
+import cmp from '../util/cmp';
+import type from '../util/type';
+import { vec3 as vec3 } from 'gl-matrix';
+import { vec4 as vec4 } from 'gl-matrix';
 
 var neighborsCacheSize = 64;
 
@@ -34,10 +34,10 @@ var faceList = 'fudlrb';
 var faceRotation = {
   f: { x: 0, y: 0 },
   b: { x: 0, y: Math.PI },
-  l: { x: 0, y: Math.PI/2 },
-  r: { x: 0, y: -Math.PI/2 },
-  u: { x: Math.PI/2, y: 0 },
-  d: { x: -Math.PI/2, y: 0 }
+  l: { x: 0, y: Math.PI / 2 },
+  r: { x: 0, y: -Math.PI / 2 },
+  u: { x: Math.PI / 2, y: 0 },
+  d: { x: -Math.PI / 2, y: 0 },
 };
 
 // Zero vector.
@@ -61,7 +61,7 @@ var faceVectors = {};
 for (var i = 0; i < faceList.length; i++) {
   var face = faceList[i];
   var rotation = faceRotation[face];
-  var v = vec3.fromValues(0,  0, -1);
+  var v = vec3.fromValues(0, 0, -1);
   rotateVector(v, 0, rotation.x, rotation.y);
   faceVectors[face] = v;
 }
@@ -69,22 +69,21 @@ for (var i = 0; i < faceList.length; i++) {
 // Map each face to its adjacent faces.
 // The order is as suggested by the front face.
 var adjacentFace = {
-  f: [ 'l', 'r', 'u', 'd' ],
-  b: [ 'r', 'l', 'u', 'd' ],
-  l: [ 'b', 'f', 'u', 'd' ],
-  r: [ 'f', 'b', 'u', 'd' ],
-  u: [ 'l', 'r', 'b', 'f' ],
-  d: [ 'l', 'r', 'f', 'b' ]
+  f: ['l', 'r', 'u', 'd'],
+  b: ['r', 'l', 'u', 'd'],
+  l: ['b', 'f', 'u', 'd'],
+  r: ['f', 'b', 'u', 'd'],
+  u: ['l', 'r', 'b', 'f'],
+  d: ['l', 'r', 'f', 'b'],
 };
 
 // Offsets to apply to the (x,y) coordinates of a tile to get its neighbors.
 var neighborOffsets = [
-  [  0,  1 ], // top
-  [  1,  0 ], // right
-  [  0, -1 ], // bottom
-  [ -1,  0 ]  // left
+  [0, 1], // top
+  [1, 0], // right
+  [0, -1], // bottom
+  [-1, 0], // left
 ];
-
 
 /**
  * @class CubeTile
@@ -145,7 +144,6 @@ class CubeTile {
     return result;
   }
   parent() {
-
     if (this.z === 0) {
       return null;
     }
@@ -159,15 +157,17 @@ class CubeTile {
     var level = geometry.levelList[z];
     var parentLevel = geometry.levelList[z - 1];
 
-    var tileX = Math.floor(x / level.numHorizontalTiles() * parentLevel.numHorizontalTiles());
-    var tileY = Math.floor(y / level.numVerticalTiles() * parentLevel.numVerticalTiles());
+    var tileX = Math.floor(
+      (x / level.numHorizontalTiles()) * parentLevel.numHorizontalTiles()
+    );
+    var tileY = Math.floor(
+      (y / level.numVerticalTiles()) * parentLevel.numVerticalTiles()
+    );
     var tileZ = z - 1;
 
     return new CubeTile(face, tileX, tileY, tileZ, geometry);
-
   }
   children(result) {
-
     if (this.z === this._geometry.levelList.length - 1) {
       return null;
     }
@@ -196,10 +196,8 @@ class CubeTile {
     }
 
     return result;
-
   }
   neighbors() {
-
     var geometry = this._geometry;
     var cache = geometry._neighborsCache;
 
@@ -232,7 +230,6 @@ class CubeTile {
       var newFace = face;
 
       if (newX < 0 || newX >= numX || newY < 0 || newY >= numY) {
-
         // If the neighboring tile belongs to a different face, calculate a
         // vector pointing to the edge between the two faces at the point the
         // tile and its neighbor meet, and convert it into tile coordinates for
@@ -282,25 +279,39 @@ class CubeTile {
     cache.set(this, result);
 
     return result;
-
   }
   hash() {
     return hash(faceList.indexOf(this.face), this.z, this.y, this.x);
   }
   equals(that) {
-    return (this._geometry === that._geometry &&
+    return (
+      this._geometry === that._geometry &&
       this.face === that.face &&
       this.z === that.z &&
       this.y === that.y &&
-      this.x === that.x);
+      this.x === that.x
+    );
   }
   cmp(that) {
-    return (cmp(this.z, that.z) ||
+    return (
+      cmp(this.z, that.z) ||
       cmp(faceList.indexOf(this.face), faceList.indexOf(that.face)) ||
-      cmp(this.y, that.y) || cmp(this.x, that.x));
+      cmp(this.y, that.y) ||
+      cmp(this.x, that.x)
+    );
   }
   str() {
-    return 'CubeTile(' + tile.face + ', ' + tile.x + ', ' + tile.y + ', ' + tile.z + ')';
+    return (
+      'CubeTile(' +
+      tile.face +
+      ', ' +
+      tile.x +
+      ', ' +
+      tile.y +
+      ', ' +
+      tile.z +
+      ')'
+    );
   }
 }
 
@@ -312,8 +323,12 @@ class CubeLevel extends Level {
     this._tileSize = levelProperties.tileSize;
 
     if (this._size % this._tileSize !== 0) {
-      throw new Error('Level size is not multiple of tile size: ' +
-        this._size + ' ' + this._tileSize);
+      throw new Error(
+        'Level size is not multiple of tile size: ' +
+          this._size +
+          ' ' +
+          this._tileSize
+      );
     }
   }
   width() {
@@ -329,7 +344,6 @@ class CubeLevel extends Level {
     return this._tileSize;
   }
   _validateWithParentLevel(parentLevel) {
-
     var width = this.width();
     var height = this.height();
     var tileWidth = this.tileWidth();
@@ -345,27 +359,60 @@ class CubeLevel extends Level {
     var parentNumVertical = parentLevel.numVerticalTiles();
 
     if (width % parentWidth !== 0) {
-      throw new Error('Level width must be multiple of parent level: ' +
-        width + ' vs. ' + parentWidth);
+      throw new Error(
+        'Level width must be multiple of parent level: ' +
+          width +
+          ' vs. ' +
+          parentWidth
+      );
     }
 
     if (height % parentHeight !== 0) {
-      throw new Error('Level height must be multiple of parent level: ' +
-        height + ' vs. ' + parentHeight);
+      throw new Error(
+        'Level height must be multiple of parent level: ' +
+          height +
+          ' vs. ' +
+          parentHeight
+      );
     }
 
     if (numHorizontal % parentNumHorizontal !== 0) {
-      throw new Error('Number of horizontal tiles must be multiple of parent level: ' +
-        numHorizontal + " (" + width + '/' + tileWidth + ')' + " vs. " +
-        parentNumHorizontal + " (" + parentWidth + '/' + parentTileWidth + ')');
+      throw new Error(
+        'Number of horizontal tiles must be multiple of parent level: ' +
+          numHorizontal +
+          ' (' +
+          width +
+          '/' +
+          tileWidth +
+          ')' +
+          ' vs. ' +
+          parentNumHorizontal +
+          ' (' +
+          parentWidth +
+          '/' +
+          parentTileWidth +
+          ')'
+      );
     }
 
     if (numVertical % parentNumVertical !== 0) {
-      throw new Error('Number of vertical tiles must be multiple of parent level: ' +
-        numVertical + " (" + height + '/' + tileHeight + ')' + " vs. " +
-        parentNumVertical + " (" + parentHeight + '/' + parentTileHeight + ')');
+      throw new Error(
+        'Number of vertical tiles must be multiple of parent level: ' +
+          numVertical +
+          ' (' +
+          height +
+          '/' +
+          tileHeight +
+          ')' +
+          ' vs. ' +
+          parentNumVertical +
+          ' (' +
+          parentHeight +
+          '/' +
+          parentTileHeight +
+          ')'
+      );
     }
-
   }
 }
 
@@ -418,7 +465,6 @@ class CubeGeometry {
     return maxTileSize;
   }
   levelTiles(level, result) {
-
     var levelIndex = this.levelList.indexOf(level);
     var maxX = level.numHorizontalTiles() - 1;
     var maxY = level.numVerticalTiles() - 1;
@@ -435,7 +481,6 @@ class CubeGeometry {
     }
 
     return result;
-
   }
   _closestTile(view, level) {
     var ray = this._vec;
@@ -461,7 +506,8 @@ class CubeGeometry {
 
     // Project view ray onto cube, i.e., normalize the coordinate with
     // largest absolute value to ±0.5.
-    var max = Math.max(Math.abs(ray[0]), Math.abs(ray[1]), Math.abs(ray[2])) / 0.5;
+    var max =
+      Math.max(Math.abs(ray[0]), Math.abs(ray[1]), Math.abs(ray[2])) / 0.5;
     for (var i = 0; i < 3; i++) {
       ray[i] = ray[i] / max;
     }
@@ -506,6 +552,5 @@ class CubeGeometry {
 CubeGeometry.Tile = CubeGeometry.prototype.Tile = CubeTile;
 CubeGeometry.type = CubeGeometry.prototype.type = 'cube';
 CubeTile.type = CubeTile.prototype.type = 'cube';
-
 
 export default CubeGeometry;

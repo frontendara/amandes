@@ -14,74 +14,72 @@
  * limitations under the License.
  */
 import { suite, test, assert } from 'vitest';
-import sinon from "sinon";
-import wait from "../../test/wait";
+import sinon from 'sinon';
+import wait from '../../test/wait';
 
-import retry from "./retry";
-import defer from "./defer";
-import cancelize from "./cancelize";
+import retry from './retry';
+import defer from './defer';
+import cancelize from './cancelize';
 
 var error = new Error('err');
 
 function flaky(nfail) {
   return function fn(x, done) {
     if (nfail--) {
-      defer(function() {
+      defer(function () {
         done(true);
       });
     } else {
-      defer(function() {
-        done(null, 2*x);
+      defer(function () {
+        done(null, 2 * x);
       });
     }
   };
 }
 
-suite('retry', function() {
-
-  test('zero failures', function(done) {
+suite('retry', function () {
+  test('zero failures', function (done) {
     var spy = sinon.spy();
     var fn = retry(cancelize(flaky(0)));
     fn(2, spy);
-    wait.untilSpyCalled(spy, function() {
+    wait.untilSpyCalled(spy, function () {
       assert.isTrue(spy.calledOnce);
       assert.isTrue(spy.calledWithExactly(null, 4));
       done();
     });
   });
 
-  test('one failure', function(done) {
+  test('one failure', function (done) {
     var spy = sinon.spy();
     var fn = retry(cancelize(flaky(1)));
     fn(2, spy);
-    wait.untilSpyCalled(spy, function() {
+    wait.untilSpyCalled(spy, function () {
       assert.isTrue(spy.calledOnce);
       assert.isTrue(spy.calledWithExactly(null, 4));
       done();
     });
   });
 
-  test('two failures', function(done) {
+  test('two failures', function (done) {
     var spy = sinon.spy();
     var fn = retry(cancelize(flaky(2)));
     fn(2, spy);
-    wait.untilSpyCalled(spy, function() {
+    wait.untilSpyCalled(spy, function () {
       assert.isTrue(spy.calledOnce);
       assert.isTrue(spy.calledWithExactly(null, 4));
       done();
     });
   });
 
-  test('cancel', function(done) {
+  test('cancel', function (done) {
     var spy = sinon.spy();
     var fn = retry(cancelize(flaky(0)));
     var cancel = fn(2, spy);
     cancel(error);
-    wait.untilSpyCalled(spy, function() {
+    wait.untilSpyCalled(spy, function () {
       assert.isTrue(spy.calledOnce);
       assert.isTrue(spy.calledWithExactly(error));
       done();
     });
   });
-
 });

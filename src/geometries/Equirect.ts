@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import hash from "../util/hash";
-import cmp from "../util/cmp";
-import common from "./common";
-import Level from "./Level";
-import type from "../util/type";
-
+import hash from '../util/hash';
+import cmp from '../util/cmp';
+import common from './common';
+import Level from './Level';
+import type from '../util/type';
 
 /**
  * @class EquirectTile
@@ -117,7 +116,7 @@ class EquirectLevel extends Level {
  *
  * @param {Object[]} levelPropertiesList Level description
  * @param {number} levelPropertiesList[].width Level width in pixels
-*/
+ */
 class EquirectGeometry {
   levelList: any[];
   selectableLevelList: unknown[];
@@ -160,6 +159,5 @@ EquirectGeometry.Tile = EquirectGeometry.prototype.Tile = EquirectTile;
 EquirectGeometry.type = EquirectGeometry.prototype.type = 'equirect';
 // @ts-ignore
 EquirectTile.type = EquirectTile.prototype.type = 'equirect';
-
 
 export default EquirectGeometry;

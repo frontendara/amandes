@@ -1,4 +1,4 @@
-function defaults<T>(obj: Partial<T>, defaultsObj: T){
+function defaults<T>(obj: Partial<T>, defaultsObj: T) {
   for (const key in defaultsObj) {
     if (!(key in obj)) {
       obj[key] = defaultsObj[key];

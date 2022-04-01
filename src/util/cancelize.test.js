@@ -14,43 +14,41 @@
  * limitations under the License.
  */
 import { suite, test, assert } from 'vitest';
-import sinon from "sinon";
-import wait from "../../test/wait";
+import sinon from 'sinon';
+import wait from '../../test/wait';
 
-import cancelize from "./cancelize";
+import cancelize from './cancelize';
 
 var error = new Error('err');
 
-var noop = function() {};
+var noop = function () {};
 
 function twice(x, done) {
-  setTimeout(function() {
-    done(null, 2*x);
+  setTimeout(function () {
+    done(null, 2 * x);
   }, 0);
   return noop;
 }
 
-suite('cancelize', function() {
-
-  test('cancel', function(done) {
+suite('cancelize', function () {
+  test('cancel', function (done) {
     var fn = cancelize(twice);
     var spy = sinon.spy();
     var cancel = fn(2, spy);
     cancel(error);
-    wait.untilSpyCalled(spy, function() {
+    wait.untilSpyCalled(spy, function () {
       assert.isTrue(spy.calledWithExactly(error));
       done();
     });
   });
 
-  test('no cancel', function(done) {
+  test('no cancel', function (done) {
     var fn = cancelize(twice);
     var spy = sinon.spy();
     fn(2, spy);
-    wait.untilSpyCalled(spy, function() {
+    wait.untilSpyCalled(spy, function () {
       assert.isTrue(spy.calledWithExactly(null, 4));
       done();
     });
   });
-
 });

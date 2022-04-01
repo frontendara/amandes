@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import mod from "../util/mod";
+import mod from '../util/mod';
 
 // An LruSet holds up to a maximum number of elements, ordered by their time of
 // insertion. When the addition of an element would cause the capacity to be
@@ -29,7 +29,11 @@ class LruSet {
   #size: number;
 
   constructor(capacity) {
-    if (!isFinite(capacity) || Math.floor(capacity) !== capacity || capacity < 0) {
+    if (
+      !isFinite(capacity) ||
+      Math.floor(capacity) !== capacity ||
+      capacity < 0
+    ) {
       throw new Error('LruSet: invalid capacity');
     }
     this.#capacity = capacity;
@@ -54,7 +58,8 @@ class LruSet {
       return element;
     }
     this.remove(element);
-    const evictedElement = this.#size === this.#capacity ? this.#elements[this.#index(0)] : null;
+    const evictedElement =
+      this.#size === this.#capacity ? this.#elements[this.#index(0)] : null;
     this.#elements[this.#index(this.#size)] = element;
     if (this.#size < this.#capacity) {
       this.#size++;

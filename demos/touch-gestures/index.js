@@ -15,8 +15,7 @@
  */
 import * as Marzipano from '../../src/index';
 import { data } from './data.js';
-
-(function() {
+(function () {
   var Hammer = Marzipano.dependencies['hammerjs'];
 
   // Grab elements from DOM.
@@ -28,20 +27,20 @@ import { data } from './data.js';
   var commentTextareaElement = document.querySelector('#commentTextarea');
 
   // Prevent tap delay on mobile browsers.
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('DOMContentLoaded', function () {
     FastClick.attach(document.body);
   });
 
   // Detect mobile mode.
   if (window.matchMedia) {
-    var setMode = function() {
+    var setMode = function () {
       if (mql.matches) {
         document.body.classList.add('mobile');
       } else {
         document.body.classList.remove('mobile');
       }
     };
-    var mql = matchMedia("(max-width: 450px), (max-height: 400px)");
+    var mql = matchMedia('(max-width: 450px), (max-height: 400px)');
     setMode();
     mql.addListener(setMode);
   }
@@ -49,34 +48,41 @@ import { data } from './data.js';
   // Viewer options.
   var viewerOpts = {
     controls: {
-      mouseViewMode: data.settings.mouseViewMode
-    }
+      mouseViewMode: data.settings.mouseViewMode,
+    },
   };
 
   // Initialize viewer.
   var viewer = new Marzipano.Viewer(panoElement, viewerOpts);
 
   // Create scenes.
-  var scenes = data.scenes.map(function(sceneData) {
-    var urlPrefix = "//www.marzipano.net/media";
+  var scenes = data.scenes.map(function (sceneData) {
+    var urlPrefix = '//www.marzipano.net/media';
     var source = Marzipano.ImageUrlSource.fromString(
-      urlPrefix + "/" + sceneData.id + "/{z}/{f}/{y}/{x}.jpg",
-      { cubeMapPreviewUrl: urlPrefix + "/" + sceneData.id + "/preview.jpg" });
+      urlPrefix + '/' + sceneData.id + '/{z}/{f}/{y}/{x}.jpg',
+      { cubeMapPreviewUrl: urlPrefix + '/' + sceneData.id + '/preview.jpg' }
+    );
     var geometry = new Marzipano.CubeGeometry(sceneData.levels);
-    var resolution = sceneData.levels[sceneData.levels.length-1].size;
-    var limiter = Marzipano.RectilinearView.limit.traditional(resolution, 120*Math.PI/180);
+    var resolution = sceneData.levels[sceneData.levels.length - 1].size;
+    var limiter = Marzipano.RectilinearView.limit.traditional(
+      resolution,
+      (120 * Math.PI) / 180
+    );
 
-    var view = new Marzipano.RectilinearView(sceneData.initialViewParameters, limiter);
+    var view = new Marzipano.RectilinearView(
+      sceneData.initialViewParameters,
+      limiter
+    );
     var marzipanoScene = viewer.createScene({
       source: source,
       geometry: geometry,
       view: view,
-      pinFirstLevel: true
+      pinFirstLevel: true,
     });
 
     return {
       data: sceneData,
-      marzipanoObject: marzipanoScene
+      marzipanoObject: marzipanoScene,
     };
   });
 
@@ -98,7 +104,9 @@ import { data } from './data.js';
     currentScene = mod(index, scenes.length);
 
     var scene = scenes[currentScene];
-    scene.marzipanoObject.view().setParameters(scene.data.initialViewParameters);
+    scene.marzipanoObject
+      .view()
+      .setParameters(scene.data.initialViewParameters);
     updateSceneName();
 
     function update(val, newScene) {
@@ -112,9 +120,12 @@ import { data } from './data.js';
       if (toPrevious) {
         relativeX = relativeX * -1;
       }
-      newScene.layer().setEffects({ rect: { relativeX: relativeX }});
+      newScene.layer().setEffects({ rect: { relativeX: relativeX } });
     }
-    scene.marzipanoObject.switchTo({ transitionUpdate: update, transitionDuration: 500 });
+    scene.marzipanoObject.switchTo({
+      transitionUpdate: update,
+      transitionDuration: 500,
+    });
   }
 
   // Change scene on button click.
@@ -127,7 +138,10 @@ import { data } from './data.js';
 
   // Change scene on two-finger swipe.
   var pinchRecognizer = hammerTouch.manager().get('pinch');
-  var swipeRecognizer = new Hammer.Swipe({ direction: Hammer.HORIZONTAL, pointers: 2 });
+  var swipeRecognizer = new Hammer.Swipe({
+    direction: Hammer.HORIZONTAL,
+    pointers: 2,
+  });
   swipeRecognizer.recognizeWith(pinchRecognizer);
   hammerTouch.manager().add(swipeRecognizer);
 
@@ -135,18 +149,18 @@ import { data } from './data.js';
   function disableControlsTemporarily() {
     viewer.controls().disableMethod('touchView');
     viewer.controls().disableMethod('pinch');
-    setTimeout(function() {
+    setTimeout(function () {
       viewer.controls().enableMethod('touchView');
       viewer.controls().enableMethod('pinch');
     }, 200);
   }
 
-  hammerTouch.on('swiperight', function() {
+  hammerTouch.on('swiperight', function () {
     previousScene();
     disableControlsTemporarily();
   });
 
-  hammerTouch.on('swipeleft', function() {
+  hammerTouch.on('swipeleft', function () {
     nextScene();
     disableControlsTemporarily();
   });
@@ -160,18 +174,18 @@ import { data } from './data.js';
   var tapRecognizerMouse = new Hammer.Tap({ taps: 2, posThreshold: 20 });
   hammerMouse.manager().add(tapRecognizerMouse);
   hammerMouse.on('tap', zoomOnTap);
-  var tapRecognizerTouch = new Hammer.Tap({ taps: 2, posThreshold: 50 })
+  var tapRecognizerTouch = new Hammer.Tap({ taps: 2, posThreshold: 50 });
   hammerTouch.manager().add(tapRecognizerTouch);
   hammerTouch.on('tap', zoomOnTap);
 
   // Add marker on press.
-  hammerMouse.manager().add(new Hammer.Press({ }));
+  hammerMouse.manager().add(new Hammer.Press({}));
   hammerMouse.on('press', showMarkerCommentModal);
-  hammerTouch.manager().add(new Hammer.Press({ }));
+  hammerTouch.manager().add(new Hammer.Press({}));
   hammerTouch.on('press', showMarkerCommentModal);
 
   commentFormElement.addEventListener('submit', addMarker);
-  commentTextareaElement.addEventListener('keydown', function(e) {
+  commentTextareaElement.addEventListener('keydown', function (e) {
     // Prevent the viewer keyboard controls from being triggered.
     e.stopPropagation();
   });
@@ -195,17 +209,24 @@ import { data } from './data.js';
     el.appendChild(commentEl);
 
     var scene = scenes[currentScene];
-    scene.marzipanoObject.hotspotContainer().createHotspot(el, markerCoordinates);
+    scene.marzipanoObject
+      .hotspotContainer()
+      .createHotspot(el, markerCoordinates);
 
     commentFormElement.style.display = 'none';
-    commentTextareaElement.value = "";
+    commentTextareaElement.value = '';
     e.preventDefault();
   }
 
   function updateSceneName() {
     var scene = scenes[currentScene];
     var name = sanitize(scene.data.name);
-    var counter = "<span class='scenesCounter'>(" + (currentScene+1) + "/" + scenes.length + ")</span>";
+    var counter =
+      "<span class='scenesCounter'>(" +
+      (currentScene + 1) +
+      '/' +
+      scenes.length +
+      ')</span>';
     sceneNameElement.innerHTML = name + counter;
   }
 
@@ -214,7 +235,6 @@ import { data } from './data.js';
   }
 
   function mod(m, n) {
-    return ((m%n)+n)%n;
+    return ((m % n) + n) % n;
   }
-
 })();

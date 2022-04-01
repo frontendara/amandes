@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import cmp from "../util/cmp";
-import Level from "./Level";
+import cmp from '../util/cmp';
+import Level from './Level';
 
 function makeLevelList(levelPropertiesList, LevelClass: typeof Level) {
   const list: any[] = [];
@@ -23,7 +23,7 @@ function makeLevelList(levelPropertiesList, LevelClass: typeof Level) {
     list.push(new LevelClass(levelPropertiesList[i]));
   }
 
-  list.sort(function(level1, level2) {
+  list.sort(function (level1, level2) {
     return cmp(level1.width(), level2.width());
   });
 
@@ -48,12 +48,9 @@ function makeSelectableLevelList(levelList) {
 }
 
 // TODO: restructure these imports
-export {
-  makeLevelList,
-  makeSelectableLevelList
-};
+export { makeLevelList, makeSelectableLevelList };
 
 export default {
   makeLevelList: makeLevelList,
-  makeSelectableLevelList: makeSelectableLevelList
+  makeSelectableLevelList: makeSelectableLevelList,
 };
