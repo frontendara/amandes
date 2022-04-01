@@ -17,7 +17,7 @@
 import eventEmitter from 'minimal-event-emitter';
 import extend from './util/extend';
 import clearOwnProperties from './util/clearOwnProperties';
-import { Geometry, Source } from './jsdoc-extras';
+import { Effects, Geometry, Source } from './jsdoc-extras';
 import TextureStore from './TextureStore';
 
 /**
@@ -40,7 +40,7 @@ class Layer {
   #view: any;
   #textureStore: any;
   #effects: any;
-  #fixedLevelIndex: null;
+  #fixedLevelIndex: null | number;
   #viewChangeHandler: () => void;
   #textureStoreChangeHandler: () => void;
 
@@ -49,7 +49,7 @@ class Layer {
     geometry: Geometry,
     view: any,
     textureStore: TextureStore,
-    opts: { effects: unknown }
+    opts?: { effects?: Effects }
   ) {
     opts = opts || {};
 
@@ -90,6 +90,12 @@ class Layer {
   emit(_arg0: string, _arg1: any) {
     throw new Error('Method not implemented.');
   }
+  removeEventListener(_arg0: string, _arg1: any) {
+    throw new Error('Method not implemented.');
+  }
+  addEventListener(_arg0: string, _arg1: any) {
+    throw new Error('Method not implemented.');
+  }
   /**
    * Destructor.
    */
@@ -113,14 +119,14 @@ class Layer {
    * Returns the underlying {@link Source source}.
    * @return {Source}
    */
-  source() {
+  source(): Source {
     return this.#source;
   }
   /**
    * Returns the underlying {@link Geometry geometry}.
    * @return {Geometry}
    */
-  geometry() {
+  geometry(): Geometry {
     return this.#geometry;
   }
   /**
@@ -134,21 +140,21 @@ class Layer {
    * Returns the underlying {@link TextureStore texture store}.
    * @return {TextureStore}
    */
-  textureStore() {
+  textureStore(): TextureStore {
     return this.#textureStore;
   }
   /**
    * Returns the currently set {@link Effects effects}.
    * @return {Effects}
    */
-  effects() {
+  effects(): Effects {
     return this.#effects;
   }
   /**
    * Sets the {@link Effects effects}.
    * @param {Effects} effects
    */
-  setEffects(effects) {
+  setEffects(effects: Effects) {
     this.#effects = effects;
     this.emit('effectsChange', this.#effects);
   }
@@ -160,7 +166,7 @@ class Layer {
    *
    * @param {Effects} effects
    */
-  mergeEffects(effects) {
+  mergeEffects(effects: Effects) {
     extend(this.#effects, effects);
     this.emit('effectsChange', this.#effects);
   }
@@ -168,7 +174,7 @@ class Layer {
    * Returns the fixed level index.
    * @return {(number|null)}
    */
-  fixedLevel() {
+  fixedLevel(): (number | null) {
     return this.#fixedLevelIndex;
   }
   /**
@@ -178,7 +184,7 @@ class Layer {
    * @param {(number|null)} levelIndex
    * @throws An error if the level index is out of range.
    */
-  setFixedLevel(levelIndex) {
+  setFixedLevel(levelIndex: (number | null)) {
     if (levelIndex !== this.#fixedLevelIndex) {
       if (
         levelIndex != null &&
@@ -207,7 +213,7 @@ class Layer {
    * Pin a whole level into the texture store.
    * @param {Number} levelIndex
    */
-  pinLevel(levelIndex) {
+  pinLevel(levelIndex: number) {
     const level = this.#geometry.levelList[levelIndex];
     const tiles = this.#geometry.levelTiles(level);
     for (let i = 0; i < tiles.length; i++) {
@@ -218,7 +224,7 @@ class Layer {
    * Unpin a whole level from the texture store.
    * @param {Number} levelIndex
    */
-  unpinLevel(levelIndex) {
+  unpinLevel(levelIndex: number) {
     const level = this.#geometry.levelList[levelIndex];
     const tiles = this.#geometry.levelTiles(level);
     for (let i = 0; i < tiles.length; i++) {

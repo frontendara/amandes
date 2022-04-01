@@ -235,8 +235,8 @@ function optimized() {
 }
 
 export var colorTransformEffects = {
-  gray: gray,
-  color: color,
-  halfcolor: halfcolor,
-  optimized: optimized,
+  gray,
+  color,
+  halfcolor,
+  optimized,
 };

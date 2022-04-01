@@ -58,7 +58,7 @@ stage.addLayer(left);
 
 function createLayer(stage, view, geometry, eye) {
   // Create the source.
-  var urlPrefix = '//www.net/media/music-room';
+  var urlPrefix = '//www.marzipano.net/media/music-room';
   var source = ImageUrlSource.fromString(
     urlPrefix + '/' + eye + '/{z}/{f}/{y}/{x}.jpg',
     { cubeMapPreviewUrl: urlPrefix + '/' + eye + '/preview.jpg' }
@@ -76,7 +76,7 @@ function createLayer(stage, view, geometry, eye) {
 }
 
 // Update the effects to match the chosen anaglyph type.
-var typeElement = document.getElementById('type');
+var typeElement = document.getElementById('type') as HTMLSelectElement;
 function updateEffects() {
   var type = typeElement.value;
   var effects = colorTransformEffects[type]();

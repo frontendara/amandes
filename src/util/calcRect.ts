@@ -35,8 +35,8 @@ import { Rect, RectSpec } from '../jsdoc-extras';
 function calcRect(
   totalWidth: number,
   totalHeight: number,
-  spec: RectSpec,
-  result: Rect
+  spec?: RectSpec,
+  result?: Rect
 ) {
   result = result || {};
 

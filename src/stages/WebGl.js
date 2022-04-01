@@ -91,6 +91,8 @@ function initWebGlContext(canvas, opts) {
  * Also see the available {@link Stage} options.
  */
 class WebGlStage extends Stage {
+  TextureClass = WebGlTexture;
+  type = 'webgl';
   constructor(opts) {
     opts = opts || {};
 
@@ -259,6 +261,9 @@ class WebGlStage extends Stage {
 
 WebGlStage.type = WebGlStage.prototype.type = 'webgl';
 
+/**
+ * @implements {Texture}
+ */
 class WebGlTexture {
   constructor(stage, tile, asset) {
     this._stage = stage;
