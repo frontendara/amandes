@@ -34,7 +34,7 @@ var viewer = new Viewer(document.getElementById('pano'), {
 // and must write a custom function to convert tiles into URLs.
 var urlPrefix = '//www.marzipano.net/media/prague';
 var previewUrl = urlPrefix + '/preview.jpg';
-var tileUrl = function (f, z, x, y) {
+var tileUrl = function (f: string, z: number, x: number, y: number) {
   return urlPrefix + '/l' + z + '/' + f + '/' + y + '/' + x + '.jpg';
 };
 var source = new ImageUrlSource(function (tile) {
