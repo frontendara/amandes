@@ -17,7 +17,7 @@ import { Dynamics, util, dependencies } from '../../src/index';
 
 // Custom control method to alter the view according to the device orientation.
 class DeviceOrientationControlMethod {
-  _dynamics: { yaw: Dynamics; pitch: Dynamics; };
+  _dynamics: { yaw: Dynamics; pitch: Dynamics };
   _deviceOrientationHandler: any;
   _previous: {};
   _current: {};

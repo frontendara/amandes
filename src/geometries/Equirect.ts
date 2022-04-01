@@ -124,7 +124,7 @@ class EquirectGeometry implements Geometry {
   // static Tile: typeof EquirectTile;
   // static type: string;
   Tile = EquirectTile;
-  type  = 'equirect' as const;
+  type = 'equirect' as const;
   constructor(levelPropertiesList) {
     if (getType(levelPropertiesList) !== 'array') {
       throw new Error('Level list must be an array');
@@ -160,7 +160,5 @@ class EquirectGeometry implements Geometry {
 // @ts-ignore
 EquirectGeometry.Tile = EquirectTile;
 
-export {
-  EquirectTile
-}
+export { EquirectTile };
 export default EquirectGeometry;
