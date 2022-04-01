@@ -13,8 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
-
 // These are used to set the WebGl depth for a tile.
 var MAX_LAYERS = 256; // Max number of layers per stage.
 var MAX_LEVELS = 256; // Max number of levels per layer.
