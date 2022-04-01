@@ -74,7 +74,7 @@ class PinchZoomControlMethod {
     }
   }
   #handleEvent(e) {
-    var scale = e.scale;
+    let scale = e.scale;
 
     if (this.#lastEvent) {
       scale /= this.#lastEvent.scale;

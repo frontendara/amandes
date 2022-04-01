@@ -32,9 +32,9 @@ class SingleAssetSource {
   }
   // TODO: _stage doesn't seem to be uesd here. Remove?
   loadAsset(_stage, tile, done) {
-    var self = this;
+    const self = this;
 
-    var timeout = setTimeout(function () {
+    const timeout = setTimeout(function () {
       done(null, tile, self.#asset);
     }, 0);
 

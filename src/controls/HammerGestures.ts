@@ -15,8 +15,8 @@
  */
 import Hammer from "hammerjs";
 
-var nextId = 1;
-var idProperty = 'MarzipanoHammerElementId';
+let nextId = 1;
+const idProperty = 'MarzipanoHammerElementId';
 function getKeyForElementAndType(element, type) {
   if (!element[idProperty]) {
     element[idProperty] = nextId++;
@@ -37,7 +37,7 @@ class HammerGestures {
     this.#refCount = {};
   }
   get(element, type) {
-    var key = getKeyForElementAndType(element, type);
+    const key = getKeyForElementAndType(element, type);
     if (!this.#managers[key]) {
       this.#managers[key] = this.#createManager(element, type);
       this.#refCount[key] = 0;
@@ -46,7 +46,7 @@ class HammerGestures {
     return new HammerGesturesHandle(this, this.#managers[key], element, type);
   }
   #createManager(element, type) {
-    var manager = new Hammer.Manager(element);
+    const manager = new Hammer.Manager(element);
 
     // Managers are created with different parameters for different pointer
     // types.
@@ -63,7 +63,7 @@ class HammerGestures {
     return manager;
   }
   releaseHandle(element, type) {
-    var key = getKeyForElementAndType(element, type);
+    const key = getKeyForElementAndType(element, type);
     if (this.#refCount[key]) {
       this.#refCount[key]--;
       if (!this.#refCount[key]) {
@@ -90,8 +90,8 @@ export class HammerGesturesHandle {
     this.#eventHandlers = [];
   }
   on(events, handler) {
-    var type = this.#type;
-    var handlerFilteredEvents = function (e) {
+    const type = this.#type;
+    const handlerFilteredEvents = function (e) {
       if (type === e.pointerType) {
         handler(e);
       }
@@ -101,8 +101,8 @@ export class HammerGesturesHandle {
     this.#manager.on(events, handlerFilteredEvents);
   }
   release() {
-    for (var i = 0; i < this.#eventHandlers.length; i++) {
-      var eventHandler = this.#eventHandlers[i];
+    for (let i = 0; i < this.#eventHandlers.length; i++) {
+      const eventHandler = this.#eventHandlers[i];
       this.#manager.off(eventHandler.events, eventHandler.handler);
     }
 

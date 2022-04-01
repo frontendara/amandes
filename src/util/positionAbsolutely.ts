@@ -26,7 +26,7 @@ function positionAbsolutely(
   extraTransforms = extraTransforms || "";
   // A translateZ(0) transform improves performance on Chrome by creating a
   // new layer for the element, which prevents unnecessary repaints.
-  var transform =
+  const transform =
     "translateX(" +
     decimal(x) +
     "px) translateY(" +

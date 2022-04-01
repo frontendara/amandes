@@ -23,7 +23,7 @@ import retry from "./util/retry";
 import chain from "./util/chain";
 import clearOwnProperties from "./util/clearOwnProperties";
 
-var debug =
+const debug =
   // @ts-ignore
   typeof MARZIPANODEBUG !== "undefined" && MARZIPANODEBUG.textureStore;
 
@@ -40,14 +40,14 @@ var debug =
 // first markTile and the first endFrame. The END state corresponds to the
 // interval between the first and the last endFrame. At any other time, the
 // TextureStore is in the IDLE state.
-var State = {
+const State = {
   IDLE: 0,
   START: 1,
   MARK: 2,
   END: 3,
 };
 
-var defaultOptions = {
+const defaultOptions = {
   // Maximum number of cached textures for previously visible tiles.
   previouslyVisibleCacheSize: 512,
 };
@@ -55,7 +55,7 @@ var defaultOptions = {
 // Assign an id to each operation so we can track its state.
 // We actually only need this in debug mode, but the code is less convoluted
 // if we track unconditionally, and the performance hit is minimal anyway.
-var nextId = 0;
+let nextId = 0;
 
 // Distinguishes a cancellation from other kinds of errors.
 class CancelError extends Error {
@@ -87,7 +87,7 @@ class TextureStoreItem {
   #cancel: null | ((...args: any[]) => void);
 
   constructor(store, tile) {
-    var id = nextId++;
+    const id = nextId++;
 
     this.#id = id;
     this.#store = store;
@@ -100,15 +100,15 @@ class TextureStoreItem {
       store.emit("textureInvalid", tile);
     };
 
-    var source = store.source();
-    var stage = store.stage();
+    const source = store.source();
+    const stage = store.stage();
 
-    var loadAsset = source.loadAsset.bind(source);
-    var createTexture = stage.createTexture.bind(stage);
+    const loadAsset = source.loadAsset.bind(source);
+    const createTexture = stage.createTexture.bind(stage);
 
     // Retry loading the asset until it succeeds, then create the texture from it.
     // This process may be canceled at any point by calling the destroy() method.
-    var fn = chain(retry(loadAsset), createTexture);
+    const fn = chain(retry(loadAsset), createTexture);
 
     store.emit("textureStartLoad", tile);
     if (debug) {
@@ -174,12 +174,12 @@ class TextureStoreItem {
     return this.#texture;
   }
   destroy() {
-    var id = this.#id;
-    var store = this.#store;
-    var tile = this.#tile;
-    var asset = this.#asset;
-    var texture = this.#texture;
-    var cancel = this.#cancel;
+    const id = this.#id;
+    const store = this.#store;
+    const tile = this.#tile;
+    const asset = this.#asset;
+    const texture = this.#texture;
+    const cancel = this.#cancel;
 
     if (cancel) {
       // The texture is still loading, so cancel it.
@@ -361,7 +361,7 @@ class TextureStore {
    * Remove all textures from the TextureStore, including pinned textures.
    */
   clear() {
-    var self = this;
+    const self = this;
 
     // Collect list of tiles to be evicted.
     self.#evicted.length = 0;
@@ -437,9 +437,9 @@ class TextureStore {
     this.#state = State.MARK;
 
     // Refresh texture for dynamic assets.
-    var item = this.#itemMap.get(tile);
-    var texture = item && item.texture();
-    var asset = item && item.asset();
+    const item = this.#itemMap.get(tile);
+    const texture = item && item.texture();
+    const asset = item && item.asset();
     if (texture && asset) {
       texture.refresh(tile, asset);
     }
@@ -473,7 +473,7 @@ class TextureStore {
     }
   }
   #update() {
-    var self = this;
+    const self = this;
 
     // Calculate the set of tiles that used to be visible but no longer are.
     self.#noLongerVisible.length = 0;
@@ -503,10 +503,10 @@ class TextureStore {
     // visible set, and collect the tiles evicted from the latter.
     self.#evicted.length = 0;
     self.#noLongerVisible.forEach(function (tile) {
-      var item = self.#itemMap.get(tile);
-      var texture = item && item.texture();
+      const item = self.#itemMap.get(tile);
+      const texture = item && item.texture();
       if (texture) {
-        var otherTile = self.#previouslyVisible.add(tile);
+        const otherTile = self.#previouslyVisible.add(tile);
         if (otherTile != null) {
           self.#evicted.push(otherTile);
         }
@@ -525,14 +525,14 @@ class TextureStore {
     // Load visible tiles that are not already in the store.
     // Refresh texture on visible tiles for dynamic assets.
     self.#newVisible.forEach(function (tile) {
-      var item = self.#itemMap.get(tile);
+      const item = self.#itemMap.get(tile);
       if (!item) {
         self.#loadTile(tile);
       }
     });
 
     // Swap the old visible set with the new one.
-    var tmp = self.#visible;
+    const tmp = self.#visible;
     self.#visible = self.#newVisible;
     self.#newVisible = tmp;
 
@@ -548,25 +548,25 @@ class TextureStore {
     if (this.#itemMap.has(tile)) {
       throw new Error("TextureStore: loading texture already in cache");
     }
-    var item = new TextureStoreItem(this, tile);
+    const item = new TextureStoreItem(this, tile);
     this.#itemMap.set(tile, item);
   }
   #unloadTile(tile) {
-    var item = this.#itemMap.del(tile);
+    const item = this.#itemMap.del(tile);
     if (!item) {
       throw new Error("TextureStore: unloading texture not in cache");
     }
     item.destroy();
   }
   asset(tile) {
-    var item = this.#itemMap.get(tile);
+    const item = this.#itemMap.get(tile);
     if (item) {
       return item.asset();
     }
     return null;
   }
   texture(tile) {
-    var item = this.#itemMap.get(tile);
+    const item = this.#itemMap.get(tile);
     if (item) {
       return item.texture();
     }
@@ -584,7 +584,7 @@ class TextureStore {
    */
   pin(tile) {
     // Increment reference count.
-    var count = (this.#pinMap.get(tile) || 0) + 1;
+    const count = (this.#pinMap.get(tile) || 0) + 1;
     this.#pinMap.set(tile, count);
     // If the texture for the tile is not present, load it now.
     if (!this.#itemMap.has(tile)) {
@@ -599,7 +599,7 @@ class TextureStore {
    * @returns {number} the pin reference count.
    */
   unpin(tile) {
-    var count = this.#pinMap.get(tile);
+    let count = this.#pinMap.get(tile);
     // Consistency check.
     if (!count) {
       throw new Error("TextureStore: unpin when not pinned");
@@ -636,8 +636,8 @@ class TextureStore {
    * @return {TileState}
    */
   query(tile) {
-    var item = this.#itemMap.get(tile);
-    var pinCount = this.#pinMap.get(tile) || 0;
+    const item = this.#itemMap.get(tile);
+    const pinCount = this.#pinMap.get(tile) || 0;
     return {
       visible: this.#visible.has(tile),
       previouslyVisible: this.#previouslyVisible.has(tile),

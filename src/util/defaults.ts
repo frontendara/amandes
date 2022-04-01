@@ -1,5 +1,5 @@
 function defaults<T>(obj: Partial<T>, defaultsObj: T){
-  for (var key in defaultsObj) {
+  for (const key in defaultsObj) {
     if (!(key in obj)) {
       obj[key] = defaultsObj[key];
     }

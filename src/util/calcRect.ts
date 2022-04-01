@@ -36,7 +36,7 @@ function calcRect(totalWidth: number, totalHeight: number, spec: RectSpec, resul
 
   result = result || {};
 
-  var width;
+  let width;
   if (spec != null && spec.absoluteWidth != null) {
     width = spec.absoluteWidth / totalWidth;
   } else if (spec != null && spec.relativeWidth != null) {
@@ -45,7 +45,7 @@ function calcRect(totalWidth: number, totalHeight: number, spec: RectSpec, resul
     width = 1;
   }
 
-  var height;
+  let height;
   if (spec && spec.absoluteHeight != null) {
     height = spec.absoluteHeight / totalHeight;
   } else if (spec != null && spec.relativeHeight != null) {
@@ -54,7 +54,7 @@ function calcRect(totalWidth: number, totalHeight: number, spec: RectSpec, resul
     height = 1;
   }
 
-  var x;
+  let x;
   if (spec != null && spec.absoluteX != null) {
     x = spec.absoluteX / totalWidth;
   } else if (spec != null && spec.relativeX != null) {
@@ -63,7 +63,7 @@ function calcRect(totalWidth: number, totalHeight: number, spec: RectSpec, resul
     x = 0;
   }
 
-  var y;
+  let y;
   if (spec != null && spec.absoluteY != null) {
     y = spec.absoluteY / totalHeight;
   } else if (spec != null && spec.relativeY != null) {

@@ -20,7 +20,7 @@ import defaults from "../util/defaults";
 import { maxFriction as maxFriction } from "./util";
 import clearOwnProperties from "../util/clearOwnProperties";
 
-var defaultOptions = {
+const defaultOptions = {
   friction: 6,
   maxFrictionTime: 0.3,
   hammerEvent: "pan",
@@ -28,7 +28,7 @@ var defaultOptions = {
 
 // TODO: figure out where this was coming from
 // @ts-ignore
-var debug = typeof MARZIPANODEBUG !== "undefined" && MARZIPANODEBUG.controls;
+const debug = typeof MARZIPANODEBUG !== "undefined" && MARZIPANODEBUG.controls;
 
 /**
  * @class DragControlMethod
@@ -165,12 +165,12 @@ class DragControlMethod {
     this.#lastEvent = false;
   }
   #updateDynamicsMove(e) {
-    var x = e.deltaX;
-    var y = e.deltaY;
+    let x = e.deltaX;
+    let y = e.deltaY;
 
     // When a second finger touches the screen, panstart sometimes has a large
     // offset at start; subtract that offset to prevent a sudden jump.
-    var eventToSubtract = this.#lastEvent || this.#startEvent;
+    const eventToSubtract = this.#lastEvent || this.#startEvent;
 
     if (eventToSubtract) {
       // TODO: better type checks
@@ -181,9 +181,9 @@ class DragControlMethod {
       y -= eventToSubtract.deltaY;
     }
 
-    var elementRect = this.#element.getBoundingClientRect();
-    var width = elementRect.right - elementRect.left;
-    var height = elementRect.bottom - elementRect.top;
+    const elementRect = this.#element.getBoundingClientRect();
+    const width = elementRect.right - elementRect.left;
+    const height = elementRect.bottom - elementRect.top;
 
     x /= width;
     y /= height;
@@ -196,12 +196,12 @@ class DragControlMethod {
     this.#lastEvent = e;
   }
   #updateDynamicsRelease(e) {
-    var elementRect = this.#element.getBoundingClientRect();
-    var width = elementRect.right - elementRect.left;
-    var height = elementRect.bottom - elementRect.top;
+    const elementRect = this.#element.getBoundingClientRect();
+    const width = elementRect.right - elementRect.left;
+    const height = elementRect.bottom - elementRect.top;
 
-    var x = (1000 * e.velocityX) / width;
-    var y = (1000 * e.velocityY) / height;
+    const x = (1000 * e.velocityX) / width;
+    const y = (1000 * e.velocityY) / height;
 
     this.#dynamics.x.reset();
     this.#dynamics.y.reset();

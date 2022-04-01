@@ -22,7 +22,7 @@ interface TimerOptions {
   duration: number;
 }
 
-var defaultOptions: TimerOptions = {
+const defaultOptions: TimerOptions = {
   duration: Infinity,
 };
 
@@ -117,9 +117,9 @@ class Timer {
     }
   }
   _check() {
-    var currentTime = now();
-    var elapsed = currentTime - Number(this._startTime);
-    var remaining = this._duration - elapsed;
+    const currentTime = now();
+    const elapsed = currentTime - Number(this._startTime);
+    const remaining = this._duration - elapsed;
 
     this._teardown();
 

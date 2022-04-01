@@ -20,7 +20,7 @@ import defaults from "../util/defaults";
 import { maxFriction as maxFriction } from "./util";
 import clearOwnProperties from "../util/clearOwnProperties";
 
-var defaultOptions = {
+const defaultOptions = {
   speed: 8,
   friction: 6,
   maxFrictionTime: 0.3,
@@ -107,13 +107,13 @@ class QtvrControlMethod {
     }
   }
   #updateDynamics(e, release) {
-    var elementRect = this.#element.getBoundingClientRect();
-    var width = elementRect.right - elementRect.left;
-    var height = elementRect.bottom - elementRect.top;
-    var maxDim = Math.max(width, height);
+    const elementRect = this.#element.getBoundingClientRect();
+    const width = elementRect.right - elementRect.left;
+    const height = elementRect.bottom - elementRect.top;
+    const maxDim = Math.max(width, height);
 
-    var x = (e.deltaX / maxDim) * this.#opts.speed;
-    var y = (e.deltaY / maxDim) * this.#opts.speed;
+    const x = (e.deltaX / maxDim) * this.#opts.speed;
+    const y = (e.deltaY / maxDim) * this.#opts.speed;
 
     this.#dynamics.x.reset();
     this.#dynamics.y.reset();

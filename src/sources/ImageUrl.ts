@@ -23,7 +23,7 @@ import { Source } from "../jsdoc-extras";
 
 
 // Map template properties to their corresponding tile properties.
-var templateProperties = {
+const templateProperties = {
   x: 'x',
   y: 'y',
   z: 'z',
@@ -31,13 +31,13 @@ var templateProperties = {
 };
 
 // Default face order for cube maps.
-var defaultCubeMapFaceOrder = 'bdflru';
+const defaultCubeMapFaceOrder = 'bdflru';
 
 // Default maximum number of concurrent requests.
-var defaultConcurrency = 4;
+const defaultConcurrency = 4;
 
 // Default milliseconds to wait before retrying failed requests.
-var defaultRetryDelay = 10000;
+const defaultRetryDelay = 10000;
 
 
 /**
@@ -79,16 +79,16 @@ class ImageUrlSource implements Source {
   }
   loadAsset(stage, tile, done) {
 
-    var retryDelay = this.#retryDelay;
-    var retryMap = this.#retryMap;
+    const retryDelay = this.#retryDelay;
+    const retryMap = this.#retryMap;
 
-    var tileSource = this.#sourceFromTile(tile);
-    var url = tileSource.url;
-    var rect = tileSource.rect;
+    const tileSource = this.#sourceFromTile(tile);
+    const url = tileSource.url;
+    const rect = tileSource.rect;
 
-    var loadImage = stage.loadImage.bind(stage, url, rect);
+    const loadImage = stage.loadImage.bind(stage, url, rect);
 
-    var loadFn = (done) => {
+    const loadFn = (done) => {
       // TODO: Deduplicate load requests for the same URL. Although the browser
       // might be smart enough to avoid duplicate requests, they are still unduly
       // impacted by the concurrency parameter.
@@ -109,11 +109,11 @@ class ImageUrlSource implements Source {
     };
 
     // Check whether we are retrying a failed request.
-    var delayAmount;
-    var lastTime = retryMap[url];
+    let delayAmount;
+    const lastTime = retryMap[url];
     if (lastTime != null) {
-      var currentTime = now();
-      var elapsed = currentTime - lastTime;
+      const currentTime = now();
+      const elapsed = currentTime - lastTime;
       if (elapsed < retryDelay) {
         // Wait before retrying.
         delayAmount = retryDelay - elapsed;
@@ -124,7 +124,7 @@ class ImageUrlSource implements Source {
       }
     }
 
-    var delayFn = delay.bind(null, delayAmount);
+    const delayFn = delay.bind(null, delayAmount);
 
     return chain(delayFn, loadFn)(done);
   }
@@ -149,19 +149,19 @@ class ImageUrlSource implements Source {
    *     the preview image.
    */
   static fromString(url: string, opts?: { cubeMapPreviewFaceOrder: unknown[], cubeMapPreviewUrl: unknown } | null) {
-    var faceOrder = opts && opts?.cubeMapPreviewFaceOrder || defaultCubeMapFaceOrder;
+    const faceOrder = opts && opts?.cubeMapPreviewFaceOrder || defaultCubeMapFaceOrder;
 
-    var urlFn = opts?.cubeMapPreviewUrl ? withPreview : withoutPreview;
+    const urlFn = opts?.cubeMapPreviewUrl ? withPreview : withoutPreview;
 
     return new ImageUrlSource(urlFn, opts);
 
     function withoutPreview(tile) {
-      var tileUrl = url;
+      let tileUrl = url;
 
-      for (var property in templateProperties) {
-        var templateProperty = templateProperties[property];
-        var regExp = propertyRegExp(property);
-        var valueFromTile = tile.hasOwnProperty(templateProperty) ? tile[templateProperty] : '';
+      for (const property in templateProperties) {
+        const templateProperty = templateProperties[property];
+        const regExp = propertyRegExp(property);
+        const valueFromTile = tile.hasOwnProperty(templateProperty) ? tile[templateProperty] : '';
         tileUrl = tileUrl.replace(regExp, valueFromTile);
       }
 
@@ -178,7 +178,7 @@ class ImageUrlSource implements Source {
     }
 
     function cubeMapUrl(tile) {
-      var y = faceOrder.indexOf(tile.face) / 6;
+      const y = faceOrder.indexOf(tile.face) / 6;
       return {
         url: opts?.cubeMapPreviewUrl,
         rect: { x: 0, y: y, width: 1, height: 1 / 6 }
@@ -190,7 +190,7 @@ class ImageUrlSource implements Source {
 eventEmitter(ImageUrlSource);
 
 function propertyRegExp(property) {
-  var regExpStr = '\\{(' + property + ')\\}';
+  const regExpStr = '\\{(' + property + ')\\}';
   return new RegExp(regExpStr, 'g');
 }
 

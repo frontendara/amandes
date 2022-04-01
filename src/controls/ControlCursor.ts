@@ -16,7 +16,7 @@
 import defaults from "../util/defaults";
 import clearOwnProperties from "../util/clearOwnProperties";
 
-var defaultOpts = {
+const defaultOpts = {
   active: 'move',
   inactive: 'default',
   disabled: 'default'
@@ -95,8 +95,8 @@ class ControlCursor {
     clearOwnProperties(this);
   }
   #updateAttachment() {
-    var controls = this.#controls;
-    var id = this.#id;
+    const controls = this.#controls;
+    const id = this.#id;
     if (controls.enabled() && controls.method(id).enabled) {
       this.#attachToControlMethod(controls.method(id));
     } else {

@@ -19,13 +19,13 @@ function prefixProperty(property: string) {
     return property;
   }
 
-  var style = document.documentElement.style;
-  var prefixList = ['Moz', 'Webkit', 'Khtml', 'O', 'ms'];
+  const style = document.documentElement.style;
+  const prefixList = ['Moz', 'Webkit', 'Khtml', 'O', 'ms'];
 
-  for (var i = 0; i < prefixList.length; i++) {
-    var prefix = prefixList[i];
-    var capitalizedProperty = property[0].toUpperCase() + property.slice(1);
-    var prefixedProperty = prefix + capitalizedProperty;
+  for (let i = 0; i < prefixList.length; i++) {
+    const prefix = prefixList[i];
+    const capitalizedProperty = property[0].toUpperCase() + property.slice(1);
+    const prefixedProperty = prefix + capitalizedProperty;
 
     if (prefixedProperty in style) {
       return prefixedProperty;
@@ -38,7 +38,7 @@ function prefixProperty(property: string) {
 
 
 function getWithVendorPrefix(property: string) {
-  var prefixedProperty = prefixProperty(property);
+  const prefixedProperty = prefixProperty(property);
   return function getPropertyWithVendorPrefix(element: { style: { [x: string]: any; }; }) {
     return element.style[prefixedProperty];
   };
@@ -47,15 +47,15 @@ function getWithVendorPrefix(property: string) {
 
 
 function setWithVendorPrefix(property: string) {
-  var prefixedProperty = prefixProperty(property);
+  const prefixedProperty = prefixProperty(property);
   return function setPropertyWithVendorPrefix(element: { style: { [x: string]: any; }; }, val: any) {
     return (element.style[prefixedProperty] = val);
   };
 }
 
 
-var setTransform = setWithVendorPrefix('transform');
-var setTransformOrigin = setWithVendorPrefix('transformOrigin');
+const setTransform = setWithVendorPrefix('transform');
+const setTransformOrigin = setWithVendorPrefix('transformOrigin');
 
 
 function setNullTransform(element: HTMLElement) {

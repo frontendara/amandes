@@ -18,7 +18,7 @@ import Dynamics from "./Dynamics";
 import defaults from "../util/defaults";
 import clearOwnProperties from "../util/clearOwnProperties";
 
-var defaultOptions = {
+const defaultOptions = {
   frictionTime: 0.2,
   zoomDelta: 0.001
 };
@@ -48,7 +48,7 @@ class ScrollZoomControlMethod {
     this.#dynamics = new Dynamics();
     this.#eventList = [];
 
-    var fn = this.#opts.frictionTime ? this.withSmoothing : this.withoutSmoothing;
+    const fn = this.#opts.frictionTime ? this.withSmoothing : this.withoutSmoothing;
     this.#wheelListener = fn.bind(this);
 
     element.addEventListener('wheel', this.#wheelListener);
@@ -73,7 +73,7 @@ class ScrollZoomControlMethod {
     throw new Error("Method not implemented.");
   }
   withSmoothing(e) {
-    var currentTime = e.timeStamp;
+    const currentTime = e.timeStamp;
 
     // Record event.
     this.#eventList.push(e);
@@ -87,9 +87,9 @@ class ScrollZoomControlMethod {
 
     // Get the current velocity from the recorded events.
     // Each wheel movement causes a velocity of change/frictionTime during frictionTime.
-    var velocity = 0;
-    for (var i = 0; i < this.#eventList.length; i++) {
-      var zoomChangeFromEvent = wheelEventDelta(this.#eventList[i]) * this.#opts.zoomDelta;
+    let velocity = 0;
+    for (let i = 0; i < this.#eventList.length; i++) {
+      const zoomChangeFromEvent = wheelEventDelta(this.#eventList[i]) * this.#opts.zoomDelta;
       velocity += zoomChangeFromEvent / this.#opts.frictionTime;
     }
 
@@ -108,7 +108,7 @@ class ScrollZoomControlMethod {
 eventEmitter(ScrollZoomControlMethod);
 
 function wheelEventDelta(e) {
-  var multiplier = e.deltaMode == 1 ? 20 : 1;
+  const multiplier = e.deltaMode == 1 ? 20 : 1;
   return e.deltaY * multiplier;
 }
 

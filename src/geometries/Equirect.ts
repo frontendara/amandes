@@ -132,21 +132,21 @@ class EquirectGeometry {
     this.selectableLevelList = common.makeSelectableLevelList(this.levelList);
   }
   maxTileSize() {
-    var maxTileSize = 0;
-    for (var i = 0; i < this.levelList.length; i++) {
-      var level = this.levelList[i];
+    let maxTileSize = 0;
+    for (let i = 0; i < this.levelList.length; i++) {
+      const level = this.levelList[i];
       maxTileSize = Math.max(maxTileSize, level.tileWidth, level.tileHeight);
     }
     return maxTileSize;
   }
   levelTiles(level, result) {
-    var levelIndex = this.levelList.indexOf(level);
+    const levelIndex = this.levelList.indexOf(level);
     result = result || [];
     result.push(new EquirectTile(levelIndex, this));
     return result;
   }
   visibleTiles(_view, level, result) {
-    var tile = new EquirectTile(this.levelList.indexOf(level), this);
+    const tile = new EquirectTile(this.levelList.indexOf(level), this);
     result = result || [];
     result.length = 0;
     result.push(tile);

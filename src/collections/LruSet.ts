@@ -54,7 +54,7 @@ class LruSet {
       return element;
     }
     this.remove(element);
-    var evictedElement = this.#size === this.#capacity ? this.#elements[this.#index(0)] : null;
+    const evictedElement = this.#size === this.#capacity ? this.#elements[this.#index(0)] : null;
     this.#elements[this.#index(this.#size)] = element;
     if (this.#size < this.#capacity) {
       this.#size++;
@@ -66,10 +66,10 @@ class LruSet {
   // Removes an element from the set.
   // Returns the removed element, or null if the element was not found.
   remove(element) {
-    for (var i = 0; i < this.#size; i++) {
-      var existingElement = this.#elements[this.#index(i)];
+    for (let i = 0; i < this.#size; i++) {
+      const existingElement = this.#elements[this.#index(i)];
       if (element.equals(existingElement)) {
-        for (var j = i; j < this.#size - 1; j++) {
+        for (let j = i; j < this.#size - 1; j++) {
           this.#elements[this.#index(j)] = this.#elements[this.#index(j + 1)];
         }
         this.#size--;
@@ -80,7 +80,7 @@ class LruSet {
   }
   // Returns whether an element is in the set.
   has(element) {
-    for (var i = 0; i < this.#size; i++) {
+    for (let i = 0; i < this.#size; i++) {
       if (element.equals(this.#elements[this.#index(i)])) {
         return true;
       }
@@ -101,8 +101,8 @@ class LruSet {
   // Returns the number of times fn was called.
   // The result is unspecified if the set is mutated during iteration.
   forEach(fn) {
-    var count = 0;
-    for (var i = 0; i < this.#size; i++) {
+    let count = 0;
+    for (let i = 0; i < this.#size; i++) {
       fn(this.#elements[this.#index(i)]);
       count += 1;
     }

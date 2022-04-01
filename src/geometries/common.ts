@@ -17,9 +17,9 @@ import cmp from "../util/cmp";
 import Level from "./Level";
 
 function makeLevelList(levelPropertiesList, LevelClass: typeof Level) {
-  var list: any[] = [];
+  const list: any[] = [];
 
-  for (var i = 0; i < levelPropertiesList.length; i++) {
+  for (let i = 0; i < levelPropertiesList.length; i++) {
     list.push(new LevelClass(levelPropertiesList[i]));
   }
 
@@ -31,9 +31,9 @@ function makeLevelList(levelPropertiesList, LevelClass: typeof Level) {
 }
 
 function makeSelectableLevelList(levelList) {
-  var list: unknown[] = [];
+  const list: unknown[] = [];
 
-  for (var i = 0; i < levelList.length; i++) {
+  for (let i = 0; i < levelList.length; i++) {
     // TODO: should this be using a getter
     if (!levelList[i].fallbackOnly()) {
       list.push(levelList[i]);

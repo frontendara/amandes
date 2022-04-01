@@ -53,7 +53,7 @@ class Layer {
   ) {
     opts = opts || {};
 
-    var self = this;
+    const self = this;
 
     this.#source = source;
     this.#geometry = geometry;
@@ -191,7 +191,7 @@ class Layer {
     }
   }
   #selectLevel() {
-    var level;
+    let level;
     if (this.#fixedLevelIndex != null) {
       level = this.#geometry.levelList[this.#fixedLevelIndex];
     } else {
@@ -200,7 +200,7 @@ class Layer {
     return level;
   }
   visibleTiles(result) {
-    var level = this.#selectLevel();
+    const level = this.#selectLevel();
     return this.#geometry.visibleTiles(this.#view, level, result);
   }
   /**
@@ -208,9 +208,9 @@ class Layer {
    * @param {Number} levelIndex
    */
   pinLevel(levelIndex) {
-    var level = this.#geometry.levelList[levelIndex];
-    var tiles = this.#geometry.levelTiles(level);
-    for (var i = 0; i < tiles.length; i++) {
+    const level = this.#geometry.levelList[levelIndex];
+    const tiles = this.#geometry.levelTiles(level);
+    for (let i = 0; i < tiles.length; i++) {
       this.#textureStore.pin(tiles[i]);
     }
   }
@@ -219,9 +219,9 @@ class Layer {
    * @param {Number} levelIndex
    */
   unpinLevel(levelIndex) {
-    var level = this.#geometry.levelList[levelIndex];
-    var tiles = this.#geometry.levelTiles(level);
-    for (var i = 0; i < tiles.length; i++) {
+    const level = this.#geometry.levelList[levelIndex];
+    const tiles = this.#geometry.levelTiles(level);
+    for (let i = 0; i < tiles.length; i++) {
       this.#textureStore.unpin(tiles[i]);
     }
   }

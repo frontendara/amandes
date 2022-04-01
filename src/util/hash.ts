@@ -20,9 +20,9 @@
 // Output: an integer
 
 function hash(...args: number[]) {
-  var h = 0;
-  for (var i = 0; i < args.length; i++) {
-    var k = args[i];
+  let h = 0;
+  for (let i = 0; i < args.length; i++) {
+    const k = args[i];
     h += k;
     h += k << 10;
     h ^= k >> 6;

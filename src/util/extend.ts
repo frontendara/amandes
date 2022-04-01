@@ -15,7 +15,7 @@
  */
 
 function extend(obj: { [x: string]: any; }, sourceObj: { [x: string]: any; }) {
-  for (var key in sourceObj) {
+  for (const key in sourceObj) {
     obj[key] = sourceObj[key];
   }
   return obj;

@@ -45,9 +45,9 @@ class WorkQueue {
   }
   push(fn, cb) {
 
-    var task = new WorkTask(fn, cb);
+    const task = new WorkTask(fn, cb);
 
-    var cancel = this.#cancel.bind(this, task);
+    const cancel = this.#cancel.bind(this, task);
 
     // Push the task into the queue.
     this.#queue.push(task);
@@ -80,7 +80,7 @@ class WorkQueue {
     this.#currentTask = task;
 
     // Execute the task.
-    var finish = this.#finish.bind(this, task);
+    const finish = this.#finish.bind(this, task);
     task.cfn = task.fn(finish);
 
     // Detect when a non-cancellable function has been queued.
@@ -91,7 +91,7 @@ class WorkQueue {
   }
   #finish(task) {
 
-    var args = Array.prototype.slice.call(arguments, 1);
+    const args = Array.prototype.slice.call(arguments, 1);
 
     // Consistency check.
     if (this.#currentTask !== task) {
@@ -109,7 +109,7 @@ class WorkQueue {
   }
   #cancel(task) {
 
-    var args = Array.prototype.slice.call(arguments, 1);
+    const args = Array.prototype.slice.call(arguments, 1);
 
     if (this.#currentTask === task) {
 
@@ -120,7 +120,7 @@ class WorkQueue {
     } else {
 
       // Remove task from queue.
-      var pos = this.#queue.indexOf(task);
+      const pos = this.#queue.indexOf(task);
       if (pos >= 0) {
         this.#queue.splice(pos, 1);
         task.cb.apply(null, args);
@@ -147,8 +147,8 @@ class WorkQueue {
     }
 
     if (this.#lastFinished != null) {
-      var elapsed = now() - this.#lastFinished;
-      var remaining = this.#delay - elapsed;
+      const elapsed = now() - this.#lastFinished;
+      const remaining = this.#delay - elapsed;
       if (remaining > 0) {
         // Too soon. Run again after the inter-task delay.
         setTimeout(this.#next.bind(this), remaining);
@@ -157,7 +157,7 @@ class WorkQueue {
     }
 
     // Run the next task.
-    var task = this.#queue.shift();
+    const task = this.#queue.shift();
     this.#start(task);
 
   }

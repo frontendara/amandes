@@ -596,7 +596,7 @@ class Stage {
   }
   _emitRenderInvalid() {
     this.emit('renderInvalid');
-  };
+  }
 }
 
 eventEmitter(Stage);

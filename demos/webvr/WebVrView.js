@@ -113,7 +113,7 @@ class WebVrView {
     }
     return true;
   }
-};
+}
 
 eventEmitter(WebVrView);
 

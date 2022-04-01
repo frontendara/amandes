@@ -20,7 +20,7 @@ function delay(ms: number | undefined, done: { (arg0: null): void; apply: (arg0:
 
   // Work around IE8 bug whereby a setTimeout callback may still be called
   // after the corresponding clearTimeout is invoked.
-  var timer: any = null;
+  let timer: any = null;
 
   function finish() {
     if (timer != null) {

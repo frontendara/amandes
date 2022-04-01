@@ -165,7 +165,7 @@ class HotspotContainer {
   ) {
     coords = coords || {};
 
-    var hotspot = new Hotspot(
+    const hotspot = new Hotspot(
       domElement,
       this.#hotspotContainer,
       this.#view,
@@ -192,7 +192,7 @@ class HotspotContainer {
    * Removes a hotspot from the container.
    */
   destroyHotspot(hotspot: Hotspot) {
-    var i = this.#hotspots.indexOf(hotspot);
+    const i = this.#hotspots.indexOf(hotspot);
     if (i < 0) {
       throw new Error("No such hotspot");
     }
@@ -224,10 +224,10 @@ class HotspotContainer {
     }
   }
   #update() {
-    var wrapper = this.#hotspotContainerWrapper;
-    var width = this.#stage.width();
-    var height = this.#stage.height();
-    var tmpRect = this.#tmpRect;
+    const wrapper = this.#hotspotContainerWrapper;
+    const width = this.#stage.width();
+    const height = this.#stage.height();
+    const tmpRect = this.#tmpRect;
 
     // Avoid updating the wrapper DOM unless necessary.
     if (
@@ -235,7 +235,7 @@ class HotspotContainer {
       (this.#rect &&
         (width !== this.#stageWidth || height !== this.#stageHeight))
     ) {
-      var visible = this.#visible;
+      const visible = this.#visible;
       wrapper.style.display = visible ? "block" : "none";
 
       if (visible) {
@@ -257,7 +257,7 @@ class HotspotContainer {
     }
 
     // Update hotspots unconditionally, as the view parameters may have changed.
-    for (var i = 0; i < this.#hotspots.length; i++) {
+    for (let i = 0; i < this.#hotspots.length; i++) {
       this.#hotspots[i].update();
     }
   }

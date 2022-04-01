@@ -49,7 +49,7 @@ class RenderLoop {
   #renderInvalidHandler: () => void;
   constructor(stage) {
 
-    var self = this;
+    const self = this;
 
     // The stage wrapped by the loop.
     this.#stage = stage;

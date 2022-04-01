@@ -115,7 +115,7 @@ class Hotspot {
     return this.#coords;
   }
   setPosition(coords: HotspotCoords) {
-    for (var key in coords) {
+    for (const key in coords) {
       this.#coords[key] = coords[key];
     }
     this.update();
@@ -126,7 +126,7 @@ class Hotspot {
     return this.#perspective;
   }
   setPerspective(perspective: Perspective) {
-    for (var key in perspective) {
+    for (const key in perspective) {
       this.#perspective[key] = perspective[key];
     }
     this.update();
@@ -150,16 +150,16 @@ class Hotspot {
     }
   }
   update() {
-    var element = this.#domElement;
+    const element = this.#domElement;
 
-    var params = this.#coords;
-    var position = this.#position;
-    var x, y;
+    const params = this.#coords;
+    const position = this.#position;
+    let x, y;
 
-    var isVisible = false;
+    let isVisible = false;
 
     if (this.#visible) {
-      var view = this.#view;
+      const view = this.#view;
 
       if (this.#perspective.radius) {
         // Hotspots that are embedded in the panorama may be visible even when
@@ -191,7 +191,7 @@ class Hotspot {
     }
   }
   #setEmbeddedPosition(view: { coordinatesToPerspectiveTransform: (arg0: any, arg1: number | null, arg2: string | undefined) => any; }, params: HotspotCoords) {
-    var transform = view.coordinatesToPerspectiveTransform(
+    const transform = view.coordinatesToPerspectiveTransform(
       params,
       this.#perspective.radius,
       this.#perspective.extraTransforms

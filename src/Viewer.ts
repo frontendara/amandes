@@ -265,7 +265,7 @@ class Viewer {
 
     this.#dragCursor.destroy();
 
-    for (var methodName in this.#controlMethods) {
+    for (const methodName in this.#controlMethods) {
       this.#controlMethods[methodName].destroy();
     }
 
@@ -293,7 +293,7 @@ class Viewer {
    * Most clients won't need to explicitly call it to keep the size up to date.
    */
   updateSize() {
-    var size = this.#size;
+    const size = this.#size;
     size.width = this.#domElement.clientWidth;
     size.height = this.#domElement.clientHeight;
     this.#stage.setSize(size);
@@ -348,7 +348,7 @@ class Viewer {
   createScene(opts) {
     opts = opts || {};
 
-    var scene = this.createEmptyScene({ view: opts.view });
+    const scene = this.createEmptyScene({ view: opts.view });
 
     scene.createLayer({
       source: opts.source,
@@ -377,24 +377,24 @@ class Viewer {
   createEmptyScene(opts) {
     opts = opts || {};
 
-    var scene = new Scene(this, opts.view);
+    const scene = new Scene(this, opts.view);
     this.#scenes.push(scene);
 
     return scene;
   }
   #updateSceneLayers() {
-    var i;
-    var layer;
+    let i;
+    let layer;
 
-    var stage = this.#stage;
-    var currentScene = this.#currentScene;
-    var replacedScene = this.#replacedScene;
+    const stage = this.#stage;
+    const currentScene = this.#currentScene;
+    const replacedScene = this.#replacedScene;
 
-    var oldLayers = stage.listLayers();
+    const oldLayers = stage.listLayers();
 
     // The stage contains layers from at most two scenes: the current one, on top,
     // and the one currently being switched away from, on the bottom.
-    var newLayers: Layer[] = [];
+    let newLayers: Layer[] = [];
     if (replacedScene) {
       newLayers = newLayers.concat(replacedScene.listLayers());
     }
@@ -456,13 +456,13 @@ class Viewer {
    * @param {Scene} scene
    */
   destroyScene(scene) {
-    var i = this.#scenes.indexOf(scene);
+    const i = this.#scenes.indexOf(scene);
     if (i < 0) {
       throw new Error("No such scene in viewer");
     }
 
-    var j;
-    var layers;
+    let j;
+    let layers;
 
     if (this.#currentScene === scene) {
       // The destroyed scene is the current scene.
@@ -534,7 +534,7 @@ class Viewer {
    * @return {View}
    */
   view() {
-    var scene = this.#currentScene;
+    const scene = this.#currentScene;
     if (scene) {
       return scene.view();
     }
@@ -551,7 +551,7 @@ class Viewer {
    */
   lookTo(params, opts, done) {
     // TODO: is it an error to call lookTo when no scene is displayed?
-    var scene = this.#currentScene;
+    const scene = this.#currentScene;
     if (scene) {
       scene.lookTo(params, opts, done);
     }
@@ -567,7 +567,7 @@ class Viewer {
    *     interrupted.
    */
   startMovement(fn: Function, done?: Function) {
-    var scene = this.#currentScene;
+    const scene = this.#currentScene;
     if (!scene) {
       return;
     }
@@ -580,7 +580,7 @@ class Viewer {
    * current scene. If there is no current scene, this is a no-op.
    */
   stopMovement() {
-    var scene = this.#currentScene;
+    const scene = this.#currentScene;
     if (!scene) {
       return;
     }
@@ -595,7 +595,7 @@ class Viewer {
    * @return {function}
    */
   movement() {
-    var scene = this.#currentScene;
+    const scene = this.#currentScene;
     if (!scene) {
       return;
     }
@@ -628,7 +628,7 @@ class Viewer {
     this.#idleTimer.start();
   }
   #triggerIdleTimer() {
-    var idleMovement = this.#idleMovement;
+    const idleMovement = this.#idleMovement;
     if (!idleMovement) {
       return;
     }
@@ -648,14 +648,14 @@ class Viewer {
    *     takes place, but this function is still called.
    */
   switchScene(newScene: Scene, opts?: SwitchSceneOptions, done?: () => void) {
-    var self = this;
+    const self = this;
 
     opts = opts || {};
     done = done || noop;
 
-    var stage = this.#stage;
+    const stage = this.#stage;
 
-    var oldScene = this.#currentScene;
+    const oldScene = this.#currentScene;
 
     // Do nothing if the target scene is the current one.
     if (oldScene === newScene) {
@@ -674,9 +674,9 @@ class Viewer {
       this.#cancelCurrentTween = null;
     }
 
-    var oldSceneLayers = oldScene ? oldScene.listLayers() : [];
-    var newSceneLayers = newScene.listLayers();
-    var stageLayers = stage.listLayers();
+    let oldSceneLayers = oldScene ? oldScene.listLayers() : [];
+    const newSceneLayers = newScene.listLayers();
+    const stageLayers = stage.listLayers();
 
     // Check that the stage contains exactly as many layers as the current scene,
     // and that the top layer is the right one. If this test fails, either there
@@ -690,17 +690,17 @@ class Viewer {
     }
 
     // Get the transition parameters.
-    var duration =
+    const duration =
       opts.transitionDuration != null
         ? opts.transitionDuration
         : defaultSwitchDuration;
-    var update =
+    const update =
       opts.transitionUpdate != null
         ? opts.transitionUpdate
         : defaultTransitionUpdate;
 
     // Add new scene layers into the stage before starting the transition.
-    for (var i = 0; i < newSceneLayers.length; i++) {
+    for (let i = 0; i < newSceneLayers.length; i++) {
       this.#addLayerToStage(newSceneLayers[i]);
     }
 
@@ -719,7 +719,7 @@ class Viewer {
       if (self.#replacedScene) {
         self.#removeSceneEventListeners(self.#replacedScene);
         oldSceneLayers = self.#replacedScene.listLayers();
-        for (var i = 0; i < oldSceneLayers.length; i++) {
+        for (let i = 0; i < oldSceneLayers.length; i++) {
           self.#removeLayerFromStage(oldSceneLayers[i]);
         }
         self.#replacedScene = null;
@@ -756,7 +756,7 @@ eventEmitter(Viewer);
 var defaultSwitchDuration = 1000;
 
 function defaultTransitionUpdate(val, newScene: Scene, _oldScene) {
-  var layers = newScene.listLayers();
+  const layers = newScene.listLayers();
   layers.forEach(function (layer) {
     layer.mergeEffects({ opacity: val });
   });

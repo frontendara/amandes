@@ -21,7 +21,7 @@ import PinchZoomControlMethod from "./PinchZoom";
 import KeyControlMethod from "./Key";
 import Controls from "./Controls";
 
-var defaultOptions = {
+const defaultOptions = {
   mouseViewMode: "drag",
   dragMode: "pan",
 };
@@ -58,7 +58,7 @@ function registerDefaultControls(
 ) {
   opts = defaults(opts || {}, defaultOptions) as RegisterDefaultControlsOptions;
 
-  var controlMethods: Record<string, any> = {
+  const controlMethods: Record<string, any> = {
     mouseViewDrag: new DragControlMethod(element, "mouse"),
     mouseViewQtvr: new QtvrControlMethod(element, "mouse"),
 
@@ -77,13 +77,13 @@ function registerDefaultControls(
     eKey: new KeyControlMethod(69, "roll", -0.7, 3),
   };
 
-  var enabledControls = ["scrollZoom", "touchView", "pinch"];
+  const enabledControls = ["scrollZoom", "touchView", "pinch"];
 
   if (opts.scrollZoom !== false) {
     controlMethods.scrollZoom = new ScrollZoomControlMethod(element); //{ frictionTime: 0 }
   }
 
-  var controlMethodGroups = {
+  const controlMethodGroups = {
     arrowKeys: ["leftArrowKey", "rightArrowKey", "upArrowKey", "downArrowKey"],
     plusMinusKeys: ["plusKey", "minusKey"],
     wasdKeys: ["wKey", "aKey", "sKey", "dKey"],
@@ -115,16 +115,16 @@ function registerDefaultControls(
       throw new Error("Unknown mouse view mode: " + opts.mouseViewMode);
   }
 
-  for (var id in controlMethods) {
-    var method = controlMethods[id];
+  for (const id in controlMethods) {
+    const method = controlMethods[id];
     controls.registerMethod(id, method);
     if (enabledControls.indexOf(id) >= 0) {
       controls.enableMethod(id);
     }
   }
 
-  for (let groupId in controlMethodGroups) {
-    var methodGroup = controlMethodGroups[groupId] as string[];
+  for (const groupId in controlMethodGroups) {
+    const methodGroup = controlMethodGroups[groupId] as string[];
     controls.addMethodGroup(groupId, methodGroup);
   }
 

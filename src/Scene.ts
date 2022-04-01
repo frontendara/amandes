@@ -198,15 +198,15 @@ class Scene {
   createLayer(opts) {
     opts = opts || {};
 
-    var textureStoreOpts = opts.textureStoreOpts || {};
-    var layerOpts = opts.layerOpts || {};
+    const textureStoreOpts = opts.textureStoreOpts || {};
+    const layerOpts = opts.layerOpts || {};
 
-    var source = opts.source;
-    var geometry = opts.geometry;
-    var view = this.#view;
-    var stage = this.#viewer.stage();
-    var textureStore = new TextureStore(source, stage, textureStoreOpts);
-    var layer = new Layer(source, geometry, view, textureStore, layerOpts);
+    const source = opts.source;
+    const geometry = opts.geometry;
+    const view = this.#view;
+    const stage = this.#viewer.stage();
+    const textureStore = new TextureStore(source, stage, textureStoreOpts);
+    const layer = new Layer(source, geometry, view, textureStore, layerOpts);
 
     this.#layers.push(layer);
 
@@ -225,7 +225,7 @@ class Scene {
    * @throws An error if the layer does not belong to the scene.
    */
   destroyLayer(layer) {
-    var i = this.#layers.indexOf(layer);
+    const i = this.#layers.indexOf(layer);
     if (i < 0) {
       throw new Error("No such layer in scene");
     }
@@ -275,7 +275,7 @@ class Scene {
    *    interrupted.
    */
   lookTo(params, opts, done) {
-    var self = this;
+    const self = this;
 
     opts = opts || {};
     done = done || noop;
@@ -285,25 +285,25 @@ class Scene {
     }
 
     // Quadratic in/out easing.
-    var easeInOutQuad = function (k) {
+    const easeInOutQuad = function (k) {
       if ((k *= 2) < 1) {
         return 0.5 * k * k;
       }
       return -0.5 * (--k * (k - 2) - 1);
     };
 
-    var ease = opts.ease != null ? opts.ease : easeInOutQuad;
-    var controlsInterrupt =
+    const ease = opts.ease != null ? opts.ease : easeInOutQuad;
+    const controlsInterrupt =
       opts.controlsInterrupt != null ? opts.controlsInterrupt : false;
-    var duration =
+    const duration =
       opts.transitionDuration != null ? opts.transitionDuration : 1000;
-    var shortest = opts.shortest != null ? opts.shortest : true;
+    const shortest = opts.shortest != null ? opts.shortest : true;
 
-    var view = this.#view;
+    const view = this.#view;
 
-    var initialParams = view.parameters();
+    const initialParams = view.parameters();
 
-    var finalParams = {} as RectilinearViewCoords;
+    const finalParams = {} as RectilinearViewCoords;
     defaults(finalParams, params);
     defaults(finalParams, initialParams);
 
@@ -313,19 +313,19 @@ class Scene {
       view.normalizeToClosest(finalParams, finalParams);
     }
 
-    var movement = function () {
-      var finalUpdate = false;
+    const movement = function () {
+      let finalUpdate = false;
 
       return function (params, elapsed) {
         if (elapsed >= duration && finalUpdate) {
           return null;
         }
 
-        var delta = Math.min(elapsed / duration, 1);
+        const delta = Math.min(elapsed / duration, 1);
 
-        for (var param in params) {
-          var start = initialParams[param];
-          var end = finalParams[param];
+        for (const param in params) {
+          const start = initialParams[param];
+          const end = finalParams[param];
           params[param] = start + ease(delta) * (end - start);
         }
 
@@ -335,7 +335,7 @@ class Scene {
       };
     };
 
-    var reenableControls = this.#viewer.controls()?.enabled();
+    const reenableControls = this.#viewer.controls()?.enabled();
 
     if (!controlsInterrupt) {
       this.#viewer.controls()?.disable();
@@ -356,13 +356,13 @@ class Scene {
    *     interrupted.
    */
   startMovement(fn, done) {
-    var renderLoop = this.#viewer.renderLoop();
+    const renderLoop = this.#viewer.renderLoop();
 
     if (this.#movement) {
       this.stopMovement();
     }
 
-    var step = fn();
+    const step = fn();
     if (typeof step !== "function") {
       throw new Error("Bad movement");
     }
@@ -382,8 +382,8 @@ class Scene {
    * Stops the current movement.
    */
   stopMovement() {
-    var done = this.#movementCallback;
-    var renderLoop = this.#viewer.renderLoop();
+    const done = this.#movementCallback;
+    const renderLoop = this.#viewer.renderLoop();
 
     if (!this.#movement) {
       return;
@@ -417,12 +417,12 @@ class Scene {
       throw new Error("Should not call update");
     }
 
-    var renderLoop = this.#viewer.renderLoop();
-    var view = this.#view;
+    const renderLoop = this.#viewer.renderLoop();
+    const view = this.#view;
 
-    var elapsed = now() - Number(this.#movementStartTime);
-    var step = this.#movementStep;
-    var params = this.#movementParams;
+    const elapsed = now() - Number(this.#movementStartTime);
+    const step = this.#movementStep;
+    let params = this.#movementParams;
 
     params = view.parameters(params);
     params = step(params, elapsed);
