@@ -577,7 +577,5 @@ CubeGeometry.type = CubeGeometry.prototype.type = 'cube';
 // @ts-ignore
 CubeTile.type = CubeTile.prototype.type = 'cube';
 
-export {
-  CubeTile
-}
+export { CubeTile };
 export default CubeGeometry;

@@ -43,7 +43,9 @@ var maxDimensions = maxSize + 'x' + maxSize;
 var layers = ko.observableArray([]);
 
 // Set up the user interface for importing layers.
-var selectFilesInput = document.getElementById('selectFilesInput') as HTMLInputElement;
+var selectFilesInput = document.getElementById(
+  'selectFilesInput'
+) as HTMLInputElement;
 selectFilesInput.addEventListener('change', function () {
   if (this.files && this.files.length > 0) {
     for (var i = 0; i < this.files.length; i++) {

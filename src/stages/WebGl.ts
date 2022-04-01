@@ -209,7 +209,6 @@ class WebGlTexture implements Texture {
   }
 }
 
-
 interface WebGlStageOptions {
   antialias?: boolean;
   preserveDrawingBuffer?: boolean;

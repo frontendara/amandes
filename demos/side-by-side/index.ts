@@ -73,8 +73,12 @@ function createLayer(stage, view, geometry, eye, rect) {
 // Note that setProjectionCenterX() and setProjectionCenterY() are
 // experimental APIs and may change in the future.
 
-var projectionCenterXElement = document.querySelector<HTMLInputElement>('#projection-center-x');
-var projectionCenterYElement = document.querySelector<HTMLInputElement>('#projection-center-y');
+var projectionCenterXElement = document.querySelector<HTMLInputElement>(
+  '#projection-center-x'
+);
+var projectionCenterYElement = document.querySelector<HTMLInputElement>(
+  '#projection-center-y'
+);
 
 projectionCenterXElement.addEventListener('input', function () {
   var projectionCenterX = projectionCenterXElement.value;

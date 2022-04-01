@@ -21,7 +21,15 @@ import cancelize from '../util/cancelize';
 import clearOwnProperties from '../util/clearOwnProperties';
 
 import RendererRegistry from './RendererRegistry';
-import { Asset, Rect, Renderer, Size, Texture, TextureConstructor, Tile } from '../jsdoc-extras';
+import {
+  Asset,
+  Rect,
+  Renderer,
+  Size,
+  Texture,
+  TextureConstructor,
+  Tile,
+} from '../jsdoc-extras';
 import Layer from '../Layer';
 
 function forwardTileCmp(t1, t2) {
@@ -223,7 +231,11 @@ class Stage {
    * @param {function(?Error, Asset)} done The callback.
    * @return {function()} A function to cancel loading.
    */
-  loadImage(_url: string, _rect?: Rect, _cb?: (error: Error, asset: Asset) => void): () => any {
+  loadImage(
+    _url: string,
+    _rect?: Rect,
+    _cb?: (error: Error, asset: Asset) => void
+  ): () => any {
     throw new Error('Stage implementation must override loadImage');
   }
   /**

@@ -28,7 +28,9 @@ import HammerGestures, {
   HammerGesturesHandle,
 } from './controls/HammerGestures';
 
-import registerDefaultControls, { RegisterDefaultControlsOptions } from './controls/registerDefaultControls';
+import registerDefaultControls, {
+  RegisterDefaultControlsOptions,
+} from './controls/registerDefaultControls';
 import registerDefaultRenderers from './renderers/registerDefaultRenderers';
 
 import { setOverflowHidden as setOverflowHidden } from './util/dom';

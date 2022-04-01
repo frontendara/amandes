@@ -16,7 +16,7 @@
 import * as Marzipano from '../../src/index';
 import { transitionFunctions } from './transitionFunctions.js';
 
-declare let easing: Record<string, string>
+declare let easing: Record<string, string>;
 
 // Create viewer.
 var viewer = new Marzipano.Viewer(document.getElementById('pano'));
