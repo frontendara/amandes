@@ -18,17 +18,15 @@ import * as Marzipano from '../../src/index';
 import WebVrView from './WebVrView.js';
 
 var mat4 = Marzipano.dependencies.glMatrix.mat4;
-var quat = Marzipano.dependencies.glMatrix.quat;
 
-var degToRad = Marzipano.util.degToRad;
-
-var viewerElement = document.querySelector('#pano');
-var enterVrElement = document.querySelector('#enter-vr');
-var noVrElement = document.querySelector('#no-vr');
+var viewerElement = document.querySelector<HTMLElement>('#pano');
+var enterVrElement = document.querySelector<HTMLElement>('#enter-vr');
+var noVrElement = document.querySelector<HTMLElement>('#no-vr');
 
 // Install the WebVR polyfill, which makes the demo functional on "fake" WebVR
 // displays such as Google Cardboard.
-var polyfill = new WebVRPolyfill();
+// @ts-ignore
+new WebVRPolyfill();
 
 // Create stage and register renderers.
 var stage = new Marzipano.WebGlStage();
@@ -80,6 +78,7 @@ stage.addLayer(layerRight);
 
 // Check for an available VR device and initialize accordingly.
 var vrDisplay = null;
+// @ts-ignore
 navigator.getVRDisplays().then(function (vrDisplays) {
   if (vrDisplays.length > 0) {
     vrDisplay = vrDisplays[0];
@@ -98,6 +97,7 @@ var proj = mat4.create();
 var pose = mat4.create();
 
 function render() {
+  // @ts-ignore
   var frameData = new VRFrameData();
   vrDisplay.getFrameData(frameData);
 
