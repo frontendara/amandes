@@ -19,7 +19,14 @@ import * as Marzipano from '../../src/index';
 // Note that this won't work on IE 11 because of lack of support for video
 // textures. Refer to the video-multi-res demo for a possible workaround.
 class VideoAsset {
-  constructor(videoElement) {
+  _videoElement: any;
+  _destroyed: boolean;
+  _emitChange: any;
+  _lastTimestamp: number;
+  _emptyCanvas: HTMLCanvasElement;
+  _emitChangeIfPlayingLoop: any;
+
+  constructor(videoElement?: HTMLVideoElement) {
     this._videoElement = null;
     this._destroyed = false;
     this._emitChange = this.emit.bind(this, 'change');
@@ -30,6 +37,9 @@ class VideoAsset {
     this._emptyCanvas.height = 1;
 
     this.setVideo(videoElement);
+  }
+  emit(eventName) {
+    throw new Error('not implemented')
   }
   setVideo(videoElement) {
     var self = this;

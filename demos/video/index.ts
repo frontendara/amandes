@@ -73,6 +73,7 @@ function tryStart() {
 
   // Prevent the video from going full screen on iOS.
   video.playsInline = true;
+  // @ts-ignore
   video.webkitPlaysInline = true;
 
   video.play();
