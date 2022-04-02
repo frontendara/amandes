@@ -18,8 +18,7 @@ import { suite, test, assert } from 'vitest';
 
 import TileSearcher from './TileSearcher';
 
-import CubeGeometry from './geometries/Cube';
-var CubeTile = CubeGeometry.Tile;
+import CubeGeometry, { CubeTile } from './geometries/Cube';
 import RectilinearView from './views/Rectilinear';
 
 suite('TileSearcher', function () {

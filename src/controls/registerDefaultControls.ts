@@ -26,7 +26,7 @@ const defaultOptions = {
   dragMode: 'pan',
 };
 
-interface RegisterDefaultControlsOptions {
+export interface RegisterDefaultControlsOptions {
   mouseViewMode?: 'drag' | 'qtvr';
   dragMode?: 'pan' | 'pinch';
   scrollZoom?: boolean;

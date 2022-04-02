@@ -84,7 +84,7 @@ createEditableLayers(stage, imageUrl, function (err, layers) {
       canvasAsset.markDirty();
       e.stopPropagation();
     }
-    brush.updateCursor(e);
+    brush.updateCursor();
   });
 
   function paintBetween(previous, current) {
@@ -183,6 +183,7 @@ createEditableLayers(stage, imageUrl, function (err, layers) {
     ctx.drawImage(bwCanvas, 0, 0);
 
     var dataUrl = merged.toDataURL('image/jpeg', 85);
+    // @ts-ignore
     saveAs(dataUrl, 'image.jpg'); // FileSaver.js
   }
 

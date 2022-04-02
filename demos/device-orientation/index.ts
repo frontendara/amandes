@@ -59,6 +59,7 @@ var enabled = false;
 var toggleElement = document.getElementById('toggleDeviceOrientation');
 
 function requestPermissionForIOS() {
+  // @ts-ignore
   window.DeviceOrientationEvent.requestPermission()
     .then((response) => {
       if (response === 'granted') {
@@ -83,7 +84,8 @@ function enableDeviceOrientation() {
 
 function enable() {
   if (window.DeviceOrientationEvent) {
-    if (typeof window.DeviceOrientationEvent.requestPermission == 'function') {
+    // @ts-ignore
+    if (typeof window.DeviceOrientationEvent.requestPermission === 'function') {
       requestPermissionForIOS();
     } else {
       enableDeviceOrientation();

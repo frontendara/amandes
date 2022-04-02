@@ -17,7 +17,8 @@ import hash from '../util/hash';
 import cmp from '../util/cmp';
 import common from './common';
 import Level from './Level';
-import type from '../util/type';
+import getType from '../util/type';
+import { Geometry, View } from '../jsdoc-extras';
 
 /**
  * @class EquirectTile
@@ -30,7 +31,7 @@ class EquirectTile {
   z: any;
   #geometry: any;
   _level: any;
-  static type: string;
+  type = 'equirect';
 
   constructor(z, geometry) {
     this.z = z;
@@ -117,13 +118,15 @@ class EquirectLevel extends Level {
  * @param {Object[]} levelPropertiesList Level description
  * @param {number} levelPropertiesList[].width Level width in pixels
  */
-class EquirectGeometry {
+class EquirectGeometry implements Geometry {
   levelList: any[];
   selectableLevelList: unknown[];
-  static Tile: typeof EquirectTile;
-  static type: string;
+  // static Tile: typeof EquirectTile;
+  // static type: string;
+  Tile = EquirectTile;
+  type = 'equirect' as const;
   constructor(levelPropertiesList) {
-    if (type(levelPropertiesList) !== 'array') {
+    if (getType(levelPropertiesList) !== 'array') {
       throw new Error('Level list must be an array');
     }
 
@@ -144,20 +147,18 @@ class EquirectGeometry {
     result.push(new EquirectTile(levelIndex, this));
     return result;
   }
-  visibleTiles(_view, level, result) {
+  visibleTiles(_view: View, level: Level, result) {
     const tile = new EquirectTile(this.levelList.indexOf(level), this);
     result = result || [];
     result.length = 0;
     result.push(tile);
+    return result;
   }
 }
 
-// TODO: figure this one out
+// TODO: remove this when only exported tile is used
 // @ts-ignore
-EquirectGeometry.Tile = EquirectGeometry.prototype.Tile = EquirectTile;
-// @ts-ignore
-EquirectGeometry.type = EquirectGeometry.prototype.type = 'equirect';
-// @ts-ignore
-EquirectTile.type = EquirectTile.prototype.type = 'equirect';
+EquirectGeometry.Tile = EquirectTile;
 
+export { EquirectTile };
 export default EquirectGeometry;

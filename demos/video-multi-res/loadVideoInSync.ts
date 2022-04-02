@@ -32,9 +32,12 @@ export default function loadVideoInSync(url, syncElement, cb) {
 
   // Prevent the video from going full screen on iOS.
   element.playsInline = true;
+  // @ts-ignore
   element.webkitPlaysInline = true;
 
   element.onerror = function (e) {
+    // TODO: this feels off
+    // @ts-ignore
     cb(e.target.error);
   };
 

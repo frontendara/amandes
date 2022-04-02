@@ -103,7 +103,7 @@ type ViewType = 'rectilinear' | 'flat';
  * This is an abstract interface; the concrete implementations are
  * {@link RectilinearView} and {@link FlatView}.
  */
-interface View {
+export interface View {
   /**
    * The view type, used by the {@link Stage} to determine the appropriate
    * renderer for a given geometry and view.
@@ -165,11 +165,12 @@ export interface Source {
 }
 
 export interface Texture {
-  // TODO: figure out what would be best approach here.
-  // eslint-disable-next-line @typescript-eslint/no-misused-new
-  new (stage: Stage, tile: Tile, asset: Asset): Texture;
   refresh(tile: Tile, asset: Asset): void;
   destroy(): void;
+}
+
+export interface TextureConstructor {
+  new (stage: Stage, tile: Tile, asset: Asset): Texture;
 }
 
 /**
@@ -296,7 +297,7 @@ type GeometryType = 'cube' | 'equirect' | 'flat';
 
 export interface Geometry {
   type: GeometryType;
-  visibleTitles(view: View, level: Level): Tile[];
+  visibleTiles(view: View, level: Level, result?: Tile[]): Tile[];
 }
 
 /**

@@ -30,6 +30,13 @@ var vec4 = Marzipano.dependencies.glMatrix.vec4;
 // If we ever graduate this class to the core library, we'll need to figure out
 // the best way to share code between the two.
 class WebVrView {
+  _width: number;
+  _height: number;
+  _proj: import('gl-matrix').mat4;
+  _invProj: import('gl-matrix').mat4;
+  _frustum: import('gl-matrix').vec4[];
+  _tmpVec: import('gl-matrix').vec4;
+  type = 'rectilinear' as const;
   constructor() {
     this._width = 0;
     this._height = 0;
@@ -57,6 +64,9 @@ class WebVrView {
     this.emit('change');
     this.emit('resize');
     return size;
+  }
+  emit(arg0: string) {
+    throw new Error('Method not implemented.');
   }
   setSize(size) {
     this._width = size.width;
@@ -118,6 +128,7 @@ class WebVrView {
 eventEmitter(WebVrView);
 
 // Pretend to be a RectilinearView so that an appropriate renderer can be found.
+// @ts-ignore
 WebVrView.type = WebVrView.prototype.type = 'rectilinear';
 
 export default WebVrView;

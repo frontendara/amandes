@@ -16,9 +16,12 @@
 import EventEmitter from './EventEmitter.js';
 
 class EventEmitterProxy {
-  constructor(object) {
+  _object: any;
+  _emitter: EventEmitter;
+  _listenerArguments: any[];
+  constructor(object?: any) {
     this._object = object;
-    this._emitter = new EventEmitter(this);
+    this._emitter = new EventEmitter();
     this._listenerArguments = [];
   }
   object() {

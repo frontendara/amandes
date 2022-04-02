@@ -19,7 +19,7 @@ import WorkPool from '../collections/WorkPool';
 import chain from '../util/chain';
 import delay from '../util/delay';
 import now from '../util/now';
-import { Source } from '../jsdoc-extras';
+import { Rect, Source, Tile } from '../jsdoc-extras';
 
 // Map template properties to their corresponding tile properties.
 const templateProperties = {
@@ -27,7 +27,7 @@ const templateProperties = {
   y: 'y',
   z: 'z',
   f: 'face',
-};
+} as const;
 
 // Default face order for cube maps.
 const defaultCubeMapFaceOrder = 'bdflru';
@@ -37,6 +37,19 @@ const defaultConcurrency = 4;
 
 // Default milliseconds to wait before retrying failed requests.
 const defaultRetryDelay = 10000;
+
+interface ImageUrlSourceOptions {
+  /**
+   * @param {number} [opts.concurrency=4] Maximum number of tiles to request at
+   * the same time. The limit is per {@link ImageSourceUrl} instance.
+   */
+  concurrency?: number;
+  /**
+   * @param {number} [opts.retryDelay=10000] Time in milliseconds to wait before
+   * retrying a failed request.
+   */
+  retryDelay?: number;
+}
 
 /**
  * @class ImageUrlSource
@@ -50,11 +63,6 @@ const defaultRetryDelay = 10000;
  * a `{ url, rect }` object, where `url` is an image URL and `rect`, when
  * present, is an `{ x, y, width, height }` object in normalized coordinates
  * denoting the portion of the image to use.
- * @param {Object} opts
- * @param {number} [opts.concurrency=4] Maximum number of tiles to request at
- *     the same time. The limit is per {@link ImageSourceUrl} instance.
- * @param {number} [opts.retryDelay=10000] Time in milliseconds to wait before
- *     retrying a failed request.
  */
 class ImageUrlSource implements Source {
   #loadPool: WorkPool;
@@ -62,7 +70,12 @@ class ImageUrlSource implements Source {
   #retryMap: {};
   #sourceFromTile: any;
 
-  constructor(sourceFromTile, opts) {
+  constructor(
+    sourceFromTile: (
+      tile: Tile & { face: string; x: number; y: number; z: number }
+    ) => { url?: string; rect?: Required<Rect> },
+    opts?: ImageUrlSourceOptions
+  ) {
     opts = opts ? opts : {};
 
     this.#loadPool = new WorkPool({
@@ -147,9 +160,9 @@ class ImageUrlSource implements Source {
   static fromString(
     url: string,
     opts?: {
-      cubeMapPreviewFaceOrder?: unknown[];
+      cubeMapPreviewFaceOrder?: string;
       cubeMapPreviewUrl: string;
-    } | null
+    } & ImageUrlSourceOptions
   ) {
     const faceOrder =
       (opts && opts?.cubeMapPreviewFaceOrder) || defaultCubeMapFaceOrder;

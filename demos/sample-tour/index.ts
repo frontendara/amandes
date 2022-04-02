@@ -17,10 +17,12 @@ import * as Marzipano from '../../src/index';
 import { data } from './data.js';
 (function () {
   var bowser = window.bowser;
+  // from script tag
+  // @ts-ignore
   var screenfull = window.screenfull;
 
   // Grab elements from DOM.
-  var panoElement = document.querySelector('#pano');
+  var panoElement = document.querySelector<HTMLDivElement>('#pano');
   var sceneNameElement = document.querySelector('#titleBar .sceneName');
   var sceneListElement = document.querySelector('#sceneList');
   var sceneElements = document.querySelectorAll('#sceneList .scene');
@@ -54,7 +56,7 @@ import { data } from './data.js';
   });
 
   // Use tooltip fallback mode on IE < 11.
-  if (bowser.msie && parseFloat(bowser.version) < 11) {
+  if (bowser.msie && parseFloat(String(bowser.version)) < 11) {
     document.body.classList.add('tooltip-fallback');
   }
 
@@ -430,7 +432,7 @@ import { data } from './data.js';
   }
 
   // Prevent touch and scroll events from reaching the parent element.
-  function stopTouchAndScrollEventPropagation(element, eventList) {
+  function stopTouchAndScrollEventPropagation(element) {
     var eventList = [
       'touchstart',
       'touchmove',

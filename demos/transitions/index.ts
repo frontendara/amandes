@@ -16,6 +16,8 @@
 import * as Marzipano from '../../src/index';
 import { transitionFunctions } from './transitionFunctions.js';
 
+declare let easing: Record<string, string>;
+
 // Create viewer.
 var viewer = new Marzipano.Viewer(document.getElementById('pano'));
 
@@ -88,10 +90,10 @@ function changeScene(transitionDuration, transitionUpdate) {
 }
 
 // Get elements from DOM.
-var menuItems = document.querySelectorAll('[data-easing]');
-var easingSelect = document.getElementById('easing');
-var funSelect = document.getElementById('fun');
-var timeInput = document.getElementById('time');
+var menuItems = document.querySelectorAll<HTMLLIElement>('[data-easing]');
+var easingSelect = document.getElementById('easing') as HTMLSelectElement;
+var funSelect = document.getElementById('fun') as HTMLSelectElement;
+var timeInput = document.getElementById('time') as HTMLInputElement;
 
 // Set up the predefined transitions menu.
 for (var i = 0; i < menuItems.length; i++) {

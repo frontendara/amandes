@@ -16,44 +16,45 @@
 import * as Marzipano from '../../src/index';
 
 // Dynamic asset containing a video element.
-//
-// The wrappedVideo argument should be an object exposing two methods:
-//   - videoElement() returning the actual HTML video element;
-//   - drawElement() returning the HTML element to be used as a WebGL texture.
-//
-// The two available implementations are NullVideoElementWrapper and
-// CanvasHackVideoElementWrapper. See the respective files for an explanation.
+// Note that this won't work on IE 11 because of lack of support for video
+// textures. Refer to the video-multi-res demo for a possible workaround.
 class VideoAsset {
-  constructor(wrappedVideo) {
-    this._wrappedVideo = null;
+  _videoElement: any;
+  _destroyed: boolean;
+  _emitChange: any;
+  _lastTimestamp: number;
+  _emptyCanvas: HTMLCanvasElement;
+  _emitChangeIfPlayingLoop: any;
+
+  constructor(videoElement?: HTMLVideoElement) {
+    this._videoElement = null;
     this._destroyed = false;
     this._emitChange = this.emit.bind(this, 'change');
     this._lastTimestamp = -1;
 
-    this.setVideo(wrappedVideo);
+    this._emptyCanvas = document.createElement('canvas');
+    this._emptyCanvas.width = 1;
+    this._emptyCanvas.height = 1;
 
-    this.emptyCanvas = document.createElement('canvas');
-    this.emptyCanvas.width = 1;
-    this.emptyCanvas.height = 1;
+    this.setVideo(videoElement);
   }
-  setVideo(wrappedVideo) {
+  emit(eventName) {
+    throw new Error('not implemented');
+  }
+  setVideo(videoElement) {
     var self = this;
 
-    this._wrappedVideo = wrappedVideo;
-
-    if (this._wrappedVideo) {
-      this._wrappedVideo
-        .videoElement()
-        .removeEventListener('timeupdate', this._emitChange);
+    if (this._videoElement) {
+      this._videoElement.removeEventListener('timeupdate', this._emitChange);
     }
 
-    if (wrappedVideo == null) {
+    this._videoElement = videoElement;
+
+    if (!this._videoElement) {
       return;
     }
 
-    var videoElement = wrappedVideo.videoElement();
-
-    videoElement.addEventListener('timeupdate', this._emitChange);
+    this._videoElement.addEventListener('timeupdate', this._emitChange);
 
     // Emit a change event on every frame while the video is playing.
     // TODO: make the loop sleep when video is not playing.
@@ -63,7 +64,7 @@ class VideoAsset {
     }
 
     function emitChangeIfPlaying() {
-      if (!videoElement.paused) {
+      if (!self._videoElement.paused) {
         self.emit('change');
       }
       if (!self._destroyed) {
@@ -76,46 +77,41 @@ class VideoAsset {
     this.emit('change');
   }
   width() {
-    if (this._wrappedVideo) {
-      return this._wrappedVideo.videoElement().videoWidth;
+    if (this._videoElement) {
+      return this._videoElement.videoWidth;
     } else {
-      return this.emptyCanvas.width;
+      return this._emptyCanvas.width;
     }
   }
   height() {
-    if (this._wrappedVideo) {
-      return this._wrappedVideo.videoElement().videoHeight;
+    if (this._videoElement) {
+      return this._videoElement.videoHeight;
     } else {
-      return this.emptyCanvas.height;
+      return this._emptyCanvas.height;
     }
   }
   element() {
     // If element is null, show an empty canvas. This will cause a transparent
     // image to be rendered when no video is present.
-    if (this._wrappedVideo) {
-      return this._wrappedVideo.drawElement();
+    if (this._videoElement) {
+      return this._videoElement;
     } else {
-      return this.emptyCanvas;
+      return this._emptyCanvas;
     }
-  }
-  video() {
-    return this._wrappedVideo;
   }
   isDynamic() {
     return true;
   }
   timestamp() {
-    if (this._wrappedVideo) {
-      this._lastTimestamp = this._wrappedVideo.videoElement().currentTime;
+    if (this._videoElement) {
+      this._lastTimestamp = this._videoElement.currentTime;
     }
     return this._lastTimestamp;
   }
   destroy() {
     this._destroyed = true;
-    if (this._wrappedVideo) {
-      this._wrappedVideo
-        .videoElement()
-        .removeEventListener('timeupdate', this._emitChange);
+    if (this._videoElement) {
+      this._videoElement.removeEventListener('timeupdate', this._emitChange);
     }
     if (this._emitChangeIfPlayingLoop) {
       cancelAnimationFrame(this._emitChangeIfPlayingLoop);

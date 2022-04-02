@@ -20,6 +20,7 @@ import {
   util,
   FlatView,
 } from '../../src/index';
+import { FlatViewLimiter } from '../../src/views/Flat';
 
 // Create viewer.
 var viewer = new Viewer(document.getElementById('pano'));
@@ -52,7 +53,7 @@ var geometry = new FlatGeometry([
 var limiter = util.compose(
   FlatView.limit.resolution(48384),
   FlatView.limit.letterbox()
-);
+) as FlatViewLimiter;
 var view = new FlatView({ mediaAspectRatio: 48384 / 19968 }, limiter);
 
 // Create scene.

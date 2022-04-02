@@ -16,6 +16,8 @@
 import { dependencies } from '../../src/index';
 
 class EditMode {
+  shiftPressed: boolean;
+  ctrlPressed: boolean;
   constructor() {
     var self = this;
 
@@ -56,6 +58,9 @@ class EditMode {
         self.emit('changed');
       }
     });
+  }
+  emit(arg0: string) {
+    throw new Error('Method not implemented.');
   }
   get() {
     if (this.shiftPressed) {

@@ -21,6 +21,7 @@ import ispot from '../util/ispot';
 import { setAbsolute as setAbsolute } from '../util/dom';
 import { setFullSize as setFullSize } from '../util/dom';
 import clearOwnProperties from '../util/clearOwnProperties';
+import { Renderer, Texture } from '../jsdoc-extras';
 
 // TODO(tjgq): Unify Stage and WebGlStage.
 
@@ -58,213 +59,15 @@ function initWebGlContext(canvas, opts) {
 }
 
 /**
- * @class WebGlStage
- * @extends Stage
- * @classdesc
- *
- * A {@link Stage} implementation using WebGl.
- *
- * @param {Object} opts
- * @param {boolean} [opts.antialias=false]
- * @param {boolean} [opts.preserveDrawingBuffer=false]
- * @param {boolean} [opts.generateMipmaps=false]
- * @param {function} [opts.wrapContext]
- *
- * The `antialias` and `preserveDrawingBuffer` options control the WebGL
- * context attributes of the same name. The `alpha` and `premultipliedAlpha`
- * WebGL context attributes are set to their default true value and cannot
- * be overriden; this allows semitransparent textures to be composited with
- * the page. See:
- * https://www.khronos.org/registry/webgl/specs/1.0/#WEBGLCONTEXTATTRIBUTES
- *
- * The `generateMipmaps` option controls texture mipmap generation. Mipmaps
- * may improve rendering quality, at the cost of increased memory usage.
- * Due to technical limitations, they are only generated for textures whose
- * dimensions are a power of two. See:
- * https://www.khronos.org/webgl/wiki/WebGL_and_OpenGL_Differences#Non-Power_of_Two_Texture_Support
- *
- * The `wrapContext` option is a function that receives and returns a
- * WebGLRenderingContext. The stage will use its return value as the context.
- * This is useful when used together with WebGLDebugUtils to debug WebGL issues.
- * See https://www.khronos.org/webgl/wiki/Debugging.
- *
- * Also see the available {@link Stage} options.
- */
-class WebGlStage extends Stage {
-  TextureClass = WebGlTexture;
-  type = 'webgl';
-  constructor(opts) {
-    opts = opts || {};
-
-    super(opts);
-
-    this._generateMipmaps =
-      opts.generateMipmaps != null ? opts.generateMipmaps : false;
-
-    this._loader = new HtmlImageLoader(this);
-
-    this._domElement = document.createElement('canvas');
-
-    setAbsolute(this._domElement);
-    setFullSize(this._domElement);
-
-    this._gl = initWebGlContext(this._domElement, opts);
-
-    this._handleContextLoss = () => {
-      this.emit('webglcontextlost');
-      this._gl = null;
-    };
-
-    // Handle WebGl context loss.
-    this._domElement.addEventListener(
-      'webglcontextlost',
-      this._handleContextLoss
-    );
-
-    // WebGl renderers are singletons for a given stage. This list stores the
-    // existing renderers so they can be reused across layers with the same
-    // geometry and view type.
-    this._rendererInstances = [];
-  }
-  /**
-   * Destructor.
-   */
-  destroy() {
-    this._domElement.removeEventListener(
-      'webglcontextlost',
-      this._handleContextLoss
-    );
-    // Delegate clearing own properties to the Stage destructor.
-    this.constructor.super_.prototype.destroy.call(this);
-  }
-  /**
-   * Returns the underlying DOM element.
-   *
-   * @return {Element}
-   */
-  domElement() {
-    return this._domElement;
-  }
-  /**
-   * Returns the underlying WebGL rendering context.
-   *
-   * @return {WebGLRenderingContext }
-   */
-  webGlContext() {
-    return this._gl;
-  }
-  setSizeForType() {
-    // Update the size of the canvas coordinate space.
-    //
-    // The size is obtained by taking the stage dimensions, which are set in CSS
-    // pixels, and multiplying them by the device pixel ratio. Crucially, this
-    // must be the only place where the WebGL rendering pipeline accesses the
-    // pixel ratio; subsequent uses should reference the `drawingBufferWidth` and
-    // `drawingBufferHeight` properties on the WebGLRenderingContext. Failing to
-    // do so will break the rendering if the pixel ratio changes but the stage
-    // size does not, e.g. when moving the window across screens.
-    var ratio = pixelRatio();
-    this._domElement.width = ratio * this._width;
-    this._domElement.height = ratio * this._height;
-  }
-  loadImage(url, rect, done) {
-    return this._loader.loadImage(url, rect, done);
-  }
-  maxTextureSize() {
-    return this._gl.getParameter(this._gl.MAX_TEXTURE_SIZE);
-  }
-  validateLayer(layer) {
-    var tileSize = layer.geometry().maxTileSize();
-    var maxTextureSize = this.maxTextureSize();
-    if (tileSize > maxTextureSize) {
-      throw new Error(
-        'Layer has level with tile size larger than maximum texture size (' +
-          tileSize +
-          ' vs. ' +
-          maxTextureSize +
-          ')'
-      );
-    }
-  }
-  createRenderer(Renderer) {
-    var rendererInstances = this._rendererInstances;
-    for (var i = 0; i < rendererInstances.length; i++) {
-      if (rendererInstances[i] instanceof Renderer) {
-        return rendererInstances[i];
-      }
-    }
-    var renderer = new Renderer(this._gl);
-    rendererInstances.push(renderer);
-    return renderer;
-  }
-  destroyRenderer(renderer) {
-    var rendererInstances = this._rendererInstances;
-    if (this._renderers.indexOf(renderer) < 0) {
-      renderer.destroy();
-      var index = rendererInstances.indexOf(renderer);
-      if (index >= 0) {
-        rendererInstances.splice(index, 1);
-      }
-    }
-  }
-  startFrame() {
-    var gl = this._gl;
-
-    if (!gl) {
-      throw new Error('Bad WebGL context - maybe context was lost?');
-    }
-
-    // Set the WebGL viewport.
-    gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
-
-    // Clear framebuffer.
-    gl.clearColor(0.0, 0.0, 0.0, 0.0);
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-    // Enable depth testing.
-    gl.enable(gl.DEPTH_TEST);
-
-    // Enable blending. ONE and ONE_MINUS_SRC_ALPHA are the right choices for
-    // premultiplied textures.
-    gl.enable(gl.BLEND);
-    gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
-  }
-  endFrame() {}
-  takeSnapshot(options) {
-    // Validate passed argument
-    if (typeof options !== 'object' || options == null) {
-      options = {};
-    }
-
-    var quality = options.quality;
-
-    // Set default quality if it is not passed
-    if (typeof quality == 'undefined') {
-      quality = 75;
-    }
-
-    // Throw if quality is of invlid type or out of bounds
-    if (typeof quality !== 'number' || quality < 0 || quality > 100) {
-      throw new Error(
-        'WebGLStage: Snapshot quality needs to be a number between 0 and 100'
-      );
-    }
-
-    // Canvas method "toDataURL" needs to be called in the same
-    // context as where the actual rendering is done. Hence this.
-    this.render();
-
-    // Return the snapshot
-    return this._domElement.toDataURL('image/jpeg', quality / 100);
-  }
-}
-
-WebGlStage.type = WebGlStage.prototype.type = 'webgl';
-
-/**
  * @implements {Texture}
  */
-class WebGlTexture {
+class WebGlTexture implements Texture {
+  _stage: any;
+  _gl: any;
+  _texture: null;
+  _timestamp: null;
+  _width: null;
+  _height: null;
   constructor(stage, tile, asset) {
     this._stage = stage;
     this._gl = stage._gl;
@@ -273,7 +76,7 @@ class WebGlTexture {
     this._width = this._height = null;
     this.refresh(tile, asset);
   }
-  refresh(tile, asset) {
+  refresh(_tile, asset) {
     var gl = this._gl;
     var stage = this._stage;
     var texture;
@@ -405,6 +208,226 @@ class WebGlTexture {
     clearOwnProperties(this);
   }
 }
+
+interface WebGlStageOptions {
+  antialias?: boolean;
+  preserveDrawingBuffer?: boolean;
+  generateMipmaps?: boolean;
+  wrapContext?: (gl: WebGLRenderingContext) => WebGLRenderingContext;
+}
+
+/**
+ * @class WebGlStage
+ * @extends Stage
+ * @classdesc
+ *
+ * A {@link Stage} implementation using WebGl.
+ *
+ * @param {Object} opts
+ * @param {boolean} [opts.antialias=false]
+ * @param {boolean} [opts.preserveDrawingBuffer=false]
+ * @param {boolean} [opts.generateMipmaps=false]
+ * @param {function} [opts.wrapContext]
+ *
+ * The `antialias` and `preserveDrawingBuffer` options control the WebGL
+ * context attributes of the same name. The `alpha` and `premultipliedAlpha`
+ * WebGL context attributes are set to their default true value and cannot
+ * be overriden; this allows semitransparent textures to be composited with
+ * the page. See:
+ * https://www.khronos.org/registry/webgl/specs/1.0/#WEBGLCONTEXTATTRIBUTES
+ *
+ * The `generateMipmaps` option controls texture mipmap generation. Mipmaps
+ * may improve rendering quality, at the cost of increased memory usage.
+ * Due to technical limitations, they are only generated for textures whose
+ * dimensions are a power of two. See:
+ * https://www.khronos.org/webgl/wiki/WebGL_and_OpenGL_Differences#Non-Power_of_Two_Texture_Support
+ *
+ * The `wrapContext` option is a function that receives and returns a
+ * WebGLRenderingContext. The stage will use its return value as the context.
+ * This is useful when used together with WebGLDebugUtils to debug WebGL issues.
+ * See https://www.khronos.org/webgl/wiki/Debugging.
+ *
+ * Also see the available {@link Stage} options.
+ */
+class WebGlStage extends Stage {
+  TextureClass = WebGlTexture;
+  type = 'webgl';
+  _generateMipmaps: any;
+  _loader: HtmlImageLoader;
+  _domElement: HTMLCanvasElement;
+  _gl: any;
+  _handleContextLoss: () => void;
+  _rendererInstances: Renderer[];
+  static type: string;
+  static TextureClass: typeof WebGlTexture;
+  constructor(opts?: WebGlStageOptions) {
+    opts = opts || {};
+
+    super(opts);
+
+    this._generateMipmaps =
+      opts.generateMipmaps != null ? opts.generateMipmaps : false;
+
+    this._loader = new HtmlImageLoader(this);
+
+    this._domElement = document.createElement('canvas');
+
+    setAbsolute(this._domElement);
+    setFullSize(this._domElement);
+
+    this._gl = initWebGlContext(this._domElement, opts);
+
+    this._handleContextLoss = () => {
+      this.emit('webglcontextlost');
+      this._gl = null;
+    };
+
+    // Handle WebGl context loss.
+    this._domElement.addEventListener(
+      'webglcontextlost',
+      this._handleContextLoss
+    );
+
+    // WebGl renderers are singletons for a given stage. This list stores the
+    // existing renderers so they can be reused across layers with the same
+    // geometry and view type.
+    this._rendererInstances = [];
+  }
+  /**
+   * Destructor.
+   */
+  destroy() {
+    this._domElement.removeEventListener(
+      'webglcontextlost',
+      this._handleContextLoss
+    );
+    // Delegate clearing own properties to the Stage destructor.
+    super.destroy.call(this);
+  }
+  /**
+   * Returns the underlying DOM element.
+   *
+   * @return {Element}
+   */
+  domElement() {
+    return this._domElement;
+  }
+  /**
+   * Returns the underlying WebGL rendering context.
+   *
+   * @return {WebGLRenderingContext }
+   */
+  webGlContext() {
+    return this._gl;
+  }
+  setSizeForType() {
+    // Update the size of the canvas coordinate space.
+    //
+    // The size is obtained by taking the stage dimensions, which are set in CSS
+    // pixels, and multiplying them by the device pixel ratio. Crucially, this
+    // must be the only place where the WebGL rendering pipeline accesses the
+    // pixel ratio; subsequent uses should reference the `drawingBufferWidth` and
+    // `drawingBufferHeight` properties on the WebGLRenderingContext. Failing to
+    // do so will break the rendering if the pixel ratio changes but the stage
+    // size does not, e.g. when moving the window across screens.
+    var ratio = pixelRatio();
+    this._domElement.width = ratio * this._width;
+    this._domElement.height = ratio * this._height;
+  }
+  loadImage(url: any, rect: any, done: any) {
+    return this._loader.loadImage(url, rect, done);
+  }
+  maxTextureSize() {
+    return this._gl.getParameter(this._gl.MAX_TEXTURE_SIZE);
+  }
+  validateLayer(layer) {
+    var tileSize = layer.geometry().maxTileSize();
+    var maxTextureSize = this.maxTextureSize();
+    if (tileSize > maxTextureSize) {
+      throw new Error(
+        'Layer has level with tile size larger than maximum texture size (' +
+          tileSize +
+          ' vs. ' +
+          maxTextureSize +
+          ')'
+      );
+    }
+  }
+  createRenderer(Renderer) {
+    var rendererInstances = this._rendererInstances;
+    for (var i = 0; i < rendererInstances.length; i++) {
+      if (rendererInstances[i] instanceof Renderer) {
+        return rendererInstances[i];
+      }
+    }
+    var renderer = new Renderer(this._gl);
+    rendererInstances.push(renderer);
+    return renderer;
+  }
+  destroyRenderer(renderer) {
+    var rendererInstances = this._rendererInstances;
+    if (this._renderers.indexOf(renderer) < 0) {
+      renderer.destroy();
+      var index = rendererInstances.indexOf(renderer);
+      if (index >= 0) {
+        rendererInstances.splice(index, 1);
+      }
+    }
+  }
+  startFrame() {
+    var gl = this._gl;
+
+    if (!gl) {
+      throw new Error('Bad WebGL context - maybe context was lost?');
+    }
+
+    // Set the WebGL viewport.
+    gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+
+    // Clear framebuffer.
+    gl.clearColor(0.0, 0.0, 0.0, 0.0);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+    // Enable depth testing.
+    gl.enable(gl.DEPTH_TEST);
+
+    // Enable blending. ONE and ONE_MINUS_SRC_ALPHA are the right choices for
+    // premultiplied textures.
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+  }
+  endFrame() {}
+  takeSnapshot(options) {
+    // Validate passed argument
+    if (typeof options !== 'object' || options == null) {
+      options = {};
+    }
+
+    var quality = options.quality;
+
+    // Set default quality if it is not passed
+    if (typeof quality == 'undefined') {
+      quality = 75;
+    }
+
+    // Throw if quality is of invlid type or out of bounds
+    if (typeof quality !== 'number' || quality < 0 || quality > 100) {
+      throw new Error(
+        'WebGLStage: Snapshot quality needs to be a number between 0 and 100'
+      );
+    }
+
+    // Canvas method "toDataURL" needs to be called in the same
+    // context as where the actual rendering is done. Hence this.
+    this.render();
+
+    // Return the snapshot
+    return this._domElement.toDataURL('image/jpeg', quality / 100);
+  }
+}
+
+WebGlStage.type = WebGlStage.prototype.type = 'webgl';
+
 WebGlStage.TextureClass = WebGlStage.prototype.TextureClass = WebGlTexture;
 
 export default WebGlStage;

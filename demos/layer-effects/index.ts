@@ -16,6 +16,9 @@
 import * as Marzipano from '../../src/index';
 import { colorEffects } from './colorEffects.js';
 
+// knockout imported with script tag
+declare var ko: any;
+
 // Create viewer.
 var viewer = new Marzipano.Viewer(document.getElementById('pano'));
 
@@ -32,6 +35,7 @@ var scene = viewer.createEmptyScene({ view: view });
 // Query the stage for the maximum supported texture size.
 var maxSize = viewer.stage().maxTextureSize();
 // hack for knockoutjs demo
+// @ts-ignore
 window.maxSize = maxSize;
 var maxDimensions = maxSize + 'x' + maxSize;
 
@@ -39,7 +43,9 @@ var maxDimensions = maxSize + 'x' + maxSize;
 var layers = ko.observableArray([]);
 
 // Set up the user interface for importing layers.
-var selectFilesInput = document.getElementById('selectFilesInput');
+var selectFilesInput = document.getElementById(
+  'selectFilesInput'
+) as HTMLInputElement;
 selectFilesInput.addEventListener('change', function () {
   if (this.files && this.files.length > 0) {
     for (var i = 0; i < this.files.length; i++) {
