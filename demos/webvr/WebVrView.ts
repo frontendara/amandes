@@ -32,10 +32,10 @@ var vec4 = Marzipano.dependencies.glMatrix.vec4;
 class WebVrView {
   _width: number;
   _height: number;
-  _proj: import("gl-matrix").mat4;
-  _invProj: import("gl-matrix").mat4;
-  _frustum: import("gl-matrix").vec4[];
-  _tmpVec: import("gl-matrix").vec4;
+  _proj: import('gl-matrix').mat4;
+  _invProj: import('gl-matrix').mat4;
+  _frustum: import('gl-matrix').vec4[];
+  _tmpVec: import('gl-matrix').vec4;
   type = 'rectilinear' as const;
   constructor() {
     this._width = 0;

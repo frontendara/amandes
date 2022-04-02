@@ -31,7 +31,14 @@ class EventEmitter {
       }
     }
   }
-  emit(event: string, arg1?: any, arg2?: any, arg3?: any, arg4?: any, arg5?: any) {
+  emit(
+    event: string,
+    arg1?: any,
+    arg2?: any,
+    arg3?: any,
+    arg4?: any,
+    arg5?: any
+  ) {
     var eventMap = (this.__events = this.__events || {});
     var handlerList = eventMap[event];
     if (handlerList) {

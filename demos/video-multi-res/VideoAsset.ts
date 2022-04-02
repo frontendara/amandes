@@ -47,7 +47,7 @@ class VideoAsset {
     this.emptyCanvas.height = 1;
   }
   emit(_name: string) {
-    throw new Error('not implemented')
+    throw new Error('not implemented');
   }
   setVideo(wrappedVideo) {
     var self = this;

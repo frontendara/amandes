@@ -39,7 +39,7 @@ class VideoAsset {
     this.setVideo(videoElement);
   }
   emit(eventName) {
-    throw new Error('not implemented')
+    throw new Error('not implemented');
   }
   setVideo(videoElement) {
     var self = this;
