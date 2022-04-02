@@ -20,6 +20,8 @@
 // https://connect.microsoft.com/IE/feedbackdetail/view/941984/webgl-video-upload-to-texture-not-supported
 // https://connect.microsoft.com/IE/feedback/details/967946/support-crossorigin-cors-for-drawing-video-to-canvas-both-2d-and-webgl
 class CanvasHackVideoElementWrapper {
+  _videoElement: HTMLVideoElement;
+  _drawElement: HTMLCanvasElement;
   constructor(videoElement) {
     this._videoElement = videoElement;
     this._drawElement = document.createElement('canvas');

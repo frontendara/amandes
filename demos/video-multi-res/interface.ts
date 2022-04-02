@@ -15,6 +15,7 @@
  */
 import { multiResVideo } from './multiResVideo.js';
 import { colorEffects } from './colorEffects.js';
+import { Effects } from '../../src/jsdoc-extras.js';
 
 var video = multiResVideo.element;
 
@@ -239,7 +240,7 @@ updateResolutionChanging();
 
 /* Effects */
 
-var effectElement = document.getElementById('effect');
+var effectElement = document.getElementById('effect') as HTMLSelectElement;
 
 effectElement.addEventListener('change', function () {
   var layer = multiResVideo.layer();
@@ -249,7 +250,7 @@ effectElement.addEventListener('change', function () {
   }
 
   var effect = effectElement.value;
-  var effectsObj = { colorMatrix: null, colorOffset: null };
+  var effectsObj: Effects = { colorMatrix: null, colorOffset: null };
   if (effect === 'desaturate') {
     effectsObj = colorEffects.saturation(0);
   } else if (effect === 'sepia') {

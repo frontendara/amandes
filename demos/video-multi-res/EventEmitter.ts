@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 class EventEmitter {
+  __events: any;
   constructor() {}
   addEventListener(event, fn) {
     var eventMap = (this.__events = this.__events || {});
@@ -30,7 +31,7 @@ class EventEmitter {
       }
     }
   }
-  emit(event, arg1, arg2, arg3, arg4, arg5) {
+  emit(event: string, arg1?: any, arg2?: any, arg3?: any, arg4?: any, arg5?: any) {
     var eventMap = (this.__events = this.__events || {});
     var handlerList = eventMap[event];
     if (handlerList) {

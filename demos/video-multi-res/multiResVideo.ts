@@ -65,7 +65,7 @@ var currentState = {
   resolutionChanging: false,
 };
 
-function setResolutionIndex(index, cb) {
+function setResolutionIndex(index?: number, cb?: (error?: Error) => void) {
   cb = cb || function () {};
 
   currentState.resolutionChanging = true;

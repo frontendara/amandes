@@ -17,6 +17,7 @@
 // exposes the underlying video element as the texture to be rendered, which is
 // suitable for browsers that support WebGL video textures.
 class NullVideoElementWrapper {
+  _videoElement: HTMLVideoElement;
   constructor(videoElement) {
     this._videoElement = videoElement;
   }

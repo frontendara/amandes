@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 import * as Marzipano from '../../src/index';
+import { Effects } from '../../src/jsdoc-extras';
 
 var identity = Marzipano.colorEffects.identity;
 
 export var colorEffects = {
-  brightness: function (amount, result) {
+  brightness: function (amount: number, result?: Effects) {
     result = identity(result);
 
     result.colorOffset[0] = amount;
@@ -28,7 +29,7 @@ export var colorEffects = {
     return result;
   },
 
-  sepia: function (amount, result) {
+  sepia: function (amount: number, result?: Effects) {
     result = identity(result);
 
     result.colorMatrix[0] = 1.0 - 0.607 * amount;
@@ -58,7 +59,7 @@ export var colorEffects = {
     return result;
   },
 
-  saturation: function (amount, result) {
+  saturation: function (amount?: number, result?: Effects) {
     result = identity(result);
 
     var lumR = 0.3086;
@@ -96,7 +97,7 @@ export var colorEffects = {
     return result;
   },
 
-  contrast: function (amount, result) {
+  contrast: function (amount?: number, result?: Effects) {
     result = identity(result);
 
     result.colorMatrix[0] = amount;

@@ -24,7 +24,17 @@ import * as Marzipano from '../../src/index';
 // The two available implementations are NullVideoElementWrapper and
 // CanvasHackVideoElementWrapper. See the respective files for an explanation.
 class VideoAsset {
-  constructor(wrappedVideo) {
+  _wrappedVideo: any;
+  _destroyed: boolean;
+  _emitChange: any;
+  _lastTimestamp: number;
+  emptyCanvas: HTMLCanvasElement;
+  _emitChangeIfPlayingLoop: any;
+
+  constructor(wrappedVideo?: {
+    videoElement: () => HTMLVideoElement;
+    drawElement: () => HTMLElement;
+  }) {
     this._wrappedVideo = null;
     this._destroyed = false;
     this._emitChange = this.emit.bind(this, 'change');
@@ -35,6 +45,9 @@ class VideoAsset {
     this.emptyCanvas = document.createElement('canvas');
     this.emptyCanvas.width = 1;
     this.emptyCanvas.height = 1;
+  }
+  emit(_name: string) {
+    throw new Error('not implemented')
   }
   setVideo(wrappedVideo) {
     var self = this;
