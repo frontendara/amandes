@@ -16,20 +16,20 @@
 import WebGlBaseRenderer from './WebGlBase';
 
 /**
- * @class WebGlCubeRenderer
+ * @class WebGlFlatRenderer
  * @implements Renderer
  * @classdesc
  *
- * A renderer for {@link CubeGeometry} and {@link RectilinearView}, appropriate
- * for a {@link WebGlStage}.
+ * A renderer for {@link FlatGeometry} and {@link FlatView}, appropriate for a
+ * {@link WebGlStage}.
  *
  * Most users do not need to instantiate this class. Renderers are created and
  * destroyed by {@link Stage} as necessary.
  */
-class WebGlCubeRenderer extends WebGlBaseRenderer {
-  constructor(...args) {
-    super(...args);
+class WebGlFlatRenderer extends WebGlBaseRenderer {
+  constructor(gl: WebGLRenderingContext) {
+    super(gl);
   }
 }
 
-export default WebGlCubeRenderer;
+export default WebGlFlatRenderer;

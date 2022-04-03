@@ -184,7 +184,7 @@ var scaleVector = vec3.create();
 // Therefore, when the scene's rect is not fully contained in the rendering
 // area, we clamp the viewport to the rendering area, and return a compensation
 // matrix to scale and translate vertices accordingly.
-function setViewport(gl, layer, rect, viewportMatrix) {
+function setViewport(gl, _layer, rect, viewportMatrix) {
   if (rect.x === 0 && rect.width === 1 && rect.y === 0 && rect.height === 1) {
     // Fast path for full rect.
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
