@@ -242,6 +242,8 @@ class FlatLevel extends Level {
   tileHeight() {
     return this._tileHeight;
   }
+  // TODO: figure out if it's better to return something
+  // @ts-ignore
   _validateWithParentLevel(parentLevel) {
     var width = this.width();
     var height = this.height();
