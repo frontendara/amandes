@@ -7,6 +7,16 @@
   "files": [
     "build"
   ],
+  "keywords": [
+    "webxr",
+    "360°",
+    "media",
+    "viewer",
+    "3d",
+    "360video",
+    "360image",
+    "panorama"
+  ],
   "main": "./build/marzipano.umd.js",
   "module": "./build/marzipano.es.js",
   "exports": {
