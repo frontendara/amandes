@@ -51,7 +51,15 @@ var uniformList = [
 ];
 
 class WebGlBaseRenderer {
-  constructor(gl) {
+  gl: any;
+  projMatrix: mat4;
+  viewportMatrix: mat4;
+  translateVector: vec3;
+  scaleVector: vec3;
+  constantBuffers: { vertexIndices: any; vertexPositions: any; textureCoords: any; };
+  shaderProgram: any;
+
+  constructor(gl: WebGLRenderingContext) {
     this.gl = gl;
 
     // The projection matrix positions the tiles in world space.
@@ -125,7 +133,7 @@ class WebGlBaseRenderer {
       colorMatrix: shaderProgram.uColorMatrix,
     });
   }
-  endLayer(layer, rect) {
+  endLayer() {
     var gl = this.gl;
     var shaderProgram = this.shaderProgram;
     disableAttributes(gl, shaderProgram);

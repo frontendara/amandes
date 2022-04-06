@@ -25,6 +25,7 @@ import cmp from '../util/cmp';
 import type from '../util/type';
 import { vec2 as vec2 } from 'gl-matrix';
 import { vec4 as vec4 } from 'gl-matrix';
+import { Size, Tile } from '../jsdoc-extras';
 
 var neighborsCacheSize = 64;
 
@@ -44,6 +45,14 @@ var neighborOffsets = [
  * A tile in a {@link FlatGeometry}.
  */
 class FlatTile {
+  x: any;
+  y: any;
+  z: any;
+  _geometry: any;
+  _level: any;
+  type = 'flat';
+  Tile = FlatTile;
+
   constructor(x, y, z, geometry) {
     this.x = x;
     this.y = y;
@@ -170,7 +179,7 @@ class FlatTile {
     var numX = level.numHorizontalTiles() - 1;
     var numY = level.numVerticalTiles() - 1;
 
-    var result = [];
+    var result: Tile[] = [];
 
     for (var i = 0; i < neighborOffsets.length; i++) {
       var xOffset = neighborOffsets[i][0];
@@ -205,10 +214,14 @@ class FlatTile {
     return cmp(this.z, that.z) || cmp(this.y, that.y) || cmp(this.x, that.x);
   }
   str() {
-    return 'FlatTile(' + tile.x + ', ' + tile.y + ', ' + tile.z + ')';
+    return 'FlatTile(' + this.x + ', ' + this.y + ', ' + this.z + ')';
   }
 }
 class FlatLevel extends Level {
+  _width: any;
+  _height: any;
+  _tileWidth: any;
+  _tileHeight: any;
   constructor(levelProperties) {
     super(levelProperties);
 
@@ -229,6 +242,8 @@ class FlatLevel extends Level {
   tileHeight() {
     return this._tileHeight;
   }
+  // TODO: figure out if it's better to return something
+  // @ts-ignore
   _validateWithParentLevel(parentLevel) {
     var width = this.width();
     var height = this.height();
@@ -301,6 +316,14 @@ class FlatLevel extends Level {
  *                 square tiles
  */
 class FlatGeometry {
+  levelList: any[];
+  selectableLevelList: unknown[];
+  _tileSearcher: TileSearcher;
+  _neighborsCache: LruMap;
+  _vec: vec4;
+  _viewSize: Size;
+  static Tile: typeof FlatTile;
+  static type: string;
   constructor(levelPropertiesList) {
     if (type(levelPropertiesList) !== 'array') {
       throw new Error('Level list must be an array');
@@ -313,13 +336,13 @@ class FlatGeometry {
       this.levelList[i]._validateWithParentLevel(this.levelList[i - 1]);
     }
 
-    this._tileSearcher = new TileSearcher(this);
+    this._tileSearcher = new TileSearcher();
 
     this._neighborsCache = new LruMap(neighborsCacheSize);
 
     this._vec = vec4.create();
 
-    this._viewSize = {};
+    this._viewSize = { width: 0, height: 0 };
   }
   maxTileSize() {
     var maxTileSize = 0;
@@ -394,8 +417,13 @@ class FlatGeometry {
   }
 }
 
+// TODO: remove these when exports are used
+// @ts-ignore
 FlatGeometry.Tile = FlatGeometry.prototype.Tile = FlatTile;
+// @ts-ignore
 FlatGeometry.type = FlatGeometry.prototype.type = 'flat';
+// @ts-ignore
 FlatTile.type = FlatTile.prototype.type = 'flat';
 
+export { FlatTile };
 export default FlatGeometry;

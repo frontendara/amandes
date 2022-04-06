@@ -65,7 +65,12 @@ var uniformList = [
  * destroyed by {@link Stage} as necessary.
  */
 class WebGlEquirectRenderer {
-  constructor(gl) {
+  gl: any;
+  invProjMatrix: mat4;
+  viewportMatrix: mat4;
+  constantBuffers: { vertexIndices: any; vertexPositions: any; textureCoords: any; };
+  shaderProgram: any;
+  constructor(gl: WebGLRenderingContext) {
     this.gl = gl;
 
     // The inverse projection matrix.
@@ -144,12 +149,12 @@ class WebGlEquirectRenderer {
       colorMatrix: shaderProgram.uColorMatrix,
     });
   }
-  endLayer(layer, rect) {
+  endLayer() {
     var gl = this.gl;
     var shaderProgram = this.shaderProgram;
     disableAttributes(gl, shaderProgram);
   }
-  renderTile(tile, texture, layer, layerZ) {
+  renderTile(tile, texture, _layer, layerZ) {
     var gl = this.gl;
     var shaderProgram = this.shaderProgram;
     var constantBuffers = this.constantBuffers;
