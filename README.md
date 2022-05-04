@@ -1,5 +1,9 @@
 # Amandes
 
+```
+npm install @frdr/amandes
+```
+
 Fork of [Marzipano](https://github.com/google/marzipano) with updated tech.
 
 At the moment goal is to be feature compatable to marzipano with improvements
